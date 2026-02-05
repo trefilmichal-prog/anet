@@ -212,25 +212,29 @@ document.addEventListener('DOMContentLoaded', function () {
             <?php if (empty($programItems)): ?>
                 <p>Program bude brzy doplněn.</p>
             <?php else: ?>
-                <?php foreach ($programItems as $item): ?>
-                    <div class="program-item">
-                        <div class="container2-divider2"><span class="star star-animated">✦</span></div>
-                        <h3 class="program-item__title">
-                            <span class="program-item__title-text">
-                                <?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?>
-                            </span>
-                            <?php if (!empty($item['subtitle'])): ?>
-                                – <?php echo htmlspecialchars($item['subtitle'], ENT_QUOTES, 'UTF-8'); ?>
-                            <?php endif; ?>
-                        </h3>
-                        <?php if (!empty($item['venue'])): ?>
-                            <p class="program-item__venue"><?php echo htmlspecialchars($item['venue'], ENT_QUOTES, 'UTF-8'); ?></p>
-                        <?php endif; ?>
-                        <?php if (!empty($item['event_date']) || !empty($item['event_time'])): ?>
-                            <p class="program-item__datetime"><?php echo htmlspecialchars(trim($item['event_date'] . ' ' . $item['event_time']), ENT_QUOTES, 'UTF-8'); ?></p>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
+                <div class="container2-divider2"><span class="star star-animated">✦</span></div>
+                <div class="program-grid">
+                    <?php foreach ($programItems as $item): ?>
+                        <article class="program-card">
+                            <div class="program-card__body">
+                                <h3 class="program-card__title">
+                                    <span class="program-card__title-text">
+                                        <?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </span>
+                                    <?php if (!empty($item['subtitle'])): ?>
+                                        – <?php echo htmlspecialchars($item['subtitle'], ENT_QUOTES, 'UTF-8'); ?>
+                                    <?php endif; ?>
+                                </h3>
+                                <?php if (!empty($item['venue'])): ?>
+                                    <p class="program-card__venue"><?php echo htmlspecialchars($item['venue'], ENT_QUOTES, 'UTF-8'); ?></p>
+                                <?php endif; ?>
+                                <?php if (!empty($item['event_date']) || !empty($item['event_time'])): ?>
+                                    <p class="program-card__datetime"><?php echo htmlspecialchars(trim($item['event_date'] . ' ' . $item['event_time']), ENT_QUOTES, 'UTF-8'); ?></p>
+                                <?php endif; ?>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
         </div>
         
