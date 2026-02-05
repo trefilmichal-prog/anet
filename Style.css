@@ -507,7 +507,7 @@ body.intro-done .content {
 
 .program-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 18px;
 }
 
@@ -561,7 +561,7 @@ body.intro-done .content {
 
 @media (max-width: 980px) {
     .program-grid {
-        grid-template-columns: repeat(2, minmax(190px, 1fr));
+        grid-template-columns: repeat(2, minmax(170px, 1fr));
     }
 
     .program-card {
