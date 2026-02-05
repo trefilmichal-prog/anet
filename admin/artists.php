@@ -78,37 +78,66 @@ require_once __DIR__ . '/partials/header.php';
         <?php if ($message): ?><p class="admin-alert admin-alert--success"><?php echo h($message); ?></p><?php endif; ?>
         <?php if ($error): ?><p class="admin-alert admin-alert--error"><?php echo h($error); ?></p><?php endif; ?>
 
-        <form class="admin-form" method="post" enctype="multipart/form-data">
+        <form class="admin-form admin-form--two-column" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $editRow ? (int) $editRow['id'] : 0; ?>">
-            <label>Jméno<input type="text" name="name" required value="<?php echo h($editRow ? $editRow['name'] : ''); ?>"></label>
-            <label>Role<input type="text" name="role" value="<?php echo h($editRow ? $editRow['role'] : ''); ?>"></label>
-            <label>Bio<textarea name="bio"><?php echo h($editRow ? $editRow['bio'] : ''); ?></textarea></label>
-            <?php if ($editRow && !empty($editRow['image'])): ?>
-                <p class="admin-muted">Současný obrázek: <code><?php echo h($editRow['image']); ?></code></p>
-            <?php endif; ?>
-            <label>Obrázek (JPG/PNG/WEBP, max 5 MB)<input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"></label>
-            <label>Pořadí<input type="number" name="sort_order" value="<?php echo $editRow ? (int) $editRow['sort_order'] : 0; ?>"></label>
-            <button class="admin-button" type="submit"><?php echo $editRow ? 'Upravit umělce' : 'Uložit umělce'; ?></button>
+
+            <div class="admin-field">
+                <label for="artist-name">Jméno</label>
+                <input id="artist-name" type="text" name="name" required maxlength="150" value="<?php echo h($editRow ? $editRow['name'] : ''); ?>">
+                <p class="admin-help">Povinné jméno účinkujícího.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="artist-role">Role</label>
+                <input id="artist-role" type="text" name="role" maxlength="150" value="<?php echo h($editRow ? $editRow['role'] : ''); ?>">
+                <p class="admin-help">Např. housle, dirigent, sbor.</p>
+            </div>
+
+            <div class="admin-field admin-field--full">
+                <label for="artist-bio">Bio</label>
+                <textarea id="artist-bio" name="bio"><?php echo h($editRow ? $editRow['bio'] : ''); ?></textarea>
+                <p class="admin-help">Volitelný medailonek umělce.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="artist-sort-order">Pořadí</label>
+                <input id="artist-sort-order" type="number" name="sort_order" value="<?php echo $editRow ? (int) $editRow['sort_order'] : 0; ?>">
+                <p class="admin-help">Nižší číslo se zobrazí dříve.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="artist-image-file">Obrázek</label>
+                <input id="artist-image-file" type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                <p class="admin-help">JPG/PNG/WEBP, max. 5 MB. <?php if ($editRow && !empty($editRow['image'])): ?>Současný: <code><?php echo h($editRow['image']); ?></code><?php endif; ?></p>
+            </div>
+
+            <div class="admin-form__actions">
+                <button class="admin-button admin-button--primary" type="submit"><?php echo $editRow ? 'Upravit umělce' : 'Uložit umělce'; ?></button>
+            </div>
         </form>
     </section>
 
     <section class="admin-card">
         <h2>Seznam</h2>
-        <table class="admin-table">
-            <thead><tr><th>ID</th><th>Jméno</th><th>Role</th><th>Obrázek</th><th>Pořadí</th><th>Akce</th></tr></thead>
-            <tbody>
-            <?php foreach ($rows as $row): ?>
-                <tr>
-                    <td>#<?php echo (int) $row['id']; ?></td>
-                    <td><?php echo h($row['name']); ?></td>
-                    <td><?php echo h($row['role']); ?></td>
-                    <td><?php echo h($row['image']); ?></td>
-                    <td><?php echo (int) $row['sort_order']; ?></td>
-                    <td><a href="artists.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?php if (!$rows): ?>
+            <p class="admin-empty-state">Zatím bez položek.</p>
+        <?php else: ?>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>ID</th><th>Název</th><th>Datum/pořadí</th><th>Akce</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($rows as $row): ?>
+                        <tr>
+                            <td data-label="ID">#<?php echo (int) $row['id']; ?></td>
+                            <td data-label="Název"><?php echo h($row['name']); ?><?php if ($row['role']): ?> <span class="admin-muted">(<?php echo h($row['role']); ?>)</span><?php endif; ?></td>
+                            <td data-label="Datum/pořadí">Pořadí: <?php echo (int) $row['sort_order']; ?></td>
+                            <td data-label="Akce"><a class="admin-button admin-button--secondary" href="artists.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
     </section>
 </section>
 

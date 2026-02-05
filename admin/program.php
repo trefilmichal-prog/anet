@@ -84,39 +84,78 @@ require_once __DIR__ . '/partials/header.php';
         <?php if ($message): ?><p class="admin-alert admin-alert--success"><?php echo h($message); ?></p><?php endif; ?>
         <?php if ($error): ?><p class="admin-alert admin-alert--error"><?php echo h($error); ?></p><?php endif; ?>
 
-        <form class="admin-form" method="post" enctype="multipart/form-data">
+        <form class="admin-form admin-form--two-column" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $editRow ? (int) $editRow['id'] : 0; ?>">
-            <label>Název<input type="text" name="title" required value="<?php echo h($editRow ? $editRow['title'] : ''); ?>"></label>
-            <label>Podtitul<input type="text" name="subtitle" value="<?php echo h($editRow ? $editRow['subtitle'] : ''); ?>"></label>
-            <label>Místo<input type="text" name="venue" value="<?php echo h($editRow ? $editRow['venue'] : ''); ?>"></label>
-            <label>Datum<input type="text" name="event_date" placeholder="YYYY-MM-DD" value="<?php echo h($editRow ? $editRow['event_date'] : ''); ?>"></label>
-            <label>Čas<input type="text" name="event_time" placeholder="HH:MM" value="<?php echo h($editRow ? $editRow['event_time'] : ''); ?>"></label>
-            <?php if ($editRow && !empty($editRow['image'])): ?>
-                <p class="admin-muted">Současný obrázek: <code><?php echo h($editRow['image']); ?></code></p>
-            <?php endif; ?>
-            <label>Obrázek (JPG/PNG/WEBP, max 5 MB)<input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"></label>
-            <label>Pořadí<input type="number" name="sort_order" value="<?php echo $editRow ? (int) $editRow['sort_order'] : 0; ?>"></label>
-            <button class="admin-button" type="submit"><?php echo $editRow ? 'Upravit položku' : 'Uložit položku'; ?></button>
+
+            <div class="admin-field">
+                <label for="program-title">Název</label>
+                <input id="program-title" type="text" name="title" required maxlength="180" value="<?php echo h($editRow ? $editRow['title'] : ''); ?>">
+                <p class="admin-help">Povinný název bodu programu.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="program-subtitle">Podtitul</label>
+                <input id="program-subtitle" type="text" name="subtitle" maxlength="180" value="<?php echo h($editRow ? $editRow['subtitle'] : ''); ?>">
+                <p class="admin-help">Volitelný doplňující text.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="program-venue">Místo</label>
+                <input id="program-venue" type="text" name="venue" maxlength="150" value="<?php echo h($editRow ? $editRow['venue'] : ''); ?>">
+                <p class="admin-help">Např. Kostel sv. Jakuba.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="program-sort-order">Pořadí</label>
+                <input id="program-sort-order" type="number" name="sort_order" value="<?php echo $editRow ? (int) $editRow['sort_order'] : 0; ?>">
+                <p class="admin-help">Nižší číslo se zobrazí dříve.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="program-date">Datum</label>
+                <input id="program-date" type="date" name="event_date" value="<?php echo h($editRow ? $editRow['event_date'] : ''); ?>">
+                <p class="admin-help">Kalendářní datum vystoupení.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="program-time">Čas</label>
+                <input id="program-time" type="time" name="event_time" value="<?php echo h($editRow ? $editRow['event_time'] : ''); ?>">
+                <p class="admin-help">Čas začátku.</p>
+            </div>
+
+            <div class="admin-field admin-field--full">
+                <label for="program-image-file">Obrázek</label>
+                <input id="program-image-file" type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                <p class="admin-help">JPG/PNG/WEBP, max. 5 MB. <?php if ($editRow && !empty($editRow['image'])): ?>Současný: <code><?php echo h($editRow['image']); ?></code><?php endif; ?></p>
+            </div>
+
+            <div class="admin-form__actions">
+                <button class="admin-button admin-button--primary" type="submit"><?php echo $editRow ? 'Upravit položku' : 'Uložit položku'; ?></button>
+            </div>
         </form>
     </section>
 
     <section class="admin-card">
         <h2>Seznam</h2>
-        <table class="admin-table">
-            <thead><tr><th>ID</th><th>Název</th><th>Datum/čas</th><th>Obrázek</th><th>Pořadí</th><th>Akce</th></tr></thead>
-            <tbody>
-            <?php foreach ($rows as $row): ?>
-                <tr>
-                    <td>#<?php echo (int) $row['id']; ?></td>
-                    <td><?php echo h($row['title']); ?></td>
-                    <td><?php echo h($row['event_date']); ?> <?php echo h($row['event_time']); ?></td>
-                    <td><?php echo h($row['image']); ?></td>
-                    <td><?php echo (int) $row['sort_order']; ?></td>
-                    <td><a href="program.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?php if (!$rows): ?>
+            <p class="admin-empty-state">Zatím bez položek.</p>
+        <?php else: ?>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>ID</th><th>Název</th><th>Datum/pořadí</th><th>Akce</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($rows as $row): ?>
+                        <tr>
+                            <td data-label="ID">#<?php echo (int) $row['id']; ?></td>
+                            <td data-label="Název"><?php echo h($row['title']); ?></td>
+                            <td data-label="Datum/pořadí"><?php echo h(trim($row['event_date'] . ' ' . $row['event_time'])); ?> / <?php echo (int) $row['sort_order']; ?></td>
+                            <td data-label="Akce"><a class="admin-button admin-button--secondary" href="program.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
     </section>
 </section>
 
