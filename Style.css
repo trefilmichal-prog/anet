@@ -404,6 +404,23 @@ body.intro-done .content {
   animation-delay: 1.55s; /* po dokreslení */
 }
 
+@media (max-width: 600px){
+  .brand{
+    bottom: 20px;
+    gap: 6px;
+  }
+
+  .brand-mark{
+    width: clamp(180px, 52vw, 210px);
+  }
+
+  .brand-text{
+    font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+    margin-left: -10%;
+    margin-top: 14%;
+  }
+}
+
 @keyframes textFade{
   to{ opacity:1; }
 }
