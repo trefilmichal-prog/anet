@@ -937,9 +937,10 @@ body.intro-done .content {
 /* řádek sponzorů */
 .sponsors-row {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    gap: 48px;
+    row-gap: 48px;
+    column-gap: 48px;
     flex-wrap: wrap;
 }
 
@@ -947,7 +948,7 @@ body.intro-done .content {
 .sponsor {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     padding: 18px 28px;
 
     /* RÁMEČEK SPONZOŘI */
@@ -977,7 +978,8 @@ body.intro-done .content {
 /* mobil */
 @media (max-width: 600px) {
     .sponsors-row {
-        gap: 24px;
+        row-gap: 24px;
+        column-gap: 24px;
     }
 
     .sponsor img {
