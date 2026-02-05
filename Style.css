@@ -367,7 +367,7 @@ body.intro-done .content {
   transform:translateX(-50%);
   display:flex;
   align-items:center;
-  gap:18px;
+  gap:8px;
   z-index:10;
   filter: drop-shadow(0 3px 14px rgba(0,0,0,.55));
 }
