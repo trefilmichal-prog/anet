@@ -23,10 +23,21 @@ try {
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $action = isset($_POST['action']) ? trim($_POST['action']) : 'save';
         $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
         $pageKey = isset($_POST['page_key']) ? trim($_POST['page_key']) : '';
 
         try {
+            if ($action === 'delete') {
+                if ($id <= 0) {
+                    throw new RuntimeException('Nepodařilo se určit položku ke smazání.');
+                }
+
+                $deleteStmt = $db->prepare('DELETE FROM backgrounds WHERE id = :id');
+                $deleteStmt->execute(array(':id' => $id));
+                $message = 'Pozadí bylo odstraněno.';
+                $editRow = null;
+            } else {
             if ($pageKey === '') {
                 throw new RuntimeException('Klíč stránky je povinný.');
             }
@@ -69,6 +80,7 @@ try {
             }
 
             $editRow = null;
+            }
         } catch (Exception $e) {
             $error = resolve_admin_form_error($e);
         }
@@ -139,7 +151,16 @@ require_once __DIR__ . '/partials/header.php';
                             <td data-label="ID">#<?php echo (int) $row['id']; ?></td>
                             <td data-label="Název"><?php echo h($row['page_key']); ?></td>
                             <td data-label="Datum/pořadí"><?php echo h($row['updated_at']); ?></td>
-                            <td data-label="Akce"><a class="admin-button admin-button--secondary" href="backgrounds.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
+                            <td data-label="Akce">
+                                <div class="admin-actions">
+                                    <a class="admin-button admin-button--secondary" href="backgrounds.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a>
+                                    <form method="post" onsubmit="return confirm('Opravdu chcete toto pozadí odstranit?');">
+                                        <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
+                                        <input type="hidden" name="action" value="delete">
+                                        <button class="admin-button admin-button--danger" type="submit">Odstranit</button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

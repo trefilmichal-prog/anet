@@ -195,6 +195,24 @@ a:focus-visible {
     color: var(--admin-color-link);
 }
 
+
+.admin-button--danger {
+    background: #5a1f2a;
+    border-color: #d98a9a;
+    color: #fff1f4;
+}
+
+.admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--admin-space-2);
+    align-items: center;
+}
+
+.admin-actions form {
+    margin: 0;
+}
+
 .admin-form__actions {
     grid-column: 1 / -1;
 }
