@@ -1,0 +1,932 @@
+﻿/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: serif;
+    color: #f2e9dc;
+}
+.site-header {
+    min-width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* LOGO */
+.logo {
+   
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    color: #f2e9dc;
+    white-space: nowrap;
+}
+
+/* NAVIGACE */
+.main-nav{
+  display:flex;
+  gap:28px;
+}
+
+/* DESKTOP / default */
+.main-nav a{
+  position:relative;
+  font-size:1.1rem;
+  letter-spacing:0.08em;
+  display:inline-block;   /* <-- vrátit */
+  width:auto;             /* <-- vrátit */
+  padding:6px 0;
+
+  text-decoration:none;
+  color:rgba(242,233,220,0.85);
+  transition:color .25s ease;
+}
+
+/* underline hover */
+.main-nav a::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-4px;
+  width:0;
+  height:1px;
+  background:#d7c7a3;
+  transition:width .25s ease;
+}
+.main-nav a:hover{ color:#fff; }
+.main-nav a:hover::after{ width:100%; }
+
+/* MOBIL (kde chceš “čáry” přes celou šířku) */
+@media (max-width: 900px){
+  .main-nav{
+    flex-direction:column;
+    gap:0;
+  }
+
+  .main-nav a{
+    display:block;
+    width:100%;
+    padding:10px 0;
+  }
+}
+
+
+.icon{
+  display:inline-flex;
+  width:40px;
+  height:40px;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+}
+
+.icon > span{
+  display:block;
+  width:22px;
+  height:22px;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+}
+
+/* UPRAV CESTY! */
+.icon--fb > span{ background-image:url("facebook-icon.svg"); }
+.icon--mail > span{ background-image:url("mail-icon.svg");
+                    width: 25px;
+                    height:25px; 
+                }
+
+
+
+/* hover (volitelné) */
+.icon:hover{
+  transform: translateY(-1px);
+}
+.icon:focus-visible{
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+/* aby absolutní menu bylo vůči headeru */
+
+/* hamburger tlačítko */
+.nav-toggle{
+  display:none;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.nav-toggle span{
+  display:block;
+  width:22px;
+  height:2px;
+  background: rgba(242,233,220,0.92);
+  border-radius:2px;
+}
+.nav-toggle span + span{ margin-top:6px; }
+
+/* MOBIL */
+@media (max-width: 860px){
+
+  /* zobraz hamburger */
+  .nav-toggle{ display:block; }
+
+  /* nav jako dropdown pod headerem */
+  .main-nav{
+    position:absolute;
+    left:0;
+    right:0;
+    top: calc(100% + 10px);
+    display:none;
+
+    flex-direction: column;
+    gap: 0;
+
+    background: rgba(28,18,36,0.97);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px;
+    overflow: hidden;
+
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+  }
+
+  .main-nav a{
+    padding: 14px 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .main-nav a::after{ display:none; }
+
+  /* OTEVŘENÝ STAV */
+  .site-header.nav-open .main-nav{
+    display:flex;
+  }
+}
+
+
+   
+
+
+/* HERO SEKCE */
+.hero {
+   
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background-image: url("kostel.jpg");
+    background-size: cover;
+    background-position: center;
+    
+}
+
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+
+    rgba(255, 255, 255, 0),
+    rgb(17, 1, 26)
+  );}
+
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -60px;
+        width: 100%;
+        height: 120px;
+        background: linear-gradient( to bottom, rgba(10,5,20,0.0) 0%, rgba(10,5,20,0.7) 100% );
+        pointer-events: none;
+    }
+
+
+
+
+/* OBSAH */
+.hero__content {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* obsah dolů */
+    padding-bottom: 10px; /* jemné doladění */
+    align-items: center;
+    text-align: center;
+    padding: 0px;
+    color: #f2e9dc;
+    
+}
+
+.hero h1 {
+    font-size: 3.6rem;
+    margin-bottom: 12px;
+    font-weight:2;
+   
+}
+
+.hero h2 {
+    font-size: 2.3rem;
+    font-weight: normal;
+}
+.hero h3 {
+    font-size: 1.5rem;
+    font-weight: normal;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    opacity: 0.85;
+}
+
+.brand{
+  position:absolute;
+  left:50%;
+  bottom:30px;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:18px;
+  z-index:10;
+  filter: drop-shadow(0 3px 14px rgba(0,0,0,.55));
+}
+
+.brand-mark{ width: 280px; height:auto; overflow:visible; }
+.brand-mark .cls-1{ stroke-width:18px; } /* když chceš tlustší tah */
+
+
+
+
+.brand-text{
+  color: rgba(242,233,220,.95);
+  font-size: 2rem;
+  letter-spacing: .08em;
+  white-space: nowrap;
+
+  opacity: 0;
+  animation: textFade .45s ease forwards;
+  animation-delay: 1.55s; /* po dokreslení */
+}
+
+@keyframes textFade{
+  to{ opacity:1; }
+}
+
+
+/* KRESLENÍ */
+.brand-path{
+  fill:none !important;
+  stroke:#f2e9dc !important;
+  stroke-width:10;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+  stroke-dasharray:1200;
+  stroke-dashoffset:1200;
+}
+
+/* default: text schovaný */
+.brand-text{
+  opacity:0;
+  transform: translateX(-12px);
+}
+
+/* animace se spustí až po přidání třídy */
+#brand.is-animate .brand-path{
+  animation: drawLogo 1.6s ease forwards;
+}
+
+#brand.is-animate .brand-text{
+  animation: revealText .6s ease forwards;
+  animation-delay: 1.25s;
+}
+
+@keyframes drawLogo{ to{ stroke-dashoffset:0; } }
+@keyframes revealText{ to{ opacity:1; transform: translateX(0); } }
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce){
+  #brand .brand-path{ stroke-dashoffset:0; }
+  #brand .brand-text{ opacity:1; transform:none; }
+  #brand.is-animate .brand-path,
+  #brand.is-animate .brand-text{ animation:none; }
+}
+
+
+
+
+
+/* SPODNÍ SEKCE */
+.content {
+    position: relative;
+    background-image: url("back.png");
+    background-repeat: repeat;
+    padding: 120px 20px 160px;
+    overflow: hidden;
+
+}
+
+
+
+
+/* KONTEJNER */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+
+    
+}
+.container2 {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    
+}
+
+/* HLADKÉ NAVÁZÁNÍ */
+.content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.container2 h2 {
+    font-size: 1.9rem;
+    font-weight: normal;
+    text-align: center;
+    color:rgb(255, 215, 120) ;
+    margin-bottom: 1rem;
+
+}
+.container2 h3 {
+    font-size: 1.5rem;
+    font-weight: normal;
+    text-align: center;
+    margin-bottom: 1rem;
+    color:rgb(255, 230, 173) ;
+
+}
+.container2 a {
+    font-size: 1.2rem;
+    font-weight: normal;
+    text-align: center;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+
+}
+
+.container2-divider {
+    height: 1.3px;
+    background: linear-gradient(
+        to right,rgba(215,199,163,0), rgb(255, 230, 173),rgba(215,199,163,0));
+}
+.container2-divider2{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    width:100% !important;
+    max-width:620px !important;
+    margin:40px auto !important;
+
+    /* debug: aby bylo hned vidět, že element existuje */
+    padding:10px 0 !important;
+}
+
+.container2-divider2::before,
+.container2-divider2::after{
+    content:"" !important;
+    flex:1 !important;
+    height:1px !important;
+    display:block !important;
+    opacity:1 !important;
+}
+
+.container2-divider2::before{
+    background: linear-gradient(to right, rgba(215,199,163,0), rgb(255, 230, 173)) !important;
+}
+
+.container2-divider2::after{
+    background: linear-gradient(to left, rgba(215,199,163,0), rgb(255, 230, 173)) !important;
+}
+
+.container2-divider2 .star{
+    margin:0 16px !important;
+    font-size:20px !important;
+    color: rgb(255, 230, 173) !important;
+    line-height:1 !important;
+    display:inline-block !important;
+}
+
+
+
+
+/*-----TLAČÍTKO-----*/
+
+.btn-program {
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #f2e9dc;
+    background: linear-gradient( to bottom, #55243f,#271322 );
+    border: 1px solid rgba(215, 199, 163, 0.65);
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 10px 28px rgba(0,0,0,0.45);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* šipka */
+.btn-arrow {
+    font-size: 1.1rem;
+    transform: translateY(-1px);
+    transition: transform 0.25s ease;
+}
+
+/* HOVER */
+.btn-program:hover {
+    transform: translateY(-2px);
+    border-color: #d7c7a3;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 14px 34px rgba(0,0,0,0.6);
+}
+
+    .btn-program:hover .btn-arrow {
+        transform: translate(4px, -1px);
+    }
+
+/* ACTIVE (klik) */
+.btn-program:active {
+    transform: translateY(0);
+}
+.feature-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+/* GLASS KARTA */
+.glass-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 22px 22px 18px;
+    background: linear-gradient( to bottom, rgba(55, 35, 75, 0.45), rgba(25, 14, 36, 0.55) );
+    border: 1px solid rgba(215, 199, 163, 0.22);
+    border-radius: 12px;
+    backdrop-filter: blur(0.8px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+    /* jemný “svit” nahoře */
+    .glass-card::before {
+        content: "";
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        top: 12px;
+        height: 60px;
+        background: radial-gradient( ellipse at top, rgba(215,199,163,0.12), rgba(215,199,163,0.0) 70% );
+        pointer-events: none;
+    }
+
+/* TITULEK */
+.glass-title {
+    font-size: 1.30rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+    color: rgba(242,233,220,0.95);
+    font-weight: 2;
+}
+
+/* seznam koncertů */
+.glass-list {
+    margin-top: 6px;
+}
+
+.glass-item {
+    padding: 8px 0;
+}
+
+.glass-date {
+    font-size: 0.95rem;
+    color: rgba(242,233,220,0.92);
+}
+
+.glass-place {
+    margin-top: 3px;
+    font-size: 0.92rem;
+    color: rgba(242,233,220,0.80);
+}
+
+.glass-note {
+    margin-top: 6px;
+    font-size: 0.86rem;
+    color: rgba(215,199,163,0.85);
+}
+
+.glass-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+}
+
+/* obrázek v boxu */
+.glass-media {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.10);
+    margin-bottom: 14px;
+}
+
+    .glass-media img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        display: block;
+    }
+
+/* text */
+.glass-text {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: rgba(242,233,220,0.82);
+    margin-top: 8px;
+}
+
+/* Umělci */
+.artist-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.artist img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.10);
+    display: block;
+}
+
+.artist-name {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: rgba(242,233,220,0.88);
+}
+
+/* tlačítko uvnitř boxu */
+.glass-actions {
+    margin-top: auto;
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-glass {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgba(242,233,220,0.95);
+    background: rgba(25, 14, 36, 0.55);
+    border: 1px solid rgba(215, 199, 163, 0.35);
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 10px 24px rgba(0,0,0,0.35);
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+    .btn-glass:hover {
+        transform: translateY(-2px);
+        border-color: rgba(215, 199, 163, 0.7);
+        background: rgba(35, 20, 48, 0.62);
+    }
+
+    .btn-glass span {
+        font-size: 1.05rem;
+        transform: translateY(-1px);
+    }
+
+/* RESPONSIVE */
+@media (max-width: 980px) {
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .artist-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 520px) {
+    .artist-row {
+        grid-template-columns: 1fr;
+    }
+
+    .artist img {
+        height: 180px;
+    }
+}
+.site-footer {
+    position: relative;
+    margin-top: 120px;
+   
+    padding: 80px 20px 60px;
+}
+
+/* vnitřek */
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* nadpis */
+.footer-title {
+    text-align: center;
+    font-size: 1.2rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+    color: rgba(242,233,220,0.85);
+}
+
+/* řádek sponzorů */
+.sponsors-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 48px;
+    flex-wrap: wrap;
+}
+
+/* logo */
+.sponsor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 28px;
+
+    /* RÁMEČEK SPONZOŘI */
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    backdrop-filter: blur(0.8px);
+    -webkit-backdrop-filter: blur(6px);
+   
+}
+
+    .sponsor img {
+        max-height: 56px;
+        max-width: 160px;
+        object-fit: contain;
+        display: block;
+        filter: brightness(0.95);
+    }
+
+    /* hover */
+    .sponsor:hover {
+        transform: translateY(-4px);
+        background: rgba(255,255,255,0.14);
+        border-color: rgba(215,199,163,0.6);
+    }
+
+/* mobil */
+@media (max-width: 600px) {
+    .sponsors-row {
+        gap: 24px;
+    }
+
+    .sponsor img {
+        max-height: 44px;
+        max-width: 130px;
+    }
+}
+
+/*---BOXY UMĚLCI---*/
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#f2e9dc;
+  --muted:rgba(242,233,220,0.78);
+  --gold:rgba(215,199,163,0.95);
+  --bg1:#12081b;
+  --bg2:#2a0f2b;
+}
+
+.page{
+  min-height:100vh;
+  color:var(--ink);
+  background:
+    radial-gradient(900px 600px at 20% 20%, rgba(120,70,160,0.25), rgba(0,0,0,0) 60%),
+    radial-gradient(900px 700px at 80% 10%, rgba(180,110,130,0.18), rgba(0,0,0,0) 55%),
+    linear-gradient(180deg, var(--bg2), var(--bg1));
+}
+
+/* wrapper */
+.artists{
+  padding: 76px 20px 96px;
+}
+.artists__container{
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* heading */
+.artists__kicker{
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(242,233,220,0.70);
+}
+.artists__title{
+  margin-top: 10px;
+  font-size: 2.25rem;
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* grid */
+.artists__grid{
+  margin-top: 46px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+/* card */
+.artist-card{
+  max-width: 600px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border-radius: 16px;
+  background: linear-gradient(to bottom, rgba(55,35,75,0.46), rgba(25,14,36,0.62));
+  border: 1px solid rgba(215,199,163,0.20);
+  box-shadow: 0 22px 60px rgba(0,0,0,0.48), inset 0 0 0 1px rgba(255,255,255,0.04);
+  backdrop-filter: blur(1.2px);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.artist-card:hover{
+  transform: translateY(-6px);
+  border-color: rgba(215,199,163,0.40);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* image */
+.artist-card__media{
+  padding: 26px 26px 8px;
+  display:flex;
+  justify-content:center;
+}
+.artist-card__media img{
+  width: 184px;
+  height: 184px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid rgba(215,199,163,0.30);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.50), inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* body */
+.artist-card__body{
+  padding: 10px 26px 26px;
+  text-align:center;
+}
+.artist-card__name{
+  margin-top: 6px;
+  font-size: 1.35rem;
+  font-weight: normal;
+  letter-spacing: 0.02em;
+}
+.artist-card__name a{
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(215,199,163,0.55);
+  padding-bottom: 2px;
+}
+.artist-card__name a:hover{
+  border-bottom-color: rgba(215,199,163,0.85);
+}
+.artist-card__meta{
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+/* divider: line – ✦ – line */
+.artist-card__divider{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 14px;
+  max-width: 320px;
+  margin: 18px auto 14px;
+}
+.artist-card__divider::before,
+.artist-card__divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+}
+.artist-card__divider::before{
+  background: linear-gradient(to right, rgba(215,199,163,0), rgba(231,210,159,0.85));
+}
+.artist-card__divider::after{
+  background: linear-gradient(to left, rgba(215,199,163,0), rgba(231,210,159,0.85));
+}
+.artist-card__star{
+  color: rgba(231,210,159,0.90);
+  font-size: 0.9rem;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.artist-card__desc{
+  margin-top: 4px;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: rgba(242,233,220,0.82);
+}
+
+/* buttons */
+.artist-card__actions{
+  margin-top: 20px;
+  display:flex;
+  gap: 10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.box{
+  display:inline-flex;
+  align-items:center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  text-decoration:none;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.box__arrow{font-size:1.1rem;transform:translateY(-1px);}
+
+.box--primary{
+  color: #140a1b;
+  background: linear-gradient(to bottom, rgba(231,210,159,0.98), rgba(215,199,163,0.90));
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+}
+.box--primary:hover{transform:translateY(-2px); box-shadow: 0 16px 34px rgba(0,0,0,0.45);}
+
+.box--ghost{
+  color: rgba(242,233,220,0.92);
+  background: rgba(25,14,36,0.45);
+  border: 1px solid rgba(215,199,163,0.28);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+.box--ghost:hover{transform:translateY(-2px); border-color: rgba(215,199,163,0.55);}
+
+/* responsive */
+@media (max-width: 860px){
+  .artists__grid{grid-template-columns: 1fr;justify-items: center; }
+  .artists__title{text-align:center;}
+  .artist-card__body{text-align:center;}
+}
