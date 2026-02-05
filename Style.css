@@ -383,7 +383,7 @@ body.intro-done .content {
   font-size: 2rem;
   letter-spacing: .08em;
   white-space: nowrap;
-  margin-left:-34px;
+  margin-left:-25%;
 
   opacity: 0;
   animation: textFade .45s ease forwards;
