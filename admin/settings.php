@@ -2,11 +2,13 @@
 require_once __DIR__ . '/auth.php';
 require_admin_login();
 
-$db = get_db();
 $message = '';
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+try {
+    $db = get_db();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $currentPin = isset($_POST['current_pin']) ? trim($_POST['current_pin']) : '';
     $newPin = isset($_POST['new_pin']) ? trim($_POST['new_pin']) : '';
     $confirmPin = isset($_POST['confirm_pin']) ? trim($_POST['confirm_pin']) : '';
@@ -30,6 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ));
         $message = 'PIN byl úspěšně změněn.';
     }
+    }
+} catch (RuntimeException $e) {
+    error_log('Admin settings DB failed: ' . $e->getMessage());
+    $error = $e->getMessage();
+} catch (Exception $e) {
+    error_log('Admin settings init failed: ' . $e->getMessage());
+    $error = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
 }
 
 $adminPageTitle = 'Nastavení PIN';

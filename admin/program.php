@@ -78,6 +78,12 @@ try {
     }
 
     $rows = $db->query('SELECT id, title, image, event_date, event_time, sort_order FROM program_items ORDER BY sort_order ASC, id DESC')->fetchAll();
+} catch (RuntimeException $e) {
+    error_log('Admin program DB failed: ' . $e->getMessage());
+    if ($error === '') {
+        $error = $e->getMessage();
+    }
+    $rows = array();
 } catch (Exception $e) {
     error_log('Admin program init failed: ' . $e->getMessage());
     if ($error === '') {

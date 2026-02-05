@@ -25,7 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $error = 'Neplatný PIN.';
     } catch (RuntimeException $e) {
-        $error = 'Na serveru chybí PDO SQLite, kontaktujte hosting.';
+        error_log('Admin login DB failed: ' . $e->getMessage());
+        $error = $e->getMessage();
+    } catch (Exception $e) {
+        error_log('Admin login unexpected error: ' . $e->getMessage());
+        $error = 'Přihlášení se nepodařilo dokončit. Zkuste to prosím znovu.';
     }
 }
 

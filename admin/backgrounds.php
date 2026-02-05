@@ -69,6 +69,12 @@ try {
     }
 
     $rows = $db->query('SELECT id, page_key, image, updated_at FROM backgrounds ORDER BY id DESC')->fetchAll();
+} catch (RuntimeException $e) {
+    error_log('Admin backgrounds DB failed: ' . $e->getMessage());
+    if ($error === '') {
+        $error = $e->getMessage();
+    }
+    $rows = array();
 } catch (Exception $e) {
     error_log('Admin backgrounds init failed: ' . $e->getMessage());
     if ($error === '') {

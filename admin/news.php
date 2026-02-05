@@ -72,6 +72,12 @@ try {
     }
 
     $rows = $db->query('SELECT id, title, image, published_at, sort_order FROM news ORDER BY sort_order ASC, id DESC')->fetchAll();
+} catch (RuntimeException $e) {
+    error_log('Admin news DB failed: ' . $e->getMessage());
+    if ($error === '') {
+        $error = $e->getMessage();
+    }
+    $rows = array();
 } catch (Exception $e) {
     error_log('Admin news init failed: ' . $e->getMessage());
     if ($error === '') {

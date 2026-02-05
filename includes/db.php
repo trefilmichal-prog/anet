@@ -13,7 +13,15 @@ function get_db()
         mkdir($dataDir, 0777, true);
     }
 
+    if (!is_writable($dataDir)) {
+        throw new RuntimeException('Adresář data/ není zapisovatelný. Zkontrolujte prosím práva k souborům pro PHP proces (webserver uživatel).');
+    }
+
     $dbFile = $dataDir . '/anet.sqlite';
+
+    if (file_exists($dbFile) && !is_writable($dbFile)) {
+        throw new RuntimeException('Soubor databáze data/anet.sqlite není zapisovatelný. Zkontrolujte prosím práva nebo vlastníka souboru.');
+    }
 
     if (!extension_loaded('pdo_sqlite') || !in_array('sqlite', PDO::getAvailableDrivers(), true)) {
         throw new RuntimeException('Na serveru není dostupné PDO SQLite (extension pdo_sqlite / sqlite driver). Kontaktujte správce hostingu.');
@@ -28,7 +36,11 @@ function get_db()
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-    initialize_schema($pdo);
+    try {
+        initialize_schema($pdo);
+    } catch (Exception $e) {
+        throw new RuntimeException('Nepodařilo se inicializovat databázi. Pravděpodobně chybí práva k zápisu, nebo je databázový soubor poškozený. Kontaktujte správce.', 0, $e);
+    }
 
     return $pdo;
 }
