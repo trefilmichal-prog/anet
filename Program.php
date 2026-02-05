@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?>
                                     </span>
                                     <?php if (!empty($item['subtitle'])): ?>
-                                        – <?php echo htmlspecialchars($item['subtitle'], ENT_QUOTES, 'UTF-8'); ?>
+                                        <span class="program-card__subtitle"><?php echo htmlspecialchars($item['subtitle'], ENT_QUOTES, 'UTF-8'); ?></span>
                                     <?php endif; ?>
                                 </h3>
                                 <?php if (!empty($item['venue'])): ?>
