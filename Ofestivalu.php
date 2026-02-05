@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/includes/background_repository.php';
+$heroBackgroundImage = get_background_image('festival', 'back.png');
+?>
 <!doctype html>
 <html lang="cs">
 <head>
@@ -201,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     <!-- NAVAZUJ�C� OBSAH -->
-    <section class="content">
+    <section class="content" style="background-image: url('<?php echo htmlspecialchars($heroBackgroundImage, ENT_QUOTES, 'UTF-8'); ?>');">
         <div class="container2">
             <h2>O FESTIVALU</h2>
 <div class="container2-divider2"><span class="star star-animated">✦</span></div>
