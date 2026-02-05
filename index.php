@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/includes/program_repository.php';
+$programItems = get_program_items(3);
+?>
 ﻿<!doctype html>
 <html lang="cs">
 <head>
@@ -163,30 +167,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
             <!-- BOX 1 -->
             <article class="glass-card" id="aktuality">
-                <h3 class="glass-title">Nejbližší koncerty</h3>
+                <h3 class="glass-title">Program</h3>
 
                 <div class="glass-list">
-                    <div class="glass-item">
-                        <div class="glass-date">5. ledna · 19:00</div>
-                        <div class="glass-place">Kostel sv. Mikuláše, Praha</div>
-                        <div class="glass-note">Novoroční galakoncert</div>
-                    </div>
+                    <?php if (empty($programItems)): ?>
+                        <div class="glass-item">
+                            <div class="glass-note">Program bude brzy doplněn.</div>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($programItems as $index => $item): ?>
+                            <div class="glass-item">
+                                <div class="glass-date"><?php echo htmlspecialchars(trim($item['event_date'] . ' ' . $item['event_time']), ENT_QUOTES, 'UTF-8'); ?></div>
+                                <div class="glass-place"><?php echo htmlspecialchars($item['venue'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                <div class="glass-note"><?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                <?php if (!empty($item['subtitle'])): ?>
+                                    <div class="glass-note"><?php echo htmlspecialchars($item['subtitle'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                <?php endif; ?>
+                            </div>
 
-                    <div class="glass-divider"></div>
-
-                    <div class="glass-item">
-                        <div class="glass-date">14. ledna · 19:00</div>
-                        <div class="glass-place">Kostel sv. Bartoloměje, Pardubice</div>
-                        <div class="glass-note">Slavnostní večer</div>
-                    </div>
-
-                    <div class="glass-divider"></div>
-
-                    <div class="glass-item">
-                        <div class="glass-date">18. ledna · 19:00</div>
-                        <div class="glass-place">Kostel sv. Martina v Hlinsku</div>
-                        <div class="glass-note">Komorní koncert</div>
-                    </div>
+                            <?php if ($index < count($programItems) - 1): ?>
+                                <div class="glass-divider"></div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
                 <div class="glass-actions">
