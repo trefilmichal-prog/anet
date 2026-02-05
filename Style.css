@@ -10,6 +10,108 @@ html, body {
     font-family: serif;
     color: #f2e9dc;
 }
+
+/* Intro overlay */
+#intro-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+    background: radial-gradient(circle at 50% 50%, rgba(46, 30, 67, 0.2) 0%, rgba(9, 5, 17, 0.92) 58%, rgba(5, 3, 10, 1) 100%);
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 1;
+}
+
+#intro-particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#intro-mask {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255, 230, 173, 0.14) 0%, rgba(22, 12, 35, 0.75) 48%, rgba(5, 3, 10, 0.95) 100%);
+}
+
+#intro-star {
+    position: absolute;
+    left: -12vw;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgb(255, 230, 173);
+    font-size: clamp(2rem, 4vw, 3.8rem);
+    text-shadow: 0 0 12px rgba(255, 218, 120, 0.78), 0 0 40px rgba(255, 218, 120, 0.36);
+    animation: introStarTravel 2.4s cubic-bezier(.26,.67,.2,1) forwards, introStarGlow 1.05s ease-in-out infinite;
+}
+
+body.intro-active .content {
+    opacity: 0;
+    visibility: hidden;
+}
+
+body.intro-done .content {
+    animation: introContentReveal 0.8s ease forwards;
+}
+
+#intro-overlay.is-exiting {
+    animation: introOverlayFade 0.8s ease forwards;
+}
+
+@keyframes introStarTravel {
+    0% {
+        left: -12vw;
+        opacity: 0;
+        transform: translateY(-50%) scale(0.6);
+    }
+    14% {
+        opacity: 1;
+    }
+    65% {
+        left: 52%;
+        transform: translateY(-50%) scale(1.08);
+    }
+    100% {
+        left: 50%;
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+@keyframes introStarGlow {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 6px rgba(255, 219, 127, 0.45));
+        transform: translateY(-50%) scale(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 18px rgba(255, 229, 173, 0.95));
+        transform: translateY(-50%) scale(1.12);
+    }
+}
+
+@keyframes introOverlayFade {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes introContentReveal {
+    from {
+        opacity: 0;
+        visibility: hidden;
+    }
+    to {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
 .site-header {
     min-width: 100%;
     position: fixed;
