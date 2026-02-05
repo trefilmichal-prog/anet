@@ -4,7 +4,7 @@ function get_db()
 {
     static $pdo = null;
 
-    if ($pdo instanceof PDO) {
+    if ($pdo !== null) {
         return $pdo;
     }
 
@@ -23,13 +23,17 @@ function get_db()
         throw new RuntimeException('Soubor databáze data/anet.sqlite není zapisovatelný. Zkontrolujte prosím práva nebo vlastníka souboru.');
     }
 
+    if (!extension_loaded('pdo') || !class_exists('PDO')) {
+        throw new RuntimeException('Na serveru není dostupné PDO rozšíření. Kontaktujte správce hostingu.');
+    }
+
     if (!extension_loaded('pdo_sqlite') || !in_array('sqlite', PDO::getAvailableDrivers(), true)) {
         throw new RuntimeException('Na serveru není dostupné PDO SQLite (extension pdo_sqlite / sqlite driver). Kontaktujte správce hostingu.');
     }
 
     try {
         $pdo = new PDO('sqlite:' . $dbFile);
-    } catch (PDOException $e) {
+    } catch (Exception $e) {
         throw new RuntimeException('Nepodařilo se navázat SQLite připojení přes PDO. Zkontrolujte podporu PDO SQLite na hostingu.', 0, $e);
     }
 
@@ -45,7 +49,7 @@ function get_db()
     return $pdo;
 }
 
-function initialize_schema(PDO $pdo)
+function initialize_schema($pdo)
 {
     $pdo->exec('CREATE TABLE IF NOT EXISTS settings (
         key TEXT PRIMARY KEY,
@@ -111,7 +115,7 @@ function initialize_schema(PDO $pdo)
     }
 }
 
-function ensure_table_column(PDO $pdo, $tableName, $columnName, $columnDefinition)
+function ensure_table_column($pdo, $tableName, $columnName, $columnDefinition)
 {
     $existingColumns = get_table_columns($pdo, $tableName);
 
@@ -129,7 +133,7 @@ function ensure_table_column(PDO $pdo, $tableName, $columnName, $columnDefinitio
     $pdo->exec($sql);
 }
 
-function get_table_columns(PDO $pdo, $tableName)
+function get_table_columns($pdo, $tableName)
 {
     $columns = array();
     $statement = $pdo->query("PRAGMA table_info('" . str_replace("'", "''", $tableName) . "')");
