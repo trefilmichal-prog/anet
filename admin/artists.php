@@ -72,29 +72,51 @@ $rows = $db->query('SELECT id, name, role, image, sort_order FROM artists ORDER 
 ?>
 <!doctype html>
 <html lang="cs">
-<head><meta charset="utf-8"><title>Umělci</title></head>
+<head>
+    <meta charset="utf-8">
+    <title>Umělci</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
 <body>
-<p><a href="dashboard.php">← Zpět na dashboard</a></p>
-<h1>Umělci</h1>
-<?php if ($message): ?><p style="color:green;"><?php echo h($message); ?></p><?php endif; ?>
-<?php if ($error): ?><p style="color:red;"><?php echo h($error); ?></p><?php endif; ?>
-<form method="post" enctype="multipart/form-data">
-    <input type="hidden" name="id" value="<?php echo $editRow ? (int) $editRow['id'] : 0; ?>">
-    <label>Jméno<br><input type="text" name="name" required value="<?php echo h($editRow ? $editRow['name'] : ''); ?>"></label><br>
-    <label>Role<br><input type="text" name="role" value="<?php echo h($editRow ? $editRow['role'] : ''); ?>"></label><br>
-    <label>Bio<br><textarea name="bio"><?php echo h($editRow ? $editRow['bio'] : ''); ?></textarea></label><br>
-    <?php if ($editRow && !empty($editRow['image'])): ?>
-        <p>Současný obrázek: <code><?php echo h($editRow['image']); ?></code></p>
-    <?php endif; ?>
-    <label>Obrázek (JPG/PNG/WEBP, max 5 MB)<br><input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"></label><br>
-    <label>Pořadí<br><input type="number" name="sort_order" value="<?php echo $editRow ? (int) $editRow['sort_order'] : 0; ?>"></label><br>
-    <button type="submit"><?php echo $editRow ? 'Upravit umělce' : 'Uložit umělce'; ?></button>
-</form>
-<h2>Seznam</h2>
-<ul>
-<?php foreach ($rows as $row): ?>
-    <li>#<?php echo (int) $row['id']; ?> | <?php echo h($row['name']); ?> | <?php echo h($row['role']); ?> | obrázek <?php echo h($row['image']); ?> | pořadí <?php echo (int) $row['sort_order']; ?> | <a href="artists.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></li>
-<?php endforeach; ?>
-</ul>
+<main class="admin-shell">
+    <section class="admin-card">
+        <ul class="admin-nav"><li><a href="dashboard.php">← Zpět na dashboard</a></li></ul>
+        <h1>Umělci</h1>
+        <?php if ($message): ?><p class="admin-alert admin-alert--success"><?php echo h($message); ?></p><?php endif; ?>
+        <?php if ($error): ?><p class="admin-alert admin-alert--error"><?php echo h($error); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="<?php echo $editRow ? (int) $editRow['id'] : 0; ?>">
+            <label>Jméno<input type="text" name="name" required value="<?php echo h($editRow ? $editRow['name'] : ''); ?>"></label>
+            <label>Role<input type="text" name="role" value="<?php echo h($editRow ? $editRow['role'] : ''); ?>"></label>
+            <label>Bio<textarea name="bio"><?php echo h($editRow ? $editRow['bio'] : ''); ?></textarea></label>
+            <?php if ($editRow && !empty($editRow['image'])): ?>
+                <p class="admin-muted">Současný obrázek: <code><?php echo h($editRow['image']); ?></code></p>
+            <?php endif; ?>
+            <label>Obrázek (JPG/PNG/WEBP, max 5 MB)<input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"></label>
+            <label>Pořadí<input type="number" name="sort_order" value="<?php echo $editRow ? (int) $editRow['sort_order'] : 0; ?>"></label>
+            <button class="admin-button" type="submit"><?php echo $editRow ? 'Upravit umělce' : 'Uložit umělce'; ?></button>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h2>Seznam</h2>
+        <table class="admin-table">
+            <thead><tr><th>ID</th><th>Jméno</th><th>Role</th><th>Obrázek</th><th>Pořadí</th><th>Akce</th></tr></thead>
+            <tbody>
+            <?php foreach ($rows as $row): ?>
+                <tr>
+                    <td>#<?php echo (int) $row['id']; ?></td>
+                    <td><?php echo h($row['name']); ?></td>
+                    <td><?php echo h($row['role']); ?></td>
+                    <td><?php echo h($row['image']); ?></td>
+                    <td><?php echo (int) $row['sort_order']; ?></td>
+                    <td><a href="artists.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </section>
+</main>
 </body>
 </html>

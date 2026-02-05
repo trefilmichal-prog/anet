@@ -30,19 +30,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <title>Admin přihlášení</title>
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <h1>Administrace</h1>
-    <h2>Přihlášení PINem</h2>
+    <main class="admin-shell">
+        <section class="admin-card">
+            <h1>Administrace</h1>
+            <h2>Přihlášení PINem</h2>
 
-    <?php if ($error): ?>
-        <p style="color:red;"><?php echo h($error); ?></p>
-    <?php endif; ?>
+            <?php if ($error): ?>
+                <p class="admin-alert admin-alert--error"><?php echo h($error); ?></p>
+            <?php endif; ?>
 
-    <form method="post" action="">
-        <label for="pin">PIN</label><br>
-        <input type="password" name="pin" id="pin" required>
-        <button type="submit">Přihlásit</button>
-    </form>
+            <form class="admin-form" method="post" action="">
+                <label for="pin">PIN
+                    <input type="password" name="pin" id="pin" required>
+                </label>
+                <button class="admin-button" type="submit">Přihlásit</button>
+            </form>
+        </section>
+    </main>
 </body>
 </html>
