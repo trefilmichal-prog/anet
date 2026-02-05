@@ -6,7 +6,15 @@ $newsError = '';
 
 try {
     $db = get_db();
-    $stmt = $db->query('SELECT id, title, body, image, published_at, sort_order FROM news ORDER BY sort_order ASC, id DESC');
+    $stmt = $db->query("SELECT id, title, body, image, published_at, sort_order FROM news
+        ORDER BY
+            CASE
+                WHEN published_at IS NULL OR TRIM(published_at) = '' THEN 1
+                ELSE 0
+            END ASC,
+            datetime(published_at) DESC,
+            sort_order ASC,
+            id DESC");
     $newsRows = $stmt->fetchAll();
 } catch (RuntimeException $e) {
     error_log('Aktuality DB failed: ' . $e->getMessage());

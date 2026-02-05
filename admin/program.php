@@ -77,7 +77,18 @@ try {
         }
     }
 
-    $rows = $db->query('SELECT id, title, image, event_date, event_time, sort_order FROM program_items ORDER BY sort_order ASC, id DESC')->fetchAll();
+    $rows = $db->query("SELECT id, title, image, event_date, event_time, sort_order FROM program_items
+        ORDER BY
+            CASE
+                WHEN event_date IS NULL OR TRIM(event_date) = '' THEN 1
+                ELSE 0
+            END ASC,
+            datetime(event_date || ' ' || CASE
+                WHEN event_time IS NULL OR TRIM(event_time) = '' THEN '23:59'
+                ELSE event_time
+            END) ASC,
+            sort_order ASC,
+            id DESC")->fetchAll();
 } catch (RuntimeException $e) {
     error_log('Admin program DB failed: ' . $e->getMessage());
     if ($error === '') {
