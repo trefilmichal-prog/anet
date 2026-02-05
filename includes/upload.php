@@ -28,6 +28,44 @@ function ensure_upload_directory($type)
     return $targetDir;
 }
 
+function generate_upload_token($lengthBytes = 16)
+{
+    $lengthBytes = (int) $lengthBytes;
+    if ($lengthBytes < 1) {
+        $lengthBytes = 16;
+    }
+
+    $randomData = '';
+
+    if (function_exists('random_bytes')) {
+        try {
+            $randomData = random_bytes($lengthBytes);
+        } catch (Exception $exception) {
+            $randomData = '';
+        }
+    }
+
+    if ($randomData === '' && function_exists('openssl_random_pseudo_bytes')) {
+        $opensslData = openssl_random_pseudo_bytes($lengthBytes);
+        if (is_string($opensslData) && $opensslData !== '') {
+            $randomData = $opensslData;
+        }
+    }
+
+    if ($randomData !== '') {
+        return bin2hex($randomData);
+    }
+
+    $requiredLength = $lengthBytes * 2;
+    $token = '';
+
+    while (strlen($token) < $requiredLength) {
+        $token .= sha1(uniqid(mt_rand(), true) . microtime(true));
+    }
+
+    return substr($token, 0, $requiredLength);
+}
+
 function handle_image_upload($inputName, $type)
 {
     if (!isset($_FILES[$inputName]) || !is_array($_FILES[$inputName])) {
@@ -78,7 +116,7 @@ function handle_image_upload($inputName, $type)
     }
 
     $targetDir = ensure_upload_directory($type);
-    $safeName = bin2hex(random_bytes(16)) . '.' . $targetExtension;
+    $safeName = generate_upload_token(16) . '.' . $targetExtension;
     $targetPath = $targetDir . '/' . $safeName;
 
     if (!move_uploaded_file($file['tmp_name'], $targetPath)) {

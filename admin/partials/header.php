@@ -1,7 +1,7 @@
 <?php
 $adminPageTitle = isset($adminPageTitle) ? (string) $adminPageTitle : 'Administrace';
 $adminShowNavigation = isset($adminShowNavigation) ? (bool) $adminShowNavigation : true;
-$currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
+$currentScript = basename(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '');
 $adminNavItems = array(
     'dashboard.php' => 'Dashboard',
     'backgrounds.php' => 'Pozadí',
