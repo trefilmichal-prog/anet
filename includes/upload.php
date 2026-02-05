@@ -1,0 +1,89 @@
+<?php
+
+const UPLOAD_ALLOWED_MIME_TYPES = array(
+    'image/jpeg' => 'jpg',
+    'image/png' => 'png',
+    'image/webp' => 'webp'
+);
+const UPLOAD_ALLOWED_EXTENSIONS = array('jpg', 'jpeg', 'png', 'webp');
+const UPLOAD_MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+function ensure_upload_directory($type)
+{
+    $allowed = array('backgrounds', 'news', 'program', 'artists');
+    if (!in_array($type, $allowed, true)) {
+        throw new RuntimeException('Neplatný typ upload adresáře.');
+    }
+
+    $baseDir = dirname(__DIR__) . '/uploads';
+    if (!is_dir($baseDir)) {
+        mkdir($baseDir, 0755, true);
+    }
+
+    $targetDir = $baseDir . '/' . $type;
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0755, true);
+    }
+
+    return $targetDir;
+}
+
+function handle_image_upload($inputName, $type)
+{
+    if (!isset($_FILES[$inputName]) || !is_array($_FILES[$inputName])) {
+        return null;
+    }
+
+    $file = $_FILES[$inputName];
+
+    if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+        return null;
+    }
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        throw new RuntimeException('Soubor se nepodařilo nahrát.');
+    }
+
+    $size = isset($file['size']) ? (int) $file['size'] : 0;
+    if ($size <= 0 || $size > UPLOAD_MAX_FILE_SIZE) {
+        throw new RuntimeException('Soubor je příliš velký. Maximum je 5 MB.');
+    }
+
+    if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        throw new RuntimeException('Neplatný upload souboru.');
+    }
+
+    $originalName = isset($file['name']) ? (string) $file['name'] : '';
+    $pathInfo = pathinfo($originalName);
+    $extension = isset($pathInfo['extension']) ? strtolower((string) $pathInfo['extension']) : '';
+    if (!in_array($extension, UPLOAD_ALLOWED_EXTENSIONS, true)) {
+        throw new RuntimeException('Nepovolená přípona souboru.');
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mimeType = $finfo->file($file['tmp_name']);
+    if (!isset(UPLOAD_ALLOWED_MIME_TYPES[$mimeType])) {
+        throw new RuntimeException('Nepovolený typ souboru.');
+    }
+
+    $targetExtension = UPLOAD_ALLOWED_MIME_TYPES[$mimeType];
+    $extensionByMime = array(
+        'jpg' => array('jpg', 'jpeg'),
+        'png' => array('png'),
+        'webp' => array('webp')
+    );
+
+    if (!in_array($extension, $extensionByMime[$targetExtension], true)) {
+        throw new RuntimeException('Přípona neodpovídá MIME typu souboru.');
+    }
+
+    $targetDir = ensure_upload_directory($type);
+    $safeName = bin2hex(random_bytes(16)) . '.' . $targetExtension;
+    $targetPath = $targetDir . '/' . $safeName;
+
+    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+        throw new RuntimeException('Soubor se nepodařilo uložit.');
+    }
+
+    return 'uploads/' . $type . '/' . $safeName;
+}
