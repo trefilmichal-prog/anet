@@ -98,8 +98,29 @@ function handle_image_upload($inputName, $type)
         throw new RuntimeException('Nepovolená přípona souboru.');
     }
 
-    $finfo = new finfo(FILEINFO_MIME_TYPE);
-    $mimeType = $finfo->file($file['tmp_name']);
+    $mimeType = '';
+    $fileinfoAvailable = class_exists('finfo') && defined('FILEINFO_MIME_TYPE');
+
+    if ($fileinfoAvailable) {
+        try {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mimeType = (string) $finfo->file($file['tmp_name']);
+        } catch (Throwable $throwable) {
+            throw new RuntimeException('Nepodařilo se ověřit typ obrázku přes fileinfo. Zkontrolujte konfiguraci PHP extension fileinfo.', 0, $throwable);
+        }
+    } else {
+        if (!function_exists('getimagesize')) {
+            throw new RuntimeException('Na serveru není dostupné fileinfo ani getimagesize(). Zapněte extension fileinfo v PHP konfiguraci serveru.');
+        }
+
+        $imageInfo = @getimagesize($file['tmp_name']);
+        if (!is_array($imageInfo) || !isset($imageInfo['mime'])) {
+            throw new RuntimeException('Nepodařilo se ověřit typ obrázku.');
+        }
+
+        $mimeType = (string) $imageInfo['mime'];
+    }
+
     if (!isset(UPLOAD_ALLOWED_MIME_TYPES[$mimeType])) {
         throw new RuntimeException('Nepovolený typ souboru.');
     }
