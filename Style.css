@@ -546,6 +546,21 @@ body.intro-done .content {
     color: rgb(255, 230, 173) !important;
     line-height:1 !important;
     display:inline-block !important;
+    animation: dividerStarGlow 1.2s ease-in-out infinite !important;
+}
+
+@keyframes dividerStarGlow {
+    0%,
+    100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px rgba(255, 219, 127, 0.45));
+        text-shadow: 0 0 7px rgba(255, 218, 120, 0.55), 0 0 20px rgba(255, 218, 120, 0.25);
+    }
+    50% {
+        transform: scale(1.14);
+        filter: drop-shadow(0 0 13px rgba(255, 229, 173, 0.85));
+        text-shadow: 0 0 12px rgba(255, 230, 173, 0.92), 0 0 28px rgba(255, 218, 120, 0.45);
+    }
 }
 
 
