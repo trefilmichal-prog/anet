@@ -3,72 +3,82 @@ require_once __DIR__ . '/auth.php';
 require_once dirname(__DIR__) . '/includes/upload.php';
 require_admin_login();
 
-$db = get_db();
 $message = '';
 $error = '';
 $editRow = null;
+$rows = array();
 
-if (isset($_GET['edit'])) {
-    $editId = (int) $_GET['edit'];
-    if ($editId > 0) {
-        $editStmt = $db->prepare('SELECT * FROM artists WHERE id = :id');
-        $editStmt->execute(array(':id' => $editId));
-        $editRow = $editStmt->fetch();
+try {
+    $db = get_db();
+
+    if (isset($_GET['edit'])) {
+        $editId = (int) $_GET['edit'];
+        if ($editId > 0) {
+            $editStmt = $db->prepare('SELECT * FROM artists WHERE id = :id');
+            $editStmt->execute(array(':id' => $editId));
+            $editRow = $editStmt->fetch();
+        }
     }
-}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-    $name = isset($_POST['name']) ? trim($_POST['name']) : '';
-    $role = isset($_POST['role']) ? trim($_POST['role']) : '';
-    $bio = isset($_POST['bio']) ? trim($_POST['bio']) : '';
-    $sortOrder = isset($_POST['sort_order']) ? (int) $_POST['sort_order'] : 0;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+        $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+        $role = isset($_POST['role']) ? trim($_POST['role']) : '';
+        $bio = isset($_POST['bio']) ? trim($_POST['bio']) : '';
+        $sortOrder = isset($_POST['sort_order']) ? (int) $_POST['sort_order'] : 0;
 
-    try {
-        if ($name === '') {
-            throw new RuntimeException('Jméno je povinné.');
+        try {
+            if ($name === '') {
+                throw new RuntimeException('Jméno je povinné.');
+            }
+
+            $existingImage = '';
+            if ($id > 0) {
+                $existingStmt = $db->prepare('SELECT image FROM artists WHERE id = :id');
+                $existingStmt->execute(array(':id' => $id));
+                $existingImage = (string) $existingStmt->fetchColumn();
+            }
+
+            $uploadedImage = handle_image_upload('image_file', 'artists');
+            $image = $uploadedImage !== null ? $uploadedImage : $existingImage;
+
+            if ($id > 0) {
+                $stmt = $db->prepare('UPDATE artists SET name = :name, role = :role, bio = :bio, image = :image, sort_order = :sort_order WHERE id = :id');
+                $stmt->execute(array(
+                    ':name' => $name,
+                    ':role' => $role,
+                    ':bio' => $bio,
+                    ':image' => $image,
+                    ':sort_order' => $sortOrder,
+                    ':id' => $id
+                ));
+                $message = 'Umělec upraven.';
+            } else {
+                $stmt = $db->prepare('INSERT INTO artists(name, role, bio, image, sort_order) VALUES(:name, :role, :bio, :image, :sort_order)');
+                $stmt->execute(array(
+                    ':name' => $name,
+                    ':role' => $role,
+                    ':bio' => $bio,
+                    ':image' => $image,
+                    ':sort_order' => $sortOrder
+                ));
+                $message = 'Umělec uložen.';
+            }
+
+            $editRow = null;
+        } catch (Exception $e) {
+            $error = resolve_admin_form_error($e);
         }
-
-        $existingImage = '';
-        if ($id > 0) {
-            $existingStmt = $db->prepare('SELECT image FROM artists WHERE id = :id');
-            $existingStmt->execute(array(':id' => $id));
-            $existingImage = (string) $existingStmt->fetchColumn();
-        }
-
-        $uploadedImage = handle_image_upload('image_file', 'artists');
-        $image = $uploadedImage !== null ? $uploadedImage : $existingImage;
-
-        if ($id > 0) {
-            $stmt = $db->prepare('UPDATE artists SET name = :name, role = :role, bio = :bio, image = :image, sort_order = :sort_order WHERE id = :id');
-            $stmt->execute(array(
-                ':name' => $name,
-                ':role' => $role,
-                ':bio' => $bio,
-                ':image' => $image,
-                ':sort_order' => $sortOrder,
-                ':id' => $id
-            ));
-            $message = 'Umělec upraven.';
-        } else {
-            $stmt = $db->prepare('INSERT INTO artists(name, role, bio, image, sort_order) VALUES(:name, :role, :bio, :image, :sort_order)');
-            $stmt->execute(array(
-                ':name' => $name,
-                ':role' => $role,
-                ':bio' => $bio,
-                ':image' => $image,
-                ':sort_order' => $sortOrder
-            ));
-            $message = 'Umělec uložen.';
-        }
-
-        $editRow = null;
-    } catch (Exception $e) {
-        $error = resolve_admin_form_error($e);
     }
-}
 
-$rows = $db->query('SELECT id, name, role, image, sort_order FROM artists ORDER BY sort_order ASC, id DESC')->fetchAll();
+    $rows = $db->query('SELECT id, name, role, image, sort_order FROM artists ORDER BY sort_order ASC, id DESC')->fetchAll();
+} catch (Exception $e) {
+    error_log('Admin artists init failed: ' . $e->getMessage());
+    if ($error === '') {
+        $error = 'Nepodařilo se načíst data. Zkuste to prosím znovu.';
+    }
+    $rows = array();
+}
 $adminPageTitle = 'Umělci';
 require_once __DIR__ . '/partials/header.php';
 ?>

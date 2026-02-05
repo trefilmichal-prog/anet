@@ -3,69 +3,79 @@ require_once __DIR__ . '/auth.php';
 require_once dirname(__DIR__) . '/includes/upload.php';
 require_admin_login();
 
-$db = get_db();
 $message = '';
 $error = '';
 $editRow = null;
+$rows = array();
 
-if (isset($_GET['edit'])) {
-    $editId = (int) $_GET['edit'];
-    if ($editId > 0) {
-        $editStmt = $db->prepare('SELECT * FROM backgrounds WHERE id = :id');
-        $editStmt->execute(array(':id' => $editId));
-        $editRow = $editStmt->fetch();
+try {
+    $db = get_db();
+
+    if (isset($_GET['edit'])) {
+        $editId = (int) $_GET['edit'];
+        if ($editId > 0) {
+            $editStmt = $db->prepare('SELECT * FROM backgrounds WHERE id = :id');
+            $editStmt->execute(array(':id' => $editId));
+            $editRow = $editStmt->fetch();
+        }
     }
-}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-    $pageKey = isset($_POST['page_key']) ? trim($_POST['page_key']) : '';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+        $pageKey = isset($_POST['page_key']) ? trim($_POST['page_key']) : '';
 
-    try {
-        if ($pageKey === '') {
-            throw new RuntimeException('Klíč stránky je povinný.');
+        try {
+            if ($pageKey === '') {
+                throw new RuntimeException('Klíč stránky je povinný.');
+            }
+
+            $existingImage = '';
+            if ($id > 0) {
+                $existingStmt = $db->prepare('SELECT image FROM backgrounds WHERE id = :id');
+                $existingStmt->execute(array(':id' => $id));
+                $existingImage = (string) $existingStmt->fetchColumn();
+            }
+
+            $uploadedImage = handle_image_upload('image_file', 'backgrounds');
+            $image = $uploadedImage !== null ? $uploadedImage : $existingImage;
+
+            if ($image === '') {
+                throw new RuntimeException('Obrázek je povinný.');
+            }
+
+            if ($id > 0) {
+                $stmt = $db->prepare('UPDATE backgrounds SET page_key = :page_key, image = :image, updated_at = :updated_at WHERE id = :id');
+                $stmt->execute(array(
+                    ':page_key' => $pageKey,
+                    ':image' => $image,
+                    ':updated_at' => date('c'),
+                    ':id' => $id
+                ));
+                $message = 'Pozadí upraveno.';
+            } else {
+                $stmt = $db->prepare('INSERT INTO backgrounds(page_key, image, updated_at) VALUES(:page_key, :image, :updated_at)');
+                $stmt->execute(array(
+                    ':page_key' => $pageKey,
+                    ':image' => $image,
+                    ':updated_at' => date('c')
+                ));
+                $message = 'Pozadí uloženo.';
+            }
+
+            $editRow = null;
+        } catch (Exception $e) {
+            $error = resolve_admin_form_error($e);
         }
-
-        $existingImage = '';
-        if ($id > 0) {
-            $existingStmt = $db->prepare('SELECT image FROM backgrounds WHERE id = :id');
-            $existingStmt->execute(array(':id' => $id));
-            $existingImage = (string) $existingStmt->fetchColumn();
-        }
-
-        $uploadedImage = handle_image_upload('image_file', 'backgrounds');
-        $image = $uploadedImage !== null ? $uploadedImage : $existingImage;
-
-        if ($image === '') {
-            throw new RuntimeException('Obrázek je povinný.');
-        }
-
-        if ($id > 0) {
-            $stmt = $db->prepare('UPDATE backgrounds SET page_key = :page_key, image = :image, updated_at = :updated_at WHERE id = :id');
-            $stmt->execute(array(
-                ':page_key' => $pageKey,
-                ':image' => $image,
-                ':updated_at' => date('c'),
-                ':id' => $id
-            ));
-            $message = 'Pozadí upraveno.';
-        } else {
-            $stmt = $db->prepare('INSERT INTO backgrounds(page_key, image, updated_at) VALUES(:page_key, :image, :updated_at)');
-            $stmt->execute(array(
-                ':page_key' => $pageKey,
-                ':image' => $image,
-                ':updated_at' => date('c')
-            ));
-            $message = 'Pozadí uloženo.';
-        }
-
-        $editRow = null;
-    } catch (Exception $e) {
-        $error = resolve_admin_form_error($e);
     }
-}
 
-$rows = $db->query('SELECT id, page_key, image, updated_at FROM backgrounds ORDER BY id DESC')->fetchAll();
+    $rows = $db->query('SELECT id, page_key, image, updated_at FROM backgrounds ORDER BY id DESC')->fetchAll();
+} catch (Exception $e) {
+    error_log('Admin backgrounds init failed: ' . $e->getMessage());
+    if ($error === '') {
+        $error = 'Nepodařilo se načíst data. Zkuste to prosím znovu.';
+    }
+    $rows = array();
+}
 $adminPageTitle = 'Pozadí';
 require_once __DIR__ . '/partials/header.php';
 ?>
