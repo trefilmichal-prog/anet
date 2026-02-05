@@ -11,18 +11,22 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pin = isset($_POST['pin']) ? trim($_POST['pin']) : '';
 
-    $db = get_db();
-    $stmt = $db->prepare('SELECT value FROM settings WHERE key = :key');
-    $stmt->execute(array(':key' => 'admin_pin_hash'));
-    $pinHash = $stmt->fetchColumn();
+    try {
+        $db = get_db();
+        $stmt = $db->prepare('SELECT value FROM settings WHERE key = :key');
+        $stmt->execute(array(':key' => 'admin_pin_hash'));
+        $pinHash = $stmt->fetchColumn();
 
-    if ($pinHash && password_verify($pin, $pinHash)) {
-        $_SESSION['admin_logged_in'] = true;
-        header('Location: dashboard.php');
-        exit;
+        if ($pinHash && password_verify($pin, $pinHash)) {
+            $_SESSION['admin_logged_in'] = true;
+            header('Location: dashboard.php');
+            exit;
+        }
+
+        $error = 'Neplatný PIN.';
+    } catch (RuntimeException $e) {
+        $error = 'Na serveru chybí PDO SQLite, kontaktujte hosting.';
     }
-
-    $error = 'Neplatný PIN.';
 }
 
 $adminPageTitle = 'Admin přihlášení';

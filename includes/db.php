@@ -15,7 +15,16 @@ function get_db()
 
     $dbFile = $dataDir . '/anet.sqlite';
 
-    $pdo = new PDO('sqlite:' . $dbFile);
+    if (!extension_loaded('pdo_sqlite') || !in_array('sqlite', PDO::getAvailableDrivers(), true)) {
+        throw new RuntimeException('Na serveru není dostupné PDO SQLite (extension pdo_sqlite / sqlite driver). Kontaktujte správce hostingu.');
+    }
+
+    try {
+        $pdo = new PDO('sqlite:' . $dbFile);
+    } catch (PDOException $e) {
+        throw new RuntimeException('Nepodařilo se navázat SQLite připojení přes PDO. Zkontrolujte podporu PDO SQLite na hostingu.', 0, $e);
+    }
+
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
