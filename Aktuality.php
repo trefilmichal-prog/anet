@@ -48,7 +48,7 @@ function split_news_body($body)
 <head>
     <meta charset="utf-8">
     <title>Background Gradient Layout</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Style.css">
 
     <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -449,7 +449,7 @@ body.intro-done .content{transition-duration:.35s !important;}
 <head>
     <meta charset="utf-8">
     <title>Background Gradient Layout</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Style.css">
     <script>
 document.addEventListener('DOMContentLoaded', function () {
   var header = document.querySelector('.site-header');

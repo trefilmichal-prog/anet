@@ -7,7 +7,7 @@ $programItems = get_program_items(3);
 <head>
     <meta charset="utf-8">
     <title>Background Gradient Layout</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Style.css">
     <script>
 document.addEventListener('DOMContentLoaded', function () {
   var header = document.querySelector('.site-header');
