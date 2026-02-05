@@ -7,6 +7,20 @@ const UPLOAD_ALLOWED_MIME_TYPES = array(
 );
 const UPLOAD_ALLOWED_EXTENSIONS = array('jpg', 'jpeg', 'png', 'webp');
 const UPLOAD_MAX_FILE_SIZE = 5 * 1024 * 1024;
+const FORM_INTERNAL_ERROR_MESSAGE = 'Došlo k interní chybě. Zkuste to prosím znovu později.';
+
+function resolve_admin_form_error(Exception $exception)
+{
+    if ($exception instanceof RuntimeException) {
+        $message = trim($exception->getMessage());
+        if ($message !== '') {
+            return $message;
+        }
+    }
+
+    error_log('Admin/upload form failure: ' . $exception->getMessage());
+    return FORM_INTERNAL_ERROR_MESSAGE;
+}
 
 function ensure_upload_directory($type)
 {
@@ -105,7 +119,7 @@ function handle_image_upload($inputName, $type)
         try {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = (string) $finfo->file($file['tmp_name']);
-        } catch (Throwable $throwable) {
+        } catch (Exception $throwable) {
             throw new RuntimeException('Nepodařilo se ověřit typ obrázku přes fileinfo. Zkontrolujte konfiguraci PHP extension fileinfo.', 0, $throwable);
         }
     } else {

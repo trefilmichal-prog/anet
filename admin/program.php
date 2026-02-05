@@ -69,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $editRow = null;
-    } catch (Throwable $e) {
-        $error = $e->getMessage() !== '' ? $e->getMessage() : 'Při ukládání došlo k chybě.';
+    } catch (Exception $e) {
+        $error = resolve_admin_form_error($e);
     }
 }
 
