@@ -3,72 +3,82 @@ require_once __DIR__ . '/auth.php';
 require_once dirname(__DIR__) . '/includes/upload.php';
 require_admin_login();
 
-$db = get_db();
 $message = '';
 $error = '';
 $editRow = null;
+$rows = array();
 
-if (isset($_GET['edit'])) {
-    $editId = (int) $_GET['edit'];
-    if ($editId > 0) {
-        $editStmt = $db->prepare('SELECT * FROM news WHERE id = :id');
-        $editStmt->execute(array(':id' => $editId));
-        $editRow = $editStmt->fetch();
+try {
+    $db = get_db();
+
+    if (isset($_GET['edit'])) {
+        $editId = (int) $_GET['edit'];
+        if ($editId > 0) {
+            $editStmt = $db->prepare('SELECT * FROM news WHERE id = :id');
+            $editStmt->execute(array(':id' => $editId));
+            $editRow = $editStmt->fetch();
+        }
     }
-}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-    $title = isset($_POST['title']) ? trim($_POST['title']) : '';
-    $body = isset($_POST['body']) ? trim($_POST['body']) : '';
-    $publishedAt = isset($_POST['published_at']) ? trim($_POST['published_at']) : '';
-    $sortOrder = isset($_POST['sort_order']) ? (int) $_POST['sort_order'] : 0;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+        $title = isset($_POST['title']) ? trim($_POST['title']) : '';
+        $body = isset($_POST['body']) ? trim($_POST['body']) : '';
+        $publishedAt = isset($_POST['published_at']) ? trim($_POST['published_at']) : '';
+        $sortOrder = isset($_POST['sort_order']) ? (int) $_POST['sort_order'] : 0;
 
-    try {
-        if ($title === '') {
-            throw new RuntimeException('Nadpis je povinný.');
+        try {
+            if ($title === '') {
+                throw new RuntimeException('Nadpis je povinný.');
+            }
+
+            $existingImage = '';
+            if ($id > 0) {
+                $existingStmt = $db->prepare('SELECT image FROM news WHERE id = :id');
+                $existingStmt->execute(array(':id' => $id));
+                $existingImage = (string) $existingStmt->fetchColumn();
+            }
+
+            $uploadedImage = handle_image_upload('image_file', 'news');
+            $image = $uploadedImage !== null ? $uploadedImage : $existingImage;
+
+            if ($id > 0) {
+                $stmt = $db->prepare('UPDATE news SET title = :title, body = :body, image = :image, published_at = :published_at, sort_order = :sort_order WHERE id = :id');
+                $stmt->execute(array(
+                    ':title' => $title,
+                    ':body' => $body,
+                    ':image' => $image,
+                    ':published_at' => $publishedAt,
+                    ':sort_order' => $sortOrder,
+                    ':id' => $id
+                ));
+                $message = 'Aktualita upravena.';
+            } else {
+                $stmt = $db->prepare('INSERT INTO news(title, body, image, published_at, sort_order) VALUES(:title, :body, :image, :published_at, :sort_order)');
+                $stmt->execute(array(
+                    ':title' => $title,
+                    ':body' => $body,
+                    ':image' => $image,
+                    ':published_at' => $publishedAt,
+                    ':sort_order' => $sortOrder
+                ));
+                $message = 'Aktualita uložena.';
+            }
+
+            $editRow = null;
+        } catch (Exception $e) {
+            $error = resolve_admin_form_error($e);
         }
-
-        $existingImage = '';
-        if ($id > 0) {
-            $existingStmt = $db->prepare('SELECT image FROM news WHERE id = :id');
-            $existingStmt->execute(array(':id' => $id));
-            $existingImage = (string) $existingStmt->fetchColumn();
-        }
-
-        $uploadedImage = handle_image_upload('image_file', 'news');
-        $image = $uploadedImage !== null ? $uploadedImage : $existingImage;
-
-        if ($id > 0) {
-            $stmt = $db->prepare('UPDATE news SET title = :title, body = :body, image = :image, published_at = :published_at, sort_order = :sort_order WHERE id = :id');
-            $stmt->execute(array(
-                ':title' => $title,
-                ':body' => $body,
-                ':image' => $image,
-                ':published_at' => $publishedAt,
-                ':sort_order' => $sortOrder,
-                ':id' => $id
-            ));
-            $message = 'Aktualita upravena.';
-        } else {
-            $stmt = $db->prepare('INSERT INTO news(title, body, image, published_at, sort_order) VALUES(:title, :body, :image, :published_at, :sort_order)');
-            $stmt->execute(array(
-                ':title' => $title,
-                ':body' => $body,
-                ':image' => $image,
-                ':published_at' => $publishedAt,
-                ':sort_order' => $sortOrder
-            ));
-            $message = 'Aktualita uložena.';
-        }
-
-        $editRow = null;
-    } catch (Exception $e) {
-        $error = resolve_admin_form_error($e);
     }
-}
 
-$rows = $db->query('SELECT id, title, image, published_at, sort_order FROM news ORDER BY sort_order ASC, id DESC')->fetchAll();
+    $rows = $db->query('SELECT id, title, image, published_at, sort_order FROM news ORDER BY sort_order ASC, id DESC')->fetchAll();
+} catch (Exception $e) {
+    error_log('Admin news init failed: ' . $e->getMessage());
+    if ($error === '') {
+        $error = 'Nepodařilo se načíst data. Zkuste to prosím znovu.';
+    }
+    $rows = array();
+}
 $adminPageTitle = 'Aktuality';
 require_once __DIR__ . '/partials/header.php';
 ?>
