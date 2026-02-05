@@ -31,18 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'PIN byl úspěšně změněn.';
     }
 }
+
+$adminPageTitle = 'Nastavení PIN';
+require_once __DIR__ . '/partials/header.php';
 ?>
-<!doctype html>
-<html lang="cs">
-<head>
-    <meta charset="utf-8">
-    <title>Nastavení PIN</title>
-    <link rel="stylesheet" href="admin.css">
-</head>
-<body>
-<main class="admin-shell">
+<section class="admin-shell">
     <section class="admin-card">
-        <ul class="admin-nav"><li><a href="dashboard.php">← Zpět na dashboard</a></li></ul>
         <h1>Nastavení PIN</h1>
         <?php if ($message): ?><p class="admin-alert admin-alert--success"><?php echo h($message); ?></p><?php endif; ?>
         <?php if ($error): ?><p class="admin-alert admin-alert--error"><?php echo h($error); ?></p><?php endif; ?>
@@ -54,6 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button class="admin-button" type="submit">Změnit PIN</button>
         </form>
     </section>
-</main>
-</body>
-</html>
+</section>
+
+<?php require_once __DIR__ . '/partials/footer.php'; ?>
