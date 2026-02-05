@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Background Gradient Layout</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Style.css">
     <style>
 /* ===== Faster intro (star + content) ===== */
 #intro-star{
