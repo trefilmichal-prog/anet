@@ -1,3 +1,38 @@
+<?php
+require_once __DIR__ . '/includes/db.php';
+
+$artists = array();
+
+try {
+    $db = get_db();
+    $stmt = $db->query('SELECT id, name, role, bio, image, sort_order FROM artists ORDER BY sort_order ASC, id DESC');
+    $artists = $stmt->fetchAll();
+} catch (Exception $e) {
+    error_log('Umelci load failed: ' . $e->getMessage());
+    $artists = array();
+}
+
+function normalize_artist_image_path($imagePath)
+{
+    $imagePath = trim((string) $imagePath);
+
+    if ($imagePath === '') {
+        return '';
+    }
+
+    $imagePath = str_replace('\\', '/', $imagePath);
+
+    if (strpos($imagePath, '..') !== false || preg_match('/[^a-zA-Z0-9_\-\/.]/', $imagePath)) {
+        return '';
+    }
+
+    if (strpos($imagePath, 'uploads/artists/') !== 0) {
+        return '';
+    }
+
+    return $imagePath;
+}
+?>
 <!doctype html>
 <html lang="cs">
 <head>
@@ -260,238 +295,43 @@ body.intro-done .content{
         </div>
 
 <div class="artists__container">
-    <div class="artists__grid">
+    <?php if (empty($artists)): ?>
+        <p>Umělci budou brzy doplněni.</p>
+    <?php else: ?>
+        <div class="artists__grid">
+            <?php foreach ($artists as $artist): ?>
+                <?php
+                    $artistName = htmlspecialchars((string) $artist['name'], ENT_QUOTES, 'UTF-8');
+                    $artistRole = htmlspecialchars((string) $artist['role'], ENT_QUOTES, 'UTF-8');
+                    $artistBio = htmlspecialchars((string) $artist['bio'], ENT_QUOTES, 'UTF-8');
+                    $artistImage = normalize_artist_image_path($artist['image']);
+                    $artistImageEscaped = htmlspecialchars($artistImage, ENT_QUOTES, 'UTF-8');
+                ?>
+                <article class="artist-card">
+                    <?php if ($artistImage !== ''): ?>
+                        <div class="artist-card__media">
+                            <img src="<?php echo $artistImageEscaped; ?>" alt="<?php echo $artistName; ?>">
+                        </div>
+                    <?php endif; ?>
 
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="1.png" alt="Roman Perucki">
+                    <div class="artist-card__body">
+                        <h3 class="artist-card__name"><?php echo $artistName; ?></h3>
+                        <?php if ($artistRole !== ''): ?>
+                            <div class="artist-card__meta"><?php echo $artistRole; ?></div>
+                        <?php endif; ?>
+
+                        <div class="artist-card__divider">
+                            <span class="artist-card__star">✦</span>
+                        </div>
+
+                        <?php if ($artistBio !== ''): ?>
+                            <p class="artist-card__desc"><?php echo $artistBio; ?></p>
+                        <?php endif; ?>
+                    </div>
+                </article>
+            <?php endforeach; ?>
         </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#roman">Roman Perucki</a></h3>
-          <div class="artist-card__meta">Varhany · Polsko</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Koncertní varhaník, festivalové programy, slavnostní večery a interpretace klasických děl.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#roman">Profil</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="2.png" alt="Jesús Sampredo Márquez">
-        </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#jesus">Jesús Sampredo Márquez</a></h3>
-          <div class="artist-card__meta">Varhany · Španělsko</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Mezinárodní host, virtuózní interpretace a jedinečná atmosféra koncertů v historických prostorách.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#jesus">Profil</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="3.png" alt="Michaela Káčerková">
-        </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#michaela">Michaela Káčerková</a></h3>
-          <div class="artist-card__meta">Varhany, cembalo · ČR</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Špičková interpretka, komorní projekty a reprezentativní programy pro festivalové publikum.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#michaela">Profil</a>
-          </div>
-        </div>
-      </article>
-
-    </div>
-
-</div>
-<div class="artists__container">
-    <div class="artists__grid">
-
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="4.png" alt="Tomáš Strašil">
-        </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#roman">Tomáš Strašil</a></h3>
-          <div class="artist-card__meta">Varhany · Polsko</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Koncertní varhaník, festivalové programy, slavnostní večery a interpretace klasických děl.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#roman">Profil</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="5.png" alt="Karolína Cingrošová">
-        </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#jesus">Karolína Cingrošová</a></h3>
-          <div class="artist-card__meta">Varhany · Španělsko</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Mezinárodní host, virtuózní interpretace a jedinečná atmosféra koncertů v historických prostorách.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#jesus">Profil</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="6.png" alt="Anna Paulová">
-        </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#michaela">Anna Paulová</a></h3>
-          <div class="artist-card__meta">Varhany, cembalo · ČR</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Špičková interpretka, komorní projekty a reprezentativní programy pro festivalové publikum.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#michaela">Profil</a>
-          </div>
-        </div>
-      </article>
-
-    </div>
-
-</div>
-<div class="artists__container">
-    <div class="artists__grid">
-
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="7.png" alt="Lukáš Sommer">
-        </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#roman">Lukáš Sommer</a></h3>
-          <div class="artist-card__meta">Varhany · Polsko</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Koncertní varhaník, festivalové programy, slavnostní večery a interpretace klasických děl.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#roman">Profil</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="8.png" alt="Kateřina Málková">
-        </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#jesus">Kateřina Málková</a></h3>
-          <div class="artist-card__meta">Varhany · Španělsko</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Mezinárodní host, virtuózní interpretace a jedinečná atmosféra koncertů v historických prostorách.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#jesus">Profil</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="artist-card">
-        <div class="artist-card__media">
-          <img src="9.png" alt="Josef Kovačič">
-        </div>
-
-        <div class="artist-card__body">
-          <h3 class="artist-card__name"><a href="#michaela">Josef Kovačič</a></h3>
-          <div class="artist-card__meta">Varhany, cembalo · ČR</div>
-
-          <div class="artist-card__divider">
-            <span class="artist-card__star">✦</span>
-          </div>
-
-          <p class="artist-card__desc">
-            Špičková interpretka, komorní projekty a reprezentativní programy pro festivalové publikum.
-          </p>
-
-          <div class="artist-card__actions">
-            <a class="box box--primary" href="#program">Program <span class="box__arrow">›</span></a>
-            <a class="box box--ghost" href="#michaela">Profil</a>
-          </div>
-        </div>
-      </article>
-
-    </div>
-
+    <?php endif; ?>
 </div>
 <br>
     <br>
