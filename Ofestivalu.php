@@ -205,15 +205,17 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="container2">
             <h2>O FESTIVALU</h2>
 <div class="container2-divider2"><span class="star star-animated">✦</span></div>
-<a>Harmonia Caelestis je festival klasické hudby, který se koná v malebných kulisách Plzeňského kraje, jižních Čech a Karlovarského kraje. Jeho cílem je zpřístupnit široké veřejnosti krásu a bohatství klasické hudby a propojit lidi z různých koutů světa prostřednictvím sdíleného zážitku z živého hudebního umění.</a>
-<br>
-<a>Generálním partnerem tohoto ročníku festivalu je Plzeňská diecéze CČSH, která tak vyjadřuje svůj zájem o podporu kulturního života v regionu a šíření duchovních hodnot. Festival se koná pod záštitou plzeňského husitského biskupa Lukáše Bujny. Pořadatelem festivalu je Institut plzeňské diecéze.</a>        
-<br>
-<a>Koncerty jsou pořádány za finanční podpory Ministerstva kultury ČR, Magistrátu města Plzně a města Milevska.</a>
-<br>
-<a>Program festivalu je pestrý a zahrnuje koncerty renomovaných českých i zahraničních souborů a sólistů. Nabízí širokou škálu hudebních stylů od baroka po současnost, s důrazem na duchovní hudbu.</a>
-<br>
-<a>Festival Harmonia Caelestis je jedinečnou příležitostí vychutnat si krásu klasické hudby v krásných historických památkách i moderních prostorách a zároveň se setkat s lidmi, kteří sdílí lásku k hudbě.</a>
+<div class="festival-text-box">
+<p>Harmonia Caelestis je festival klasické hudby, který se koná v malebných kulisách Plzeňského kraje, jižních Čech a Karlovarského kraje. Jeho cílem je zpřístupnit široké veřejnosti krásu a bohatství klasické hudby a propojit lidi z různých koutů světa prostřednictvím sdíleného zážitku z živého hudebního umění.</p>
+
+<p>Generálním partnerem tohoto ročníku festivalu je Plzeňská diecéze CČSH, která tak vyjadřuje svůj zájem o podporu kulturního života v regionu a šíření duchovních hodnot. Festival se koná pod záštitou plzeňského husitského biskupa Lukáše Bujny. Pořadatelem festivalu je Institut plzeňské diecéze.</p>
+
+<p>Koncerty jsou pořádány za finanční podpory Ministerstva kultury ČR, Magistrátu města Plzně a města Milevska.</p>
+
+<p>Program festivalu je pestrý a zahrnuje koncerty renomovaných českých i zahraničních souborů a sólistů. Nabízí širokou škálu hudebních stylů od baroka po současnost, s důrazem na duchovní hudbu.</p>
+
+<p>Festival Harmonia Caelestis je jedinečnou příležitostí vychutnat si krásu klasické hudby v krásných historických památkách i moderních prostorách a zároveň se setkat s lidmi, kteří sdílí lásku k hudbě.</p>
+</div>
 </div>
         
         <footer class="site-footer" id="sponsors">
