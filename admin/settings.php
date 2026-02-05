@@ -31,21 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'PIN byl úspěšně změněn.';
     }
 }
-?>
-<!doctype html>
-<html lang="cs">
-<head><meta charset="utf-8"><title>Nastavení PIN</title></head>
-<body>
-<p><a href="dashboard.php">← Zpět na dashboard</a></p>
-<h1>Nastavení PIN</h1>
-<?php if ($message): ?><p style="color:green;"><?php echo h($message); ?></p><?php endif; ?>
-<?php if ($error): ?><p style="color:red;"><?php echo h($error); ?></p><?php endif; ?>
 
-<form method="post">
-    <label>Aktuální PIN<br><input type="password" name="current_pin" required></label><br>
-    <label>Nový PIN<br><input type="password" name="new_pin" required></label><br>
-    <label>Potvrdit nový PIN<br><input type="password" name="confirm_pin" required></label><br>
-    <button type="submit">Změnit PIN</button>
-</form>
-</body>
-</html>
+$adminPageTitle = 'Nastavení PIN';
+require_once __DIR__ . '/partials/header.php';
+?>
+<section class="admin-shell">
+    <section class="admin-card">
+        <h1>Nastavení PIN</h1>
+        <?php if ($message): ?><p class="admin-alert admin-alert--success"><?php echo h($message); ?></p><?php endif; ?>
+        <?php if ($error): ?><p class="admin-alert admin-alert--error"><?php echo h($error); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post">
+            <label>Aktuální PIN<input type="password" name="current_pin" required></label>
+            <label>Nový PIN<input type="password" name="new_pin" required></label>
+            <label>Potvrdit nový PIN<input type="password" name="confirm_pin" required></label>
+            <button class="admin-button" type="submit">Změnit PIN</button>
+        </form>
+    </section>
+</section>
+
+<?php require_once __DIR__ . '/partials/footer.php'; ?>

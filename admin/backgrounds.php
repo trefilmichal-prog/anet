@@ -66,29 +66,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $rows = $db->query('SELECT id, page_key, image, updated_at FROM backgrounds ORDER BY id DESC')->fetchAll();
+$adminPageTitle = 'Pozadí';
+require_once __DIR__ . '/partials/header.php';
 ?>
-<!doctype html>
-<html lang="cs">
-<head><meta charset="utf-8"><title>Pozadí</title></head>
-<body>
-<p><a href="dashboard.php">← Zpět na dashboard</a></p>
-<h1>Pozadí</h1>
-<?php if ($message): ?><p style="color:green;"><?php echo h($message); ?></p><?php endif; ?>
-<?php if ($error): ?><p style="color:red;"><?php echo h($error); ?></p><?php endif; ?>
-<form method="post" enctype="multipart/form-data">
-    <input type="hidden" name="id" value="<?php echo $editRow ? (int) $editRow['id'] : 0; ?>">
-    <label>Klíč stránky<br><input type="text" name="page_key" required value="<?php echo h($editRow ? $editRow['page_key'] : ''); ?>"></label><br>
-    <?php if ($editRow && !empty($editRow['image'])): ?>
-        <p>Současný obrázek: <code><?php echo h($editRow['image']); ?></code></p>
-    <?php endif; ?>
-    <label>Obrázek (JPG/PNG/WEBP, max 5 MB)<br><input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"></label><br>
-    <button type="submit"><?php echo $editRow ? 'Upravit pozadí' : 'Uložit pozadí'; ?></button>
-</form>
-<h2>Seznam</h2>
-<ul>
-<?php foreach ($rows as $row): ?>
-    <li>#<?php echo (int) $row['id']; ?> | <?php echo h($row['page_key']); ?> | <?php echo h($row['image']); ?> | <?php echo h($row['updated_at']); ?> | <a href="backgrounds.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></li>
-<?php endforeach; ?>
-</ul>
-</body>
-</html>
+<section class="admin-shell">
+    <section class="admin-card">
+        <h1>Pozadí</h1>
+        <?php if ($message): ?><p class="admin-alert admin-alert--success"><?php echo h($message); ?></p><?php endif; ?>
+        <?php if ($error): ?><p class="admin-alert admin-alert--error"><?php echo h($error); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="<?php echo $editRow ? (int) $editRow['id'] : 0; ?>">
+            <label>Klíč stránky<input type="text" name="page_key" required value="<?php echo h($editRow ? $editRow['page_key'] : ''); ?>"></label>
+            <?php if ($editRow && !empty($editRow['image'])): ?>
+                <p class="admin-muted">Současný obrázek: <code><?php echo h($editRow['image']); ?></code></p>
+            <?php endif; ?>
+            <label>Obrázek (JPG/PNG/WEBP, max 5 MB)<input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"></label>
+            <button class="admin-button" type="submit"><?php echo $editRow ? 'Upravit pozadí' : 'Uložit pozadí'; ?></button>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h2>Seznam</h2>
+        <table class="admin-table">
+            <thead><tr><th>ID</th><th>Klíč stránky</th><th>Obrázek</th><th>Aktualizováno</th><th>Akce</th></tr></thead>
+            <tbody>
+            <?php foreach ($rows as $row): ?>
+                <tr>
+                    <td>#<?php echo (int) $row['id']; ?></td>
+                    <td><?php echo h($row['page_key']); ?></td>
+                    <td><?php echo h($row['image']); ?></td>
+                    <td><?php echo h($row['updated_at']); ?></td>
+                    <td><a href="backgrounds.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </section>
+</section>
+
+<?php require_once __DIR__ . '/partials/footer.php'; ?>
