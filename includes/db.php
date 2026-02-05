@@ -76,6 +76,15 @@ function initialize_schema(PDO $pdo)
         updated_at TEXT
     )');
 
+    // Backward-compatible migrations for older SQLite files.
+    ensure_table_column($pdo, 'news', 'sort_order', 'INTEGER NOT NULL DEFAULT 0');
+    ensure_table_column($pdo, 'program_items', 'subtitle', 'TEXT');
+    ensure_table_column($pdo, 'program_items', 'event_time', 'TEXT');
+    ensure_table_column($pdo, 'program_items', 'sort_order', 'INTEGER NOT NULL DEFAULT 0');
+    ensure_table_column($pdo, 'artists', 'bio', 'TEXT');
+    ensure_table_column($pdo, 'artists', 'sort_order', 'INTEGER NOT NULL DEFAULT 0');
+    ensure_table_column($pdo, 'backgrounds', 'updated_at', 'TEXT');
+
     $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
     $stmt->execute(array(':key' => 'admin_pin_hash'));
     $pinHash = $stmt->fetchColumn();
@@ -88,4 +97,37 @@ function initialize_schema(PDO $pdo)
             ':value' => $defaultHash
         ));
     }
+}
+
+function ensure_table_column(PDO $pdo, $tableName, $columnName, $columnDefinition)
+{
+    $existingColumns = get_table_columns($pdo, $tableName);
+
+    if (isset($existingColumns[$columnName])) {
+        return;
+    }
+
+    $sql = sprintf(
+        'ALTER TABLE %s ADD COLUMN %s %s',
+        $tableName,
+        $columnName,
+        $columnDefinition
+    );
+
+    $pdo->exec($sql);
+}
+
+function get_table_columns(PDO $pdo, $tableName)
+{
+    $columns = array();
+    $statement = $pdo->query("PRAGMA table_info('" . str_replace("'", "''", $tableName) . "')");
+    $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($rows as $row) {
+        if (isset($row['name'])) {
+            $columns[(string) $row['name']] = true;
+        }
+    }
+
+    return $columns;
 }
