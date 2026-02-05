@@ -75,33 +75,48 @@ require_once __DIR__ . '/partials/header.php';
         <?php if ($message): ?><p class="admin-alert admin-alert--success"><?php echo h($message); ?></p><?php endif; ?>
         <?php if ($error): ?><p class="admin-alert admin-alert--error"><?php echo h($error); ?></p><?php endif; ?>
 
-        <form class="admin-form" method="post" enctype="multipart/form-data">
+        <form class="admin-form admin-form--two-column" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $editRow ? (int) $editRow['id'] : 0; ?>">
-            <label>Klíč stránky<input type="text" name="page_key" required value="<?php echo h($editRow ? $editRow['page_key'] : ''); ?>"></label>
-            <?php if ($editRow && !empty($editRow['image'])): ?>
-                <p class="admin-muted">Současný obrázek: <code><?php echo h($editRow['image']); ?></code></p>
-            <?php endif; ?>
-            <label>Obrázek (JPG/PNG/WEBP, max 5 MB)<input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"></label>
-            <button class="admin-button" type="submit"><?php echo $editRow ? 'Upravit pozadí' : 'Uložit pozadí'; ?></button>
+
+            <div class="admin-field">
+                <label for="background-page-key">Klíč stránky</label>
+                <input id="background-page-key" type="text" name="page_key" required maxlength="100" value="<?php echo h($editRow ? $editRow['page_key'] : ''); ?>">
+                <p class="admin-help">Např. home, news, artists.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="background-image-file">Obrázek</label>
+                <input id="background-image-file" type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                <p class="admin-help">JPG/PNG/WEBP, max. 5 MB. <?php if ($editRow && !empty($editRow['image'])): ?>Současný: <code><?php echo h($editRow['image']); ?></code><?php endif; ?></p>
+            </div>
+
+            <div class="admin-form__actions">
+                <button class="admin-button admin-button--primary" type="submit"><?php echo $editRow ? 'Upravit pozadí' : 'Uložit pozadí'; ?></button>
+            </div>
         </form>
     </section>
 
     <section class="admin-card">
         <h2>Seznam</h2>
-        <table class="admin-table">
-            <thead><tr><th>ID</th><th>Klíč stránky</th><th>Obrázek</th><th>Aktualizováno</th><th>Akce</th></tr></thead>
-            <tbody>
-            <?php foreach ($rows as $row): ?>
-                <tr>
-                    <td>#<?php echo (int) $row['id']; ?></td>
-                    <td><?php echo h($row['page_key']); ?></td>
-                    <td><?php echo h($row['image']); ?></td>
-                    <td><?php echo h($row['updated_at']); ?></td>
-                    <td><a href="backgrounds.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?php if (!$rows): ?>
+            <p class="admin-empty-state">Zatím bez položek.</p>
+        <?php else: ?>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>ID</th><th>Název</th><th>Datum/pořadí</th><th>Akce</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($rows as $row): ?>
+                        <tr>
+                            <td data-label="ID">#<?php echo (int) $row['id']; ?></td>
+                            <td data-label="Název"><?php echo h($row['page_key']); ?></td>
+                            <td data-label="Datum/pořadí"><?php echo h($row['updated_at']); ?></td>
+                            <td data-label="Akce"><a class="admin-button admin-button--secondary" href="backgrounds.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
     </section>
 </section>
 

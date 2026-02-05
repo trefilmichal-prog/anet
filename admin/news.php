@@ -78,37 +78,66 @@ require_once __DIR__ . '/partials/header.php';
         <?php if ($message): ?><p class="admin-alert admin-alert--success"><?php echo h($message); ?></p><?php endif; ?>
         <?php if ($error): ?><p class="admin-alert admin-alert--error"><?php echo h($error); ?></p><?php endif; ?>
 
-        <form class="admin-form" method="post" enctype="multipart/form-data">
+        <form class="admin-form admin-form--two-column" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $editRow ? (int) $editRow['id'] : 0; ?>">
-            <label>Nadpis<input type="text" name="title" required value="<?php echo h($editRow ? $editRow['title'] : ''); ?>"></label>
-            <label>Text<textarea name="body"><?php echo h($editRow ? $editRow['body'] : ''); ?></textarea></label>
-            <?php if ($editRow && !empty($editRow['image'])): ?>
-                <p class="admin-muted">Současný obrázek: <code><?php echo h($editRow['image']); ?></code></p>
-            <?php endif; ?>
-            <label>Obrázek (JPG/PNG/WEBP, max 5 MB)<input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"></label>
-            <label>Publikováno (YYYY-MM-DD HH:MM)<input type="text" name="published_at" value="<?php echo h($editRow ? $editRow['published_at'] : ''); ?>"></label>
-            <label>Pořadí<input type="number" name="sort_order" value="<?php echo $editRow ? (int) $editRow['sort_order'] : 0; ?>"></label>
-            <button class="admin-button" type="submit"><?php echo $editRow ? 'Upravit aktualitu' : 'Uložit aktualitu'; ?></button>
+
+            <div class="admin-field admin-field--full">
+                <label for="news-title">Nadpis</label>
+                <input id="news-title" type="text" name="title" required maxlength="180" value="<?php echo h($editRow ? $editRow['title'] : ''); ?>">
+                <p class="admin-help">Krátký a výstižný nadpis aktuality.</p>
+            </div>
+
+            <div class="admin-field admin-field--full">
+                <label for="news-body">Text</label>
+                <textarea id="news-body" name="body"><?php echo h($editRow ? $editRow['body'] : ''); ?></textarea>
+                <p class="admin-help">Volitelný detailní popis.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="news-published-at">Publikováno</label>
+                <input id="news-published-at" type="text" name="published_at" placeholder="YYYY-MM-DD HH:MM" pattern="\d{4}-\d{2}-\d{2}(\s\d{2}:\d{2})?" value="<?php echo h($editRow ? $editRow['published_at'] : ''); ?>">
+                <p class="admin-help">Např. 2025-05-21 18:30.</p>
+            </div>
+
+            <div class="admin-field">
+                <label for="news-sort-order">Pořadí</label>
+                <input id="news-sort-order" type="number" name="sort_order" value="<?php echo $editRow ? (int) $editRow['sort_order'] : 0; ?>">
+                <p class="admin-help">Nižší číslo se zobrazí dříve.</p>
+            </div>
+
+            <div class="admin-field admin-field--full">
+                <label for="news-image-file">Obrázek</label>
+                <input id="news-image-file" type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                <p class="admin-help">JPG/PNG/WEBP, max. 5 MB. <?php if ($editRow && !empty($editRow['image'])): ?>Současný: <code><?php echo h($editRow['image']); ?></code><?php endif; ?></p>
+            </div>
+
+            <div class="admin-form__actions">
+                <button class="admin-button admin-button--primary" type="submit"><?php echo $editRow ? 'Upravit aktualitu' : 'Uložit aktualitu'; ?></button>
+            </div>
         </form>
     </section>
 
     <section class="admin-card">
         <h2>Seznam</h2>
-        <table class="admin-table">
-            <thead><tr><th>ID</th><th>Nadpis</th><th>Publikováno</th><th>Obrázek</th><th>Pořadí</th><th>Akce</th></tr></thead>
-            <tbody>
-            <?php foreach ($rows as $row): ?>
-                <tr>
-                    <td>#<?php echo (int) $row['id']; ?></td>
-                    <td><?php echo h($row['title']); ?></td>
-                    <td><?php echo h($row['published_at']); ?></td>
-                    <td><?php echo h($row['image']); ?></td>
-                    <td><?php echo (int) $row['sort_order']; ?></td>
-                    <td><a href="news.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?php if (!$rows): ?>
+            <p class="admin-empty-state">Zatím bez položek.</p>
+        <?php else: ?>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>ID</th><th>Název</th><th>Datum/pořadí</th><th>Akce</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($rows as $row): ?>
+                        <tr>
+                            <td data-label="ID">#<?php echo (int) $row['id']; ?></td>
+                            <td data-label="Název"><?php echo h($row['title']); ?></td>
+                            <td data-label="Datum/pořadí"><?php echo h($row['published_at']); ?> / <?php echo (int) $row['sort_order']; ?></td>
+                            <td data-label="Akce"><a class="admin-button admin-button--secondary" href="news.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
     </section>
 </section>
 
