@@ -43,7 +43,7 @@ html, body {
     color: rgb(255, 230, 173);
     font-size: clamp(2rem, 4vw, 3.8rem);
     text-shadow: 0 0 12px rgba(255, 218, 120, 0.78), 0 0 40px rgba(255, 218, 120, 0.36);
-    animation: introStarTravel 2.4s cubic-bezier(.26,.67,.2,1) forwards, introStarGlow 1.05s ease-in-out infinite;
+    animation: introStarTravel 2.4s cubic-bezier(.26,.67,.2,1) forwards;
 }
 
 body.intro-active .content {
@@ -79,15 +79,23 @@ body.intro-done .content {
     }
 }
 
-@keyframes introStarGlow {
+.star-animated{
+    animation: starPulse 1.05s cubic-bezier(.26,.67,.2,1) infinite;
+    transform-origin: center;
+    will-change: transform, filter, opacity;
+}
+
+@keyframes starPulse {
     0%,
     100% {
+        opacity: 0.9;
         filter: drop-shadow(0 0 6px rgba(255, 219, 127, 0.45));
-        transform: translateY(-50%) scale(1);
+        transform: scale(1);
     }
     50% {
-        filter: drop-shadow(0 0 18px rgba(255, 229, 173, 0.95));
-        transform: translateY(-50%) scale(1.12);
+        opacity: 1;
+        filter: drop-shadow(0 0 14px rgba(255, 229, 173, 0.82));
+        transform: scale(1.06);
     }
 }
 
@@ -561,6 +569,11 @@ body.intro-done .content {
         filter: drop-shadow(0 0 13px rgba(255, 229, 173, 0.85));
         text-shadow: 0 0 12px rgba(255, 230, 173, 0.92), 0 0 28px rgba(255, 218, 120, 0.45);
     }
+}
+
+.container2-divider2 .star.star-animated{
+    animation-duration: 1.2s;
+    animation-timing-function: cubic-bezier(.26,.67,.2,1);
 }
 
 

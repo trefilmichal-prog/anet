@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p>Program bude brzy doplněn.</p>
             <?php else: ?>
                 <?php foreach ($programItems as $item): ?>
-                    <div class="container2-divider2"><span class="star">✦</span></div>
+                    <div class="container2-divider2"><span class="star star-animated">✦</span></div>
                     <br>
                     <h3>
                         <span style="font-size: 1.5rem; color: rgb(255, 230, 173);">

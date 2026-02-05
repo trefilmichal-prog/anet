@@ -157,6 +157,9 @@ document.addEventListener('DOMContentLoaded', function () {
   animation-duration:.55s !important;
   transition-duration:.35s !important;
 }
+#intro-star.star-animated{
+  animation-duration:.95s !important;
+}
 #intro-overlay, #intro-mask{
   transition-duration:.35s !important;
 }
@@ -251,7 +254,7 @@ body.intro-done .content{transition-duration:.35s !important;}
     <div id="intro-overlay" aria-hidden="true">
         <canvas id="intro-particles"></canvas>
         <div id="intro-mask"></div>
-        <div id="intro-star">✦</div>
+        <div id="intro-star" class="star-animated">✦</div>
     </div>
     
 <header class="site-header" id="head">
