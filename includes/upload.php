@@ -135,11 +135,12 @@ function handle_image_upload($inputName, $type)
         $mimeType = (string) $imageInfo['mime'];
     }
 
-    if (!isset(UPLOAD_ALLOWED_MIME_TYPES[$mimeType])) {
+    $allowedMimeTypes = UPLOAD_ALLOWED_MIME_TYPES;
+    if (!array_key_exists($mimeType, $allowedMimeTypes)) {
         throw new RuntimeException('Nepovolený typ souboru.');
     }
 
-    $targetExtension = UPLOAD_ALLOWED_MIME_TYPES[$mimeType];
+    $targetExtension = $allowedMimeTypes[$mimeType];
     $extensionByMime = array(
         'jpg' => array('jpg', 'jpeg'),
         'png' => array('png'),
