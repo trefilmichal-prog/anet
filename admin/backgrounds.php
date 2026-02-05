@@ -1,12 +1,14 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once dirname(__DIR__) . '/includes/upload.php';
+require_once dirname(__DIR__) . '/includes/background_repository.php';
 require_admin_login();
 
 $message = '';
 $error = '';
 $editRow = null;
 $rows = array();
+$allowedPageKeys = get_allowed_background_page_keys();
 
 try {
     $db = get_db();
@@ -27,6 +29,10 @@ try {
         try {
             if ($pageKey === '') {
                 throw new RuntimeException('Klíč stránky je povinný.');
+            }
+
+            if (!isset($allowedPageKeys[$pageKey])) {
+                throw new RuntimeException('Neplatný klíč stránky. Vyberte položku ze seznamu.');
             }
 
             $existingImage = '';
@@ -96,8 +102,15 @@ require_once __DIR__ . '/partials/header.php';
 
             <div class="admin-field">
                 <label for="background-page-key">Klíč stránky</label>
-                <input id="background-page-key" type="text" name="page_key" required maxlength="100" value="<?php echo h($editRow ? $editRow['page_key'] : ''); ?>">
-                <p class="admin-help">Např. home, news, artists.</p>
+                <select id="background-page-key" name="page_key" required>
+                    <option value="">Vyberte stránku</option>
+                    <?php foreach ($allowedPageKeys as $key => $label): ?>
+                        <option value="<?php echo h($key); ?>"<?php echo ($editRow && $editRow['page_key'] === $key) ? ' selected' : ''; ?>>
+                            <?php echo h($label . ' (' . $key . ')'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="admin-help">Používají se jen povolené klíče, aby nevznikaly překlepy.</p>
             </div>
 
             <div class="admin-field">

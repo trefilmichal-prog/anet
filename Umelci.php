@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/background_repository.php';
 
 $artists = array();
+$heroBackgroundImage = get_background_image('artists', 'back.png');
 
 try {
     $db = get_db();
@@ -286,7 +288,7 @@ body.intro-done .content{
 
 
     <!-- NAVAZUJ�C� OBSAH -->
-    <section class="content">
+    <section class="content" style="background-image: url('<?php echo htmlspecialchars($heroBackgroundImage, ENT_QUOTES, 'UTF-8'); ?>');">
          <div class="container2">
             <h2>UMĚLCI</h2>
             <br>

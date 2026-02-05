@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/includes/program_repository.php';
+require_once __DIR__ . '/includes/background_repository.php';
 $programItems = get_program_items(3);
+$heroBackgroundImage = get_background_image('home', 'kostel.jpg');
 ?>
 ﻿<!doctype html>
 <html lang="cs">
@@ -89,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     <!-- HERO / HEADER -->
-    <section class="hero" id="img">
+    <section class="hero" id="img" style="background-image: url('<?php echo htmlspecialchars($heroBackgroundImage, ENT_QUOTES, 'UTF-8'); ?>');">
         <div class="hero__overlay"></div>
 
 
