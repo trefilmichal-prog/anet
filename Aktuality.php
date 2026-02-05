@@ -4,6 +4,413 @@
     <meta charset="utf-8">
     <title>Background Gradient Layout</title>
     <link rel="stylesheet" href="style.css">
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+  var header = document.querySelector('.site-header');
+  var btn = document.querySelector('.nav-toggle');
+  var nav = document.querySelector('.main-nav');
+
+  if (header && btn && nav) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var open = header.classList.toggle('nav-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    nav.addEventListener('click', function (e) {
+      if (e.target && e.target.tagName === 'A') {
+        header.classList.remove('nav-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('click', function () {
+      header.classList.remove('nav-open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  var body = document.body;
+  var overlay = document.getElementById('intro-overlay');
+  var canvas = document.getElementById('intro-particles');
+  var content = document.querySelector('.content');
+  var introDuration = 650;
+
+  if (!body || !overlay || !canvas || !content) {
+    return;
+  }
+
+  var ctx = canvas.getContext('2d');
+  if (!ctx) {
+    body.classList.add('intro-done');
+    if (overlay.parentNode) {
+      overlay.parentNode.removeChild(overlay);
+    }
+    return;
+  }
+
+  body.classList.add('intro-active');
+
+  var particles = [];
+  var particleCount = 60;
+  var rafId = null;
+  var width = 0;
+  var height = 0;
+
+  function resizeCanvas() {
+    width = canvas.clientWidth;
+    height = canvas.clientHeight;
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  function createParticle() {
+    return {
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: 0.6 + Math.random() * 2,
+      speedX: -0.2 + Math.random() * 0.4,
+      speedY: -0.25 + Math.random() * 0.5,
+      alpha: 0.2 + Math.random() * 0.7
+    };
+  }
+
+  function initParticles() {
+    particles = [];
+    for (var i = 0; i < particleCount; i += 1) {
+      particles.push(createParticle());
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, width, height);
+
+    for (var i = 0; i < particles.length; i += 1) {
+      var p = particles[i];
+      p.x += p.speedX;
+      p.y += p.speedY;
+
+      if (p.x < -6 || p.x > width + 6 || p.y < -6 || p.y > height + 6) {
+        particles[i] = createParticle();
+        particles[i].x = Math.random() < 0.5 ? -4 : width + 4;
+        particles[i].y = Math.random() * height;
+        p = particles[i];
+      }
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255, 230, 173, ' + p.alpha + ')';
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    rafId = requestAnimationFrame(animateParticles);
+  }
+
+  function finishIntro() {
+    body.classList.add('intro-done');
+    body.classList.remove('intro-active');
+
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+
+    setTimeout(function () {
+      if (overlay && overlay.parentNode) {
+        overlay.parentNode.removeChild(overlay);
+      }
+    }, 250);
+  }
+
+  resizeCanvas();
+  initParticles();
+  animateParticles();
+
+  window.addEventListener('resize', function () {
+    resizeCanvas();
+    initParticles();
+  });
+
+  setTimeout(function () {
+    overlay.classList.add('is-exiting');
+    finishIntro();
+  }, introDuration);
+
+  setTimeout(function () {
+    if (body.classList.contains('intro-active')) {
+      finishIntro();
+    }
+  }, introDuration + 500);
+});
+</script>
+
+
+
+
+
+<style>
+/* ===== Faster intro (star + content) ===== */
+#intro-star{
+  animation-duration:.55s !important;
+  transition-duration:.35s !important;
+}
+#intro-overlay, #intro-mask{
+  transition-duration:.35s !important;
+}
+body.intro-active .content{transition-duration:.35s !important;}
+body.intro-done .content{transition-duration:.35s !important;}
+
+/* ===== News Cards (Aktuality) ===== */
+.news__container{margin-top:18px;}
+.news__grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:18px;
+}
+@media (max-width: 980px){
+  .news__grid{grid-template-columns:repeat(6,1fr);}
+}
+@media (max-width: 640px){
+  .news__grid{grid-template-columns:repeat(1,1fr);}
+}
+.news-card{
+  grid-column:span 12;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 14px 50px rgba(0,0,0,.22);
+  backdrop-filter: blur(10px);
+}
+.news-card__top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding:18px 18px 0 18px;
+}
+.news-card__tag{
+  display:inline-flex;
+  align-items:center;
+  font-size:.85rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  opacity:.8;
+  padding:0;
+  border:none;
+  background:transparent;
+  white-space:nowrap;
+}
+.news-card__date{
+  opacity:.8;
+  font-size:.9rem;
+  white-space:nowrap;
+}
+.news-card__body{padding:12px 18px 18px 18px;}
+.news-card__title{
+  margin:0 0 10px 0;
+  font-size:1.25rem;
+  line-height:1.25;
+}
+.news-card__lead{
+  margin:0 0 10px 0;
+  opacity:.92;
+}
+.news-card__text p{margin:0 0 10px 0; opacity:.88;}
+.news-card__text p:last-child{margin-bottom:0;}
+.news-card__btn:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.22);
+}
+.news-card details{
+  margin-top:10px;
+  border-top:1px solid rgba(255,255,255,.10);
+  padding-top:12px;
+}
+.news-card summary{
+  cursor:pointer;
+  list-style:none;
+  opacity:.9;
+}
+.news-card summary::-webkit-details-marker{display:none;}
+.news-card summary:after{
+  content:"▾";
+  float:right;
+  opacity:.7;
+  transform:translateY(1px);
+}
+.news-card details[open] summary:after{content:"▴";}
+</style>
+
+</head>
+<body>
+    <div id="intro-overlay" aria-hidden="true">
+        <canvas id="intro-particles"></canvas>
+        <div id="intro-mask"></div>
+        <div id="intro-star">✦</div>
+    </div>
+    
+<header class="site-header" id="head">
+        <div class="header-inner">
+
+            <!-- LOGO -->
+            <div class="logo">
+                Harmonia Caelestis
+            </div>
+<button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+             <span></span> 
+             <span></span>
+             <span></span>
+            </button>
+            <!-- NAVIGACE -->
+            <nav class="main-nav">
+                <a href="index.php">Úvod</a>
+                <a href="Aktuality.php">Aktuality</a>
+                <a href="Program.php">Program</a>
+                <a href="Umelci.php">Umělci</a>
+                <a href="Ofestivalu.php">O festivalu</a>
+                <a class="icon icon--fb" href="https://www.facebook.com/hcimfcz/" aria-label="Facebook"><span></span></a>
+                <a class="icon icon--mail" href="mailto:reditel@ipd-ccsh.cz" aria-label="E-mail"><span></span></a>
+
+
+
+
+            </nav>
+
+        </div>
+    </header>
+
+
+    <!-- NAVAZUJÍCÍ OBSAH -->
+    <section class="content">
+        <div class="container2">
+            <h2>AKTUALITY</h2>
+            <br>
+            <h3>Novinky a tiskové zprávy</h3>
+            <div class="container2-divider"></div>
+
+            <div class="news__container">
+                <div class="news__grid">
+
+                    <!-- 1) Pozvánka -->
+                    <article class="news-card">
+                        <div class="news-card__top">
+                            <span class="news-card__tag">Sdělení</span>
+                            <div class="news-card__date">15. 6. 2026 - 16:00</div>
+                        </div>
+                        <div class="news-card__body">
+                            <h3 class="news-card__title">Zveme na koncert do kostela Krista dobrého Pastýře</h3>
+                            <p class="news-card__lead">
+                                S radostí připravujeme třetí ročník festivalu. Setkáme se při poslechu kvalitní hudby v interpretaci polského umělce Romana Perućki.
+                            </p>
+                            <div class="news-card__text">
+                                <p><strong>Vstupné:</strong> dobrovolné.</p>
+                            </div>
+</div>
+                    </article>
+
+                    <!-- 2) Tisková zpráva -->
+                    <article class="news-card">
+                        <div class="news-card__top">
+                            <span class="news-card__tag">Sdělení</span>
+                            <div class="news-card__date">26. 5. 2026 - --:--</div>
+                        </div>
+                        <div class="news-card__body">
+                            <h3 class="news-card__title">Harmonia Caelestis vstupuje do třetí sezóny, získal podporu pro další rok</h3>
+                            <p class="news-card__lead">
+                                Plzeň, 26. 5. 2026. Festival klasické hudby Harmonia Caelestis získal i pro rok 2026 od Magistrátu města Plzeň, města Milevsko a Ministerstva kultury ČR podporu pro pořádání koncertů.
+                            </p>
+
+                            <details>
+                                <summary>Číst celý článek</summary>
+                                <div class="news-card__text">
+                                    <p>
+                                        Stejně jako loni se jejich místem konání stane kostel Krista dobrého Pastýře na Husově ulici.
+                                    </p>
+                                    <p>
+                                        „Máme radost, že festival Harmonia Caelestis může díky podpoře města Plzeň, Ministerstva kultury a města Milevsko zahájit svůj třetí ročník,“ říká ředitel festivalu Lukáš Moc.
+                                        „I v letošním roce se návštěvníci mohou těšit na pestrý program, v jehož rámci zazní skladby známých i méně známých skladatelů napříč žánry i érami klasické hudby.“
+                                    </p>
+
+                                    <p><strong>Kostel jako koncertní síň</strong></p>
+                                    <p>
+                                        Druhý ročník festivalu Harmonia Caelestis nabídne pásmo koncertů, které se budou konat od června 2025.
+                                        Stejně jako v průběhu loňského, debutového ročníku se i letos budou koncerty konat v prostorách kostela Krista dobrého Pastýře na plzeňské Husově ulici.
+                                        Letos se navíc jeden z koncertů odehraje také v prostorách milevské synagogy.
+                                    </p>
+
+                                    <p><strong>Kultura dostupná všem</strong></p>
+                                    <p>
+                                        Jedním z cílů festivalu Harmonia Caelestis je zpřístupnit klasickou hudbu co možná nejširšímu publiku a v duchu svého motta
+                                        „Tóny nebeské harmonie otevírají duše a spojují světy“ propojit publikum s tvůrci i interprety.
+                                    </p>
+                                    <p>
+                                        „V některých lidech je zakořeněné přesvědčení, že klasická hudba je něčím příliš komplikovaným, náročným, nezábavným,
+                                        případně že jsou koncerty vážné hudby drahé a určené vyšším vrstvám. To v případě našeho festivalu neplatí,“ zdůrazňuje Lukáš Moc.
+                                        Vstupné na všechny koncerty v rámci festivalu je dobrovolné.
+                                    </p>
+                                    <p>
+                                        „Za to, že si můžeme dovolit nasadit dobrovolné vstupné, vděčíme Magistrátu města Plzně, Ministerstvu kultury a městu Milevsko,
+                                        kteří našemu festivalu s důvěrou poskytli velkorysou finanční podporu,“ dodává Moc.
+                                    </p>
+                                    <p>
+                                        První koncert v rámci festivalu se odehraje v prostorách kostela Krista dobrého Pastýře již v průběhu června.
+                                        V průběhu roku budou realizovány další koncerty klasické hudby v interpretaci špičkových českých i zahraničních umělců.
+                                    </p>
+                                </div>
+                            </details>
+
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <footer class="site-footer" id="sponsors">
+
+            <div class="footer-inner">
+
+                <div class="footer-title">Partneři</div>
+
+                <div class="sponsors-row">
+                    <a href="https://www.ccshplzen.cz" class="sponsor">
+                        <img src="ccsh.png" alt="ccsh">
+                    </a>
+
+                    <a href="https://duxnet.cz" class="sponsor">
+                        <img src="d.png" alt="Duxnet.cz">
+                    </a>
+                    <a href="https://mk.gov.cz" class="sponsor">
+                        <img src="mk.jpg" alt="MK">
+                    </a>
+                    <a href="https://www.plzen2025.eu" class="sponsor">
+                        <img src="2025.png" alt="2025">
+                    </a>
+
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </section>
+
+    <!-- PŮVODNÍ VERZE (záloha pro porovnání) -->
+    <!--
+<!doctype html>
+<html lang="cs">
+<head>
+    <meta charset="utf-8">
+    <title>Background Gradient Layout</title>
+    <link rel="stylesheet" href="style.css">
     <script>
 document.addEventListener('DOMContentLoaded', function () {
   var header = document.querySelector('.site-header');
@@ -38,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <header class="site-header" id="head">
         <div class="header-inner">
 
-            <!-- LOGO -->
+            <!— LOGO —>
             <div class="logo">
                 Harmonia Caelestis
             </div>
@@ -47,15 +454,15 @@ document.addEventListener('DOMContentLoaded', function () {
              <span></span>
              <span></span>
             </button>
-            <!-- NAVIGACE -->
+            <!— NAVIGACE —>
             <nav class="main-nav">
                 <a href="index.php">Úvod</a>
                 <a href="Aktuality.php">Aktuality</a>
                 <a href="Program.php">Program</a>
                 <a href="Umelci.php">Umělci</a>
                 <a href="Ofestivalu.php">O festivalu</a>
-                <a class="icon icon--fb" href="https://www.facebook.com/hcimfcz/" aria-label="Facebook"><span></span></a>
-                <a class="icon icon--mail" href="mailto:reditel@ipd-ccsh.cz" aria-label="E-mail"><span></span></a>
+                <a class="icon icon—fb" href="https://www.facebook.com/hcimfcz/" aria-label="Facebook"><span></span></a>
+                <a class="icon icon—mail" href="mailto:reditel@ipd-ccsh.cz" aria-label="E-mail"><span></span></a>
 
 
 
@@ -67,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    <!-- NAVAZUJ�C� OBSAH -->
+    <!— NAVAZUJ�C� OBSAH —>
     <section class="content">
         <div class="container2">
             <h2>AKTUALITY</h2>
@@ -132,5 +539,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+</body>
+</html>
+
+    -->
 </body>
 </html>

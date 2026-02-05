@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var overlay = document.getElementById('intro-overlay');
   var canvas = document.getElementById('intro-particles');
   var content = document.querySelector('.content');
-  var introDuration = 2800;
+  var introDuration = 850;
 
   if (!body || !overlay || !canvas || !content) {
     return;
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (overlay && overlay.parentNode) {
         overlay.parentNode.removeChild(overlay);
       }
-    }, 800);
+    }, 200);
   }
 
   resizeCanvas();
@@ -143,11 +143,75 @@ document.addEventListener('DOMContentLoaded', function () {
     if (body.classList.contains('intro-active')) {
       finishIntro();
     }
-  }, introDuration + 1400);
+  }, introDuration + 700);
 });
 </script>
 
 
+
+
+<style>
+/* Speed up intro overlay exit and content reveal */
+#intro-overlay,
+#intro-overlay *{
+  transition-duration: .22s !important;
+  animation-duration: .22s !important;
+}
+#intro-overlay.is-exiting{
+  transition-duration: .22s !important;
+}
+body.intro-active .content{
+  transition-duration: .22s !important;
+  transition-delay: 0s !important;
+}
+body.intro-done .content{
+  transition-duration: .22s !important;
+  transition-delay: 0s !important;
+}
+
+/* ===== Artist Hover (NO click/focus) ===== */
+
+#hover-particles{
+  position:fixed; inset:0;
+  width:100vw; height:100vh;
+  pointer-events:none;
+  z-index:9500;
+}
+
+/* Hover lift (does not persist) */
+.artist-card{
+  position:relative;
+  transform:translateZ(0);
+  transition:transform .22s ease, box-shadow .22s ease, filter .22s ease;
+  will-change:transform;
+}
+.artist-card:hover{
+  transform:translateY(-8px) scale(1.02);
+  z-index:50;
+  box-shadow:0 18px 60px rgba(0,0,0,.35);
+}
+
+
+/* Speed up star animation (override whatever is in style.css) */
+#intro-star{ animation-duration: .75s !important; }
+.artist-card__star{ animation-duration: .95s !important; }
+
+
+/* Speed up content reveal inside artist cards (override style.css) */
+.artist-card__media,
+.artist-card__name,
+.artist-card__meta,
+.artist-card__divider,
+.artist-card__desc,
+.artist-card__actions,
+.artist-card__body{
+  transition-duration: .16s !important;
+  transition-delay: 0s !important;
+  animation-duration: .22s !important;
+  animation-delay: 0s !important;
+}
+
+</style>
 
 </head>
 <body>
@@ -470,9 +534,160 @@ document.addEventListener('DOMContentLoaded', function () {
     </section>
 
     
+  <canvas id="hover-particles" aria-hidden="true"></canvas>
 
+  <script>
+(function(){
+  var canvas = document.getElementById('hover-particles');
+  var cards = document.querySelectorAll('.artist-card');
+  if (!canvas || !cards || !cards.length) return;
 
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
+  var dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  var vw = 0, vh = 0;
+  function resize(){
+    vw = window.innerWidth || document.documentElement.clientWidth || 0;
+    vh = window.innerHeight || document.documentElement.clientHeight || 0;
+    canvas.style.width = vw + 'px';
+    canvas.style.height = vh + 'px';
+    canvas.width = Math.floor(vw * dpr);
+    canvas.height = Math.floor(vh * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var activeHover = null;
+  var hoverRect = null;
+  var particles = [];
+  var raf = null;
+  var lastT = 0;
+  var emitAcc = 0;
+
+  function getRect(el){
+    try { return el.getBoundingClientRect(); } catch(e){ return null; }
+  }
+
+  function spawnEdgeParticle(r){
+    // spawn only on border (thin band)
+    var side = Math.floor(Math.random()*4); // 0 top,1 right,2 bottom,3 left
+    var inset = 2 + Math.random()*4; // band thickness
+    var x, y;
+    if (side === 0){
+      x = r.left + Math.random()*r.width;
+      y = r.top + inset;
+    } else if (side === 1){
+      x = r.right - inset;
+      y = r.top + Math.random()*r.height;
+    } else if (side === 2){
+      x = r.left + Math.random()*r.width;
+      y = r.bottom - inset;
+    } else {
+      x = r.left + inset;
+      y = r.top + Math.random()*r.height;
+    }
+    // gentle outward drift
+    var vx = (Math.random()-.5)*0.35;
+    var vy = (Math.random()-.5)*0.35;
+    if (side===0) vy = -0.35 - Math.random()*0.25;
+    if (side===2) vy =  0.35 + Math.random()*0.25;
+    if (side===1) vx =  0.35 + Math.random()*0.25;
+    if (side===3) vx = -0.35 - Math.random()*0.25;
+
+    particles.push({
+      x:x, y:y,
+      vx:vx, vy:vy,
+      life: 600 + Math.random()*500,
+      age:0,
+      size: 1 + Math.random()*2.2,
+      a: 0.25 + Math.random()*0.55
+    });
+  }
+
+  function animate(t){
+    if (!lastT) lastT = t;
+    var dt = Math.min(40, t - lastT);
+    lastT = t;
+
+    ctx.clearRect(0,0,vw,vh);
+
+    // keep hoverRect synced with scroll/layout
+    if (activeHover){
+      hoverRect = getRect(activeHover);
+      if (hoverRect && hoverRect.width > 0 && hoverRect.height > 0){
+        // emit rate ~ 80/s (scaled by dt)
+        emitAcc += dt;
+        while (emitAcc >= 12){
+          emitAcc -= 12;
+          spawnEdgeParticle(hoverRect);
+        }
+      }
+    }
+
+    for (var i = particles.length - 1; i >= 0; i--){
+      var p = particles[i];
+      p.age += dt;
+      if (p.age >= p.life){
+        particles.splice(i,1);
+        continue;
+      }
+      var k = 1 - (p.age / p.life);
+      p.x += p.vx * (dt * 0.06);
+      p.y += p.vy * (dt * 0.06);
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255,230,173,' + (p.a * k) + ')';
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // stop loop when nothing left
+    if (activeHover || particles.length){
+      raf = requestAnimationFrame(animate);
+    } else {
+      raf = null;
+      lastT = 0;
+      ctx.clearRect(0,0,vw,vh);
+    }
+  }
+
+  function ensureAnim(){
+    if (!raf) raf = requestAnimationFrame(animate);
+  }
+
+  function onEnter(card){
+    activeHover = card;
+    hoverRect = getRect(card);
+    ensureAnim();
+  }
+  function onLeave(card){
+    if (activeHover === card) activeHover = null;
+    // let particles fade out naturally; loop stops when empty
+    ensureAnim();
+  }
+
+  // Events
+  for (var i=0;i<cards.length;i++){
+    (function(card){
+      card.addEventListener('mouseenter', function(){ onEnter(card); }, {passive:true});
+      card.addEventListener('mouseleave', function(){ onLeave(card); }, {passive:true});
+    })(cards[i]);
+  }
+
+  // Safety: if user scrolls while not in focus, keep hover aligned
+  window.addEventListener('scroll', function(){
+    if (!activeHover) return;
+    ensureAnim();
+  }, {passive:true});
+
+  // When leaving the window, drop hover immediately (prevents "stuck" state)
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden){ activeHover = null; ensureAnim(); }
+  });
+})();
+  </script>
 
 </body>
 </html>
