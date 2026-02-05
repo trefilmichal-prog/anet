@@ -72,6 +72,12 @@ try {
     }
 
     $rows = $db->query('SELECT id, name, role, image, sort_order FROM artists ORDER BY sort_order ASC, id DESC')->fetchAll();
+} catch (RuntimeException $e) {
+    error_log('Admin artists DB failed: ' . $e->getMessage());
+    if ($error === '') {
+        $error = $e->getMessage();
+    }
+    $rows = array();
 } catch (Exception $e) {
     error_log('Admin artists init failed: ' . $e->getMessage());
     if ($error === '') {
