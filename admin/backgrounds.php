@@ -60,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $editRow = null;
-    } catch (RuntimeException $e) {
-        $error = $e->getMessage();
+    } catch (Throwable $e) {
+        $error = $e->getMessage() !== '' ? $e->getMessage() : 'Při ukládání došlo k chybě.';
     }
 }
 
