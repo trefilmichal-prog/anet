@@ -1,3 +1,48 @@
+<?php
+require_once __DIR__ . '/includes/db.php';
+
+$newsRows = array();
+$newsError = '';
+
+try {
+    $db = get_db();
+    $stmt = $db->query('SELECT id, title, body, image, published_at, sort_order FROM news ORDER BY sort_order ASC, id DESC');
+    $newsRows = $stmt->fetchAll();
+} catch (RuntimeException $e) {
+    error_log('Aktuality DB failed: ' . $e->getMessage());
+    $newsError = 'Aktuality se teď nepodařilo načíst. Zkuste to prosím později.';
+    $newsRows = array();
+} catch (Exception $e) {
+    error_log('Aktuality load failed: ' . $e->getMessage());
+    $newsError = 'Aktuality se teď nepodařilo načíst. Zkuste to prosím později.';
+    $newsRows = array();
+}
+
+function split_news_body($body)
+{
+    $normalized = trim(str_replace(array("\r\n", "\r"), "\n", (string) $body));
+    if ($normalized === '') {
+        return array('', array());
+    }
+
+    $parts = preg_split("/\n\s*\n+/", $normalized);
+    $paragraphs = array();
+
+    foreach ($parts as $part) {
+        $clean = trim($part);
+        if ($clean !== '') {
+            $paragraphs[] = $clean;
+        }
+    }
+
+    if (!$paragraphs) {
+        return array('', array());
+    }
+
+    $lead = array_shift($paragraphs);
+    return array($lead, $paragraphs);
+}
+?>
 <!doctype html>
 <html lang="cs">
 <head>
@@ -213,6 +258,16 @@ body.intro-done .content{transition-duration:.35s !important;}
   white-space:nowrap;
 }
 .news-card__body{padding:12px 18px 18px 18px;}
+.news-card__image-wrap{
+  padding:0 18px;
+}
+.news-card__image{
+  display:block;
+  width:100%;
+  max-height:320px;
+  object-fit:cover;
+  border-radius:12px;
+}
 .news-card__title{
   margin:0 0 10px 0;
   font-size:1.25rem;
@@ -298,77 +353,58 @@ body.intro-done .content{transition-duration:.35s !important;}
 
             <div class="news__container">
                 <div class="news__grid">
-
-                    <!-- 1) Pozvánka -->
-                    <article class="news-card">
-                        <div class="news-card__top">
-                            <span class="news-card__tag">Sdělení</span>
-                            <div class="news-card__date">15. 6. 2026 - 16:00</div>
-                        </div>
-                        <div class="news-card__body">
-                            <h3 class="news-card__title">Zveme na koncert do kostela Krista dobrého Pastýře</h3>
-                            <p class="news-card__lead">
-                                S radostí připravujeme třetí ročník festivalu. Setkáme se při poslechu kvalitní hudby v interpretaci polského umělce Romana Perućki.
-                            </p>
-                            <div class="news-card__text">
-                                <p><strong>Vstupné:</strong> dobrovolné.</p>
+                    <?php if ($newsError !== ''): ?>
+                        <article class="news-card">
+                            <div class="news-card__body">
+                                <p class="news-card__lead"><?php echo htmlspecialchars($newsError, ENT_QUOTES, 'UTF-8'); ?></p>
                             </div>
-</div>
-                    </article>
-
-                    <!-- 2) Tisková zpráva -->
-                    <article class="news-card">
-                        <div class="news-card__top">
-                            <span class="news-card__tag">Sdělení</span>
-                            <div class="news-card__date">26. 5. 2026 - --:--</div>
-                        </div>
-                        <div class="news-card__body">
-                            <h3 class="news-card__title">Harmonia Caelestis vstupuje do třetí sezóny, získal podporu pro další rok</h3>
-                            <p class="news-card__lead">
-                                Plzeň, 26. 5. 2026. Festival klasické hudby Harmonia Caelestis získal i pro rok 2026 od Magistrátu města Plzeň, města Milevsko a Ministerstva kultury ČR podporu pro pořádání koncertů.
-                            </p>
-
-                            <details>
-                                <summary>Číst celý článek</summary>
-                                <div class="news-card__text">
-                                    <p>
-                                        Stejně jako loni se jejich místem konání stane kostel Krista dobrého Pastýře na Husově ulici.
-                                    </p>
-                                    <p>
-                                        „Máme radost, že festival Harmonia Caelestis může díky podpoře města Plzeň, Ministerstva kultury a města Milevsko zahájit svůj třetí ročník,“ říká ředitel festivalu Lukáš Moc.
-                                        „I v letošním roce se návštěvníci mohou těšit na pestrý program, v jehož rámci zazní skladby známých i méně známých skladatelů napříč žánry i érami klasické hudby.“
-                                    </p>
-
-                                    <p><strong>Kostel jako koncertní síň</strong></p>
-                                    <p>
-                                        Druhý ročník festivalu Harmonia Caelestis nabídne pásmo koncertů, které se budou konat od června 2025.
-                                        Stejně jako v průběhu loňského, debutového ročníku se i letos budou koncerty konat v prostorách kostela Krista dobrého Pastýře na plzeňské Husově ulici.
-                                        Letos se navíc jeden z koncertů odehraje také v prostorách milevské synagogy.
-                                    </p>
-
-                                    <p><strong>Kultura dostupná všem</strong></p>
-                                    <p>
-                                        Jedním z cílů festivalu Harmonia Caelestis je zpřístupnit klasickou hudbu co možná nejširšímu publiku a v duchu svého motta
-                                        „Tóny nebeské harmonie otevírají duše a spojují světy“ propojit publikum s tvůrci i interprety.
-                                    </p>
-                                    <p>
-                                        „V některých lidech je zakořeněné přesvědčení, že klasická hudba je něčím příliš komplikovaným, náročným, nezábavným,
-                                        případně že jsou koncerty vážné hudby drahé a určené vyšším vrstvám. To v případě našeho festivalu neplatí,“ zdůrazňuje Lukáš Moc.
-                                        Vstupné na všechny koncerty v rámci festivalu je dobrovolné.
-                                    </p>
-                                    <p>
-                                        „Za to, že si můžeme dovolit nasadit dobrovolné vstupné, vděčíme Magistrátu města Plzně, Ministerstvu kultury a městu Milevsko,
-                                        kteří našemu festivalu s důvěrou poskytli velkorysou finanční podporu,“ dodává Moc.
-                                    </p>
-                                    <p>
-                                        První koncert v rámci festivalu se odehraje v prostorách kostela Krista dobrého Pastýře již v průběhu června.
-                                        V průběhu roku budou realizovány další koncerty klasické hudby v interpretaci špičkových českých i zahraničních umělců.
-                                    </p>
+                        </article>
+                    <?php elseif (!$newsRows): ?>
+                        <article class="news-card">
+                            <div class="news-card__body">
+                                <p class="news-card__lead">Zatím bez aktualit</p>
+                            </div>
+                        </article>
+                    <?php else: ?>
+                        <?php foreach ($newsRows as $row): ?>
+                            <?php
+                            $bodyData = split_news_body(isset($row['body']) ? $row['body'] : '');
+                            $leadText = $bodyData[0];
+                            $restParagraphs = $bodyData[1];
+                            ?>
+                            <article class="news-card">
+                                <div class="news-card__top">
+                                    <span class="news-card__tag">Sdělení</span>
+                                    <div class="news-card__date"><?php echo htmlspecialchars((string) $row['published_at'], ENT_QUOTES, 'UTF-8'); ?></div>
                                 </div>
-                            </details>
 
-                        </div>
-                    </article>
+                                <?php if (!empty($row['image'])): ?>
+                                    <div class="news-card__image-wrap">
+                                        <img class="news-card__image" src="<?php echo htmlspecialchars((string) $row['image'], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars((string) $row['title'], ENT_QUOTES, 'UTF-8'); ?>">
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="news-card__body">
+                                    <h3 class="news-card__title"><?php echo htmlspecialchars((string) $row['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
+
+                                    <?php if ($leadText !== ''): ?>
+                                        <p class="news-card__lead"><?php echo nl2br(htmlspecialchars($leadText, ENT_QUOTES, 'UTF-8')); ?></p>
+                                    <?php endif; ?>
+
+                                    <?php if ($restParagraphs): ?>
+                                        <details>
+                                            <summary>Číst celý článek</summary>
+                                            <div class="news-card__text">
+                                                <?php foreach ($restParagraphs as $paragraph): ?>
+                                                    <p><?php echo nl2br(htmlspecialchars($paragraph, ENT_QUOTES, 'UTF-8')); ?></p>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </details>
+                                    <?php endif; ?>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
 
                 </div>
             </div>
