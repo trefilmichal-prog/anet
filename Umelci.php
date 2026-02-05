@@ -39,6 +39,7 @@ function normalize_artist_image_path($imagePath)
 <html lang="cs">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Background Gradient Layout</title>
     <link rel="stylesheet" href="Style.css">
 
