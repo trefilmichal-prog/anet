@@ -71,7 +71,15 @@ try {
         }
     }
 
-    $rows = $db->query('SELECT id, title, image, published_at, sort_order FROM news ORDER BY sort_order ASC, id DESC')->fetchAll();
+    $rows = $db->query("SELECT id, title, image, published_at, sort_order FROM news
+        ORDER BY
+            CASE
+                WHEN published_at IS NULL OR TRIM(published_at) = '' THEN 1
+                ELSE 0
+            END ASC,
+            datetime(published_at) DESC,
+            sort_order ASC,
+            id DESC")->fetchAll();
 } catch (RuntimeException $e) {
     error_log('Admin news DB failed: ' . $e->getMessage());
     if ($error === '') {

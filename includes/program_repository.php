@@ -6,9 +6,19 @@ function get_program_items($limit = null)
 {
     $db = get_db();
 
-    $sql = 'SELECT id, title, subtitle, venue, event_date, event_time, image, sort_order
+    $sql = "SELECT id, title, subtitle, venue, event_date, event_time, image, sort_order
             FROM program_items
-            ORDER BY sort_order ASC, id DESC';
+            ORDER BY
+                CASE
+                    WHEN event_date IS NULL OR TRIM(event_date) = '' THEN 1
+                    ELSE 0
+                END ASC,
+                datetime(event_date || ' ' || CASE
+                    WHEN event_time IS NULL OR TRIM(event_time) = '' THEN '23:59'
+                    ELSE event_time
+                END) ASC,
+                sort_order ASC,
+                id DESC";
 
     if ($limit !== null) {
         $sql .= ' LIMIT :limit';
