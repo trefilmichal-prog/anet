@@ -21,6 +21,7 @@ try {
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $action = isset($_POST['action']) ? trim($_POST['action']) : 'save';
         $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
         $title = isset($_POST['title']) ? trim($_POST['title']) : '';
         $subtitle = isset($_POST['subtitle']) ? trim($_POST['subtitle']) : '';
@@ -30,6 +31,16 @@ try {
         $sortOrder = isset($_POST['sort_order']) ? (int) $_POST['sort_order'] : 0;
 
         try {
+            if ($action === 'delete') {
+                if ($id <= 0) {
+                    throw new RuntimeException('Nepodařilo se určit položku ke smazání.');
+                }
+
+                $deleteStmt = $db->prepare('DELETE FROM program_items WHERE id = :id');
+                $deleteStmt->execute(array(':id' => $id));
+                $message = 'Položka programu byla odstraněna.';
+                $editRow = null;
+            } else {
             if ($title === '') {
                 throw new RuntimeException('Název je povinný.');
             }
@@ -72,6 +83,7 @@ try {
             }
 
             $editRow = null;
+            }
         } catch (Exception $e) {
             $error = resolve_admin_form_error($e);
         }
@@ -176,7 +188,16 @@ require_once __DIR__ . '/partials/header.php';
                             <td data-label="ID">#<?php echo (int) $row['id']; ?></td>
                             <td data-label="Název"><?php echo h($row['title']); ?></td>
                             <td data-label="Datum/pořadí"><?php echo h(trim($row['event_date'] . ' ' . $row['event_time'])); ?> / <?php echo (int) $row['sort_order']; ?></td>
-                            <td data-label="Akce"><a class="admin-button admin-button--secondary" href="program.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a></td>
+                            <td data-label="Akce">
+                                <div class="admin-actions">
+                                    <a class="admin-button admin-button--secondary" href="program.php?edit=<?php echo (int) $row['id']; ?>">Upravit</a>
+                                    <form method="post" onsubmit="return confirm('Opravdu chcete tuto položku programu odstranit?');">
+                                        <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
+                                        <input type="hidden" name="action" value="delete">
+                                        <button class="admin-button admin-button--danger" type="submit">Odstranit</button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
