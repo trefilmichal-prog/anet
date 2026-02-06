@@ -6,6 +6,7 @@ function get_allowed_background_page_keys()
 {
     return array(
         'home' => 'Úvod',
+        'home_content' => 'Úvod – spodní pozadí',
         'news' => 'Aktuality',
         'program' => 'Program',
         'artists' => 'Umělci',
