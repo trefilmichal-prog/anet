@@ -5,7 +5,11 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   var finePointer = window.matchMedia('(pointer: fine)');
   var anyFinePointer = window.matchMedia('(any-pointer: fine)');
-  var allowPointer = finePointer.matches || anyFinePointer.matches;
+  var coarsePointer = window.matchMedia('(pointer: coarse)');
+  var noHover = window.matchMedia('(hover: none)');
+  var allowPointer = (finePointer.matches || anyFinePointer.matches)
+    && !coarsePointer.matches
+    && !noHover.matches;
 
   if (!allowPointer) {
     trail.style.display = 'none';

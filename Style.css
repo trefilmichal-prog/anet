@@ -1261,6 +1261,12 @@ body.intro-done .content {
   transition: opacity 0.2s ease;
 }
 
+@media (hover: none), (pointer: coarse), (max-width: 860px){
+  #cursor-trail{
+    display: none !important;
+  }
+}
+
 #cursor-trail.is-active{
   opacity: 1;
 }
