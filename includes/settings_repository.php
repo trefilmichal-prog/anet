@@ -131,3 +131,34 @@ function normalize_admin_menu_opacity($value)
 
     return $normalized;
 }
+
+function get_admin_menu_rgba(&$menu_enabled = null)
+{
+    $defaults = get_admin_menu_defaults();
+    $menuEnabledValue = get_setting('admin_menu_bg_enabled', $defaults['admin_menu_bg_enabled']);
+    $menu_enabled = $menuEnabledValue === '1';
+
+    if (!$menu_enabled) {
+        return '';
+    }
+
+    $menuColorValue = get_setting('admin_menu_bg_color', $defaults['admin_menu_bg_color']);
+    $menuOpacityValue = get_setting('admin_menu_bg_opacity', $defaults['admin_menu_bg_opacity']);
+
+    $menuRgb = null;
+    $menuColorNormalized = normalize_admin_menu_color($menuColorValue, $menuRgb);
+    if ($menuColorNormalized === '') {
+        $menuColorNormalized = normalize_admin_menu_color($defaults['admin_menu_bg_color'], $menuRgb);
+    }
+
+    $menuOpacityNormalized = normalize_admin_menu_opacity($menuOpacityValue);
+    if ($menuOpacityNormalized === '') {
+        $menuOpacityNormalized = normalize_admin_menu_opacity($defaults['admin_menu_bg_opacity']);
+    }
+
+    if ($menuRgb === null || $menuOpacityNormalized === '') {
+        return '';
+    }
+
+    return 'rgba(' . $menuRgb['r'] . ', ' . $menuRgb['g'] . ', ' . $menuRgb['b'] . ', ' . $menuOpacityNormalized . ')';
+}
