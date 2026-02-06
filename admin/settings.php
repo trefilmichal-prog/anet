@@ -174,6 +174,12 @@ try {
                     $brandMessage = 'Brand byl uložen.';
                 }
             }
+        } elseif ($action === 'remove_brand_settings') {
+            set_setting('brand_type', '');
+            set_setting('brand_value', '');
+            $brandType = $brandDefaults['type'];
+            $brandValue = $brandDefaults['value'];
+            $brandMessage = 'Brand byl odstraněn. Použijí se výchozí hodnoty.';
         }
     }
 } catch (RuntimeException $e) {
@@ -324,7 +330,10 @@ require_once __DIR__ . '/partials/header.php';
                 <input type="text" name="brand_value" value="<?php echo h($brandValue); ?>">
                 <span class="admin-help">Text: název značky, Image: URL/relativní cesta, SVG: "inline" nebo cesta k SVG souboru.</span>
             </label>
-            <button class="admin-button" type="submit">Uložit brand</button>
+            <div class="admin-field">
+                <button class="admin-button" type="submit">Uložit brand</button>
+                <button class="admin-button admin-button--secondary" type="submit" name="action" value="remove_brand_settings">Odstranit brand</button>
+            </div>
         </form>
     </section>
 </section>
