@@ -7,6 +7,7 @@ $artists = array();
 $heroBackgroundImage = get_background_image('artists', 'back.png');
 $siteMenuRgba = get_admin_menu_rgba($siteMenuEnabled);
 $siteMenuStyle = $siteMenuRgba !== '' ? ' style="--site-menu-bg: ' . htmlspecialchars($siteMenuRgba, ENT_QUOTES, 'UTF-8') . ';"' : '';
+$siteHeaderClass = $siteMenuEnabled ? 'site-header site-header--menu-bg' : 'site-header';
 
 try {
     $db = get_db();
@@ -265,7 +266,7 @@ body.intro-done .content{
         <div id="intro-mask"></div>
         <div id="intro-star">✦</div>
     </div>
-    <header class="site-header" id="head"<?php echo $siteMenuStyle; ?>>
+    <header class="<?php echo $siteHeaderClass; ?>" id="head"<?php echo $siteMenuStyle; ?>>
         <div class="header-inner">
 
             <!-- LOGO -->
