@@ -159,6 +159,11 @@ body.intro-done .content {
     white-space: nowrap;
 }
 
+.logo-text {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
 .logo img {
     display: block;
     max-height: 56px;

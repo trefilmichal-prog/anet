@@ -21,14 +21,22 @@ function render_site_header()
     $siteHeaderClass = $siteMenuEnabled ? 'site-header site-header--menu-bg' : 'site-header';
     $menuItems = get_menu_items();
     $logoPath = trim((string) get_setting('site_logo_path', ''));
+    $logoType = trim((string) get_setting('site_logo_type', 'image'));
+    $logoText = trim((string) get_setting('site_logo_text', ''));
+    $logoFallback = 'Harmonia Caelestis';
+    if ($logoType === '') {
+        $logoType = $logoPath !== '' ? 'image' : 'text';
+    }
     ?>
     <header class="<?php echo htmlspecialchars($siteHeaderClass, ENT_QUOTES, 'UTF-8'); ?>" id="head"<?php echo $siteMenuStyle; ?>>
         <div class="header-inner">
             <div class="logo">
-                <?php if ($logoPath !== ''): ?>
-                    <img src="<?php echo htmlspecialchars($logoPath, ENT_QUOTES, 'UTF-8'); ?>" alt="Harmonia Caelestis">
+                <?php if ($logoType === 'text'): ?>
+                    <span class="logo-text"><?php echo htmlspecialchars($logoText !== '' ? $logoText : $logoFallback, ENT_QUOTES, 'UTF-8'); ?></span>
+                <?php elseif ($logoPath !== ''): ?>
+                    <img src="<?php echo htmlspecialchars($logoPath, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($logoFallback, ENT_QUOTES, 'UTF-8'); ?>">
                 <?php else: ?>
-                    Harmonia Caelestis
+                    <span class="logo-text"><?php echo htmlspecialchars($logoFallback, ENT_QUOTES, 'UTF-8'); ?></span>
                 <?php endif; ?>
             </div>
             <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">

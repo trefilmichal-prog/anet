@@ -26,6 +26,8 @@ $adminMenuColor = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_b
 $adminMenuOpacity = get_setting('admin_menu_bg_opacity', $menuDefaults['admin_menu_bg_opacity']);
 $siteFontFamily = get_setting('site_font_family', get_site_font_family_default());
 $siteLogoPath = get_setting('site_logo_path', '');
+$siteLogoType = get_setting('site_logo_type', 'image');
+$siteLogoText = get_setting('site_logo_text', '');
 $brandDefaults = array(
     'type' => 'svg',
     'value' => 'inline'
@@ -122,18 +124,37 @@ try {
                 $fontMessage = $siteFontFamilyInput === '' ? 'Font byl obnoven na výchozí hodnotu.' : 'Font byl úspěšně uložen.';
             }
         } elseif ($action === 'save_site_logo') {
-            $uploadedLogo = handle_image_upload('site_logo_file', 'logo');
+            $siteLogoTypeInput = isset($_POST['site_logo_type']) ? trim($_POST['site_logo_type']) : '';
+            $siteLogoTextInput = isset($_POST['site_logo_text']) ? trim($_POST['site_logo_text']) : '';
+            $allowedLogoTypes = array('image', 'text');
 
-            if ($uploadedLogo === null || $uploadedLogo === '') {
-                throw new RuntimeException('Vyberte obrázek loga ve formátu PNG, JPG nebo WebP.');
+            if (!in_array($siteLogoTypeInput, $allowedLogoTypes, true)) {
+                $logoError = 'Vyberte typ loga (obrázek nebo text).';
+            } elseif (strlen($siteLogoTextInput) > 120) {
+                $logoError = 'Text loga může mít maximálně 120 znaků.';
+            } else {
+                set_setting('site_logo_type', $siteLogoTypeInput);
+                set_setting('site_logo_text', $siteLogoTextInput);
+                $siteLogoType = $siteLogoTypeInput;
+                $siteLogoText = $siteLogoTextInput;
+
+                if ($siteLogoTypeInput === 'image') {
+                    $uploadedLogo = handle_image_upload('site_logo_file', 'logo');
+                    if ($uploadedLogo !== null && $uploadedLogo !== '') {
+                        set_setting('site_logo_path', $uploadedLogo);
+                        $siteLogoPath = $uploadedLogo;
+                    }
+                }
+
+                $logoMessage = 'Logo bylo uloženo.';
             }
-
-            set_setting('site_logo_path', $uploadedLogo);
-            $siteLogoPath = $uploadedLogo;
-            $logoMessage = 'Logo bylo uloženo.';
         } elseif ($action === 'remove_site_logo') {
             set_setting('site_logo_path', '');
+            set_setting('site_logo_type', '');
+            set_setting('site_logo_text', '');
             $siteLogoPath = '';
+            $siteLogoType = '';
+            $siteLogoText = '';
             $logoMessage = 'Logo bylo odstraněno.';
         } elseif ($action === 'save_brand_settings') {
             $brandTypeInput = isset($_POST['brand_type']) ? trim($_POST['brand_type']) : '';
@@ -259,6 +280,18 @@ require_once __DIR__ . '/partials/header.php';
                     <img class="admin-logo-preview" src="<?php echo h($siteLogoPath); ?>" alt="Aktuální logo webu">
                 </div>
             <?php endif; ?>
+            <label class="admin-field">
+                <span>Typ loga</span>
+                <select name="site_logo_type" required>
+                    <option value="image"<?php echo $siteLogoType === 'image' || $siteLogoType === '' ? ' selected' : ''; ?>>Obrázek</option>
+                    <option value="text"<?php echo $siteLogoType === 'text' ? ' selected' : ''; ?>>Text</option>
+                </select>
+            </label>
+            <label class="admin-field">
+                <span>Text loga</span>
+                <input type="text" name="site_logo_text" value="<?php echo h($siteLogoText); ?>" maxlength="120">
+                <span class="admin-help">Použije se jen pro textové logo. Maximum 120 znaků.</span>
+            </label>
             <label class="admin-field">
                 <span>Nahrát nové logo (PNG, JPG, WebP)</span>
                 <input type="file" name="site_logo_file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp">
