@@ -428,8 +428,8 @@ body.intro-done .content {
 }
 
 .brand{
-  position: fixed;
-  left:50%;
+  position: absolute;
+  left:57%;
   top: 50%;
   transform: translate(-50%, -50%);
   display:flex;
