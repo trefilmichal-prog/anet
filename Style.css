@@ -135,7 +135,7 @@ body.intro-done .content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(12, 7, 20, 0.72);
+    background: var(--site-menu-bg, rgba(12, 7, 20, 0.72));
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     backdrop-filter: blur(8px);
@@ -273,7 +273,7 @@ body.intro-done .content {
     flex-direction: column;
     gap: 0;
 
-    background: rgba(14, 8, 24, 0.98);
+    background: var(--site-menu-bg, rgba(14, 8, 24, 0.98));
     border: 1px solid rgba(255,255,255,0.10);
     border-radius: 14px;
     overflow: hidden;

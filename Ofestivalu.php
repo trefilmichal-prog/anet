@@ -5,6 +5,8 @@ require_once __DIR__ . '/includes/festival_content.php';
 
 $heroBackgroundImage = get_background_image('festival', 'back.png');
 $festivalPageText = get_setting('festival_page_text', get_default_festival_page_text());
+$siteMenuRgba = get_admin_menu_rgba($siteMenuEnabled);
+$siteMenuStyle = $siteMenuRgba !== '' ? ' style="--site-menu-bg: ' . htmlspecialchars($siteMenuRgba, ENT_QUOTES, 'UTF-8') . ';"' : '';
 ?>
 <!doctype html>
 <html lang="cs">
@@ -179,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <div id="intro-star" class="star-animated">✦</div>
     </div>
 
-    <header class="site-header" id="head">
+    <header class="site-header" id="head"<?php echo $siteMenuStyle; ?>>
         <div class="header-inner">
 
             <!-- LOGO -->

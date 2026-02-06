@@ -1,9 +1,12 @@
 <?php
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/background_repository.php';
+require_once __DIR__ . '/includes/settings_repository.php';
 
 $artists = array();
 $heroBackgroundImage = get_background_image('artists', 'back.png');
+$siteMenuRgba = get_admin_menu_rgba($siteMenuEnabled);
+$siteMenuStyle = $siteMenuRgba !== '' ? ' style="--site-menu-bg: ' . htmlspecialchars($siteMenuRgba, ENT_QUOTES, 'UTF-8') . ';"' : '';
 
 try {
     $db = get_db();
@@ -262,7 +265,7 @@ body.intro-done .content{
         <div id="intro-mask"></div>
         <div id="intro-star">✦</div>
     </div>
-    <header class="site-header" id="head">
+    <header class="site-header" id="head"<?php echo $siteMenuStyle; ?>>
         <div class="header-inner">
 
             <!-- LOGO -->
