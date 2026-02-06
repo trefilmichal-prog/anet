@@ -51,6 +51,14 @@ $brandLeftDesktopStyle = $brandLeftDesktop !== '' ? $brandLeftDesktop : '50%';
 $brandLeftMobileStyle = $brandLeftMobile !== '' ? $brandLeftMobile : '50%';
 $brandTranslateDesktop = $brandLeftDesktop !== '' ? '0' : '-50%';
 $brandTranslateMobile = $brandLeftMobile !== '' ? '0' : '-50%';
+$brandTextPathSize = normalize_brand_text_size(get_setting('brand_text_path_size', ''));
+$brandTextPathSizeMobile = normalize_brand_text_size(get_setting('brand_text_path_size_mobile', ''));
+if ($brandTextPathSize === null) {
+    $brandTextPathSize = '';
+}
+if ($brandTextPathSizeMobile === null) {
+    $brandTextPathSizeMobile = '';
+}
 $brandConfigPath = __DIR__ . '/includes/brand-config.php';
 if (file_exists($brandConfigPath)) {
     $brandConfig = require $brandConfigPath;
@@ -116,7 +124,7 @@ if (!in_array($brandType, array('text', 'image', 'svg'), true)) {
         <div class="hero__content">
 
 
-            <div class="brand" id="brand" style="--brand-left-desktop:<?php echo htmlspecialchars($brandLeftDesktopStyle, ENT_QUOTES, 'UTF-8'); ?>; --brand-left-mobile:<?php echo htmlspecialchars($brandLeftMobileStyle, ENT_QUOTES, 'UTF-8'); ?>; --brand-translate-desktop:<?php echo htmlspecialchars($brandTranslateDesktop, ENT_QUOTES, 'UTF-8'); ?>; --brand-translate-mobile:<?php echo htmlspecialchars($brandTranslateMobile, ENT_QUOTES, 'UTF-8'); ?>;">
+            <div class="brand" id="brand" style="--brand-left-desktop:<?php echo htmlspecialchars($brandLeftDesktopStyle, ENT_QUOTES, 'UTF-8'); ?>; --brand-left-mobile:<?php echo htmlspecialchars($brandLeftMobileStyle, ENT_QUOTES, 'UTF-8'); ?>; --brand-translate-desktop:<?php echo htmlspecialchars($brandTranslateDesktop, ENT_QUOTES, 'UTF-8'); ?>; --brand-translate-mobile:<?php echo htmlspecialchars($brandTranslateMobile, ENT_QUOTES, 'UTF-8'); ?>;<?php if ($brandTextPathSize !== ''): ?> --brand-text-path-size:<?php echo htmlspecialchars($brandTextPathSize, ENT_QUOTES, 'UTF-8'); ?>;<?php endif; ?><?php if ($brandTextPathSizeMobile !== ''): ?> --brand-text-path-size-mobile:<?php echo htmlspecialchars($brandTextPathSizeMobile, ENT_QUOTES, 'UTF-8'); ?>;<?php endif; ?>">
                 <?php if ($brandType === 'text'): ?>
                     <span class="brand-text"><?php echo htmlspecialchars($brandValue, ENT_QUOTES, 'UTF-8'); ?></span>
                 <?php elseif ($brandType === 'image'): ?>

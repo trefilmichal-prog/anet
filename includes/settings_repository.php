@@ -87,6 +87,36 @@ function normalize_site_font_family($value)
     return $value;
 }
 
+function normalize_brand_text_size($value)
+{
+    $value = trim((string) $value);
+
+    if ($value === '') {
+        return '';
+    }
+
+    if (!preg_match('/^\\d+(?:\\.\\d+)?(?:px)?$/i', $value)) {
+        return null;
+    }
+
+    $numericPart = preg_replace('/px$/i', '', $value);
+    if ($numericPart === '' || !is_numeric($numericPart)) {
+        return null;
+    }
+
+    $number = (float) $numericPart;
+    if ($number < 0) {
+        return null;
+    }
+
+    $normalized = rtrim(rtrim(sprintf('%.4F', $number), '0'), '.');
+    if ($normalized === '') {
+        $normalized = '0';
+    }
+
+    return $normalized . 'px';
+}
+
 function normalize_admin_menu_color($value, &$rgb = null)
 {
     $value = trim((string) $value);
