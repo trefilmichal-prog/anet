@@ -8,6 +8,12 @@ $homeContentBackgroundImage = get_background_image('home_content', 'back.png');
 $siteMenuRgba = get_admin_menu_rgba($siteMenuEnabled);
 $siteMenuStyle = $siteMenuRgba !== '' ? ' style="--site-menu-bg: ' . htmlspecialchars($siteMenuRgba, ENT_QUOTES, 'UTF-8') . ';"' : '';
 $siteHeaderClass = $siteMenuEnabled ? 'site-header site-header--menu-bg' : 'site-header';
+$siteFontFamilyValue = get_setting('site_font_family', get_site_font_family_default());
+$siteFontFamilyNormalized = normalize_site_font_family($siteFontFamilyValue);
+if ($siteFontFamilyNormalized === '') {
+    $siteFontFamilyNormalized = get_site_font_family_default();
+}
+$siteFontStyle = ' style="--site-font-family: ' . htmlspecialchars($siteFontFamilyNormalized, ENT_QUOTES, 'UTF-8') . ';"';
 ?>
 ﻿<!doctype html>
 <html lang="cs">
@@ -47,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 </head>
-<body>
+<body<?php echo $siteFontStyle; ?>>
     <div id="cursor-trail" aria-hidden="true"></div>
     <header class="<?php echo $siteHeaderClass; ?>" id="head"<?php echo $siteMenuStyle; ?>>
         <div class="header-inner">

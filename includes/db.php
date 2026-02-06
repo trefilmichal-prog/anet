@@ -127,6 +127,18 @@ function initialize_schema($pdo)
             ':value' => get_default_festival_page_text()
         ));
     }
+
+    $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
+    $stmt->execute(array(':key' => 'site_font_family'));
+    $siteFontFamily = $stmt->fetchColumn();
+
+    if ($siteFontFamily === false) {
+        $insert = $pdo->prepare('INSERT INTO settings(key, value) VALUES(:key, :value)');
+        $insert->execute(array(
+            ':key' => 'site_font_family',
+            ':value' => 'serif'
+        ));
+    }
 }
 
 function ensure_table_column($pdo, $tableName, $columnName, $columnDefinition)

@@ -9,6 +9,12 @@ $heroBackgroundImage = get_background_image('news', 'back.png');
 $siteMenuRgba = get_admin_menu_rgba($siteMenuEnabled);
 $siteMenuStyle = $siteMenuRgba !== '' ? ' style="--site-menu-bg: ' . htmlspecialchars($siteMenuRgba, ENT_QUOTES, 'UTF-8') . ';"' : '';
 $siteHeaderClass = $siteMenuEnabled ? 'site-header site-header--menu-bg' : 'site-header';
+$siteFontFamilyValue = get_setting('site_font_family', get_site_font_family_default());
+$siteFontFamilyNormalized = normalize_site_font_family($siteFontFamilyValue);
+if ($siteFontFamilyNormalized === '') {
+    $siteFontFamilyNormalized = get_site_font_family_default();
+}
+$siteFontStyle = ' style="--site-font-family: ' . htmlspecialchars($siteFontFamilyNormalized, ENT_QUOTES, 'UTF-8') . ';"';
 
 try {
     $db = get_db();
@@ -321,7 +327,7 @@ body.intro-done .content{transition-duration:.35s !important;}
 </style>
 
 </head>
-<body>
+<body<?php echo $siteFontStyle; ?>>
     <div id="cursor-trail" aria-hidden="true"></div>
     <div id="intro-overlay" aria-hidden="true">
         <canvas id="intro-particles"></canvas>

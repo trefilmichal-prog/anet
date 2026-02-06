@@ -11,12 +11,15 @@ $festivalMessage = '';
 $festivalError = '';
 $menuMessage = '';
 $menuError = '';
+$fontMessage = '';
+$fontError = '';
 $menuDefaults = get_admin_menu_defaults();
 $festivalText = get_setting('festival_page_text', get_default_festival_page_text());
 $adminMenuEnabledValue = get_setting('admin_menu_bg_enabled', $menuDefaults['admin_menu_bg_enabled']);
 $adminMenuEnabled = $adminMenuEnabledValue === '1';
 $adminMenuColor = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_bg_color']);
 $adminMenuOpacity = get_setting('admin_menu_bg_opacity', $menuDefaults['admin_menu_bg_opacity']);
+$siteFontFamily = get_setting('site_font_family', get_site_font_family_default());
 
 try {
     $db = get_db();
@@ -80,6 +83,18 @@ try {
             $adminMenuEnabled = $adminMenuEnabled === '1';
             $adminMenuColor = $adminMenuColorNormalized !== '' ? $adminMenuColorNormalized : $adminMenuColorInput;
             $adminMenuOpacity = $adminMenuOpacityNormalized !== '' ? $adminMenuOpacityNormalized : $adminMenuOpacityInput;
+        } elseif ($action === 'save_site_font_family') {
+            $siteFontFamilyInput = isset($_POST['site_font_family']) ? trim($_POST['site_font_family']) : '';
+            $siteFontFamilyNormalized = $siteFontFamilyInput === '' ? get_site_font_family_default() : normalize_site_font_family($siteFontFamilyInput);
+
+            if ($siteFontFamilyInput !== '' && $siteFontFamilyNormalized === '') {
+                $fontError = 'Font musí obsahovat pouze písmena, čísla, mezery, čárky nebo uvozovky.';
+                $siteFontFamily = $siteFontFamilyInput;
+            } else {
+                set_setting('site_font_family', $siteFontFamilyNormalized);
+                $siteFontFamily = $siteFontFamilyNormalized;
+                $fontMessage = $siteFontFamilyInput === '' ? 'Font byl obnoven na výchozí hodnotu.' : 'Font byl úspěšně uložen.';
+            }
         }
     }
 } catch (RuntimeException $e) {
@@ -87,11 +102,13 @@ try {
     $pinError = $e->getMessage();
     $festivalError = $e->getMessage();
     $menuError = $e->getMessage();
+    $fontError = $e->getMessage();
 } catch (Exception $e) {
     error_log('Admin settings init failed: ' . $e->getMessage());
     $pinError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $festivalError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $menuError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
+    $fontError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
 }
 
 $adminPageTitle = 'Nastavení';
@@ -148,6 +165,22 @@ require_once __DIR__ . '/partials/header.php';
                 <span class="admin-help">Příklad: 0.95 nebo 95</span>
             </label>
             <button class="admin-button" type="submit">Uložit nastavení menu</button>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h1>Font webu</h1>
+        <?php if ($fontMessage): ?><p class="admin-alert admin-alert--success"><?php echo h($fontMessage); ?></p><?php endif; ?>
+        <?php if ($fontError): ?><p class="admin-alert admin-alert--error"><?php echo h($fontError); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post">
+            <input type="hidden" name="action" value="save_site_font_family">
+            <label class="admin-field">
+                <span>Font-family</span>
+                <input type="text" name="site_font_family" value="<?php echo h($siteFontFamily); ?>">
+                <span class="admin-help">Příklad: "Times New Roman", serif</span>
+            </label>
+            <button class="admin-button" type="submit">Uložit font</button>
         </form>
     </section>
 </section>

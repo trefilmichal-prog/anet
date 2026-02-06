@@ -40,7 +40,7 @@
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: serif;
+    font-family: var(--site-font-family, serif);
     font-size: var(--admin-font-size-md);
     line-height: 1.5;
     color: var(--admin-color-text);

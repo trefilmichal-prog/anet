@@ -5,6 +5,11 @@ $adminPageTitle = isset($adminPageTitle) ? (string) $adminPageTitle : 'Administr
 $adminShowNavigation = isset($adminShowNavigation) ? (bool) $adminShowNavigation : true;
 $currentScript = basename(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '');
 $menuDefaults = get_admin_menu_defaults();
+$siteFontFamilyValue = get_setting('site_font_family', get_site_font_family_default());
+$siteFontFamilyNormalized = normalize_site_font_family($siteFontFamilyValue);
+if ($siteFontFamilyNormalized === '') {
+    $siteFontFamilyNormalized = get_site_font_family_default();
+}
 $menuEnabledValue = get_setting('admin_menu_bg_enabled', $menuDefaults['admin_menu_bg_enabled']);
 $menuEnabled = $menuEnabledValue === '1';
 $menuColorValue = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_bg_color']);
@@ -24,6 +29,7 @@ if ($menuEnabled && $menuRgb !== null && $menuOpacityNormalized !== '') {
     $adminHeaderStyle = ' style="--admin-menu-bg: ' . h($menuRgba) . ';"';
 }
 $adminHeaderClass = 'admin-header' . ($menuEnabled ? '' : ' admin-header--no-menu-bg');
+$adminBodyStyle = ' style="--site-font-family: ' . h($siteFontFamilyNormalized) . ';"';
 $adminNavItems = array(
     'dashboard.php' => 'Dashboard',
     'backgrounds.php' => 'Pozadí',
@@ -40,7 +46,7 @@ $adminNavItems = array(
     <title><?php echo h($adminPageTitle); ?></title>
     <link rel="stylesheet" href="admin.css">
 </head>
-<body>
+<body<?php echo $adminBodyStyle; ?>>
 <header class="<?php echo h($adminHeaderClass); ?>"<?php echo $adminHeaderStyle; ?>>
     <div class="admin-content admin-header__inner">
         <p class="admin-title">Administrace</p>
