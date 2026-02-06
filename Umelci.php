@@ -232,7 +232,9 @@ body.intro-done .content{
 
 /* Speed up star animation (override whatever is in style.css) */
 #intro-star{ animation-duration: .75s !important; }
-.artist-card__star{ animation-duration: .95s !important; }
+.artist-card__star{
+  animation: starPulse .95s cubic-bezier(.26,.67,.2,1) infinite !important;
+}
 
 
 /* Speed up content reveal inside artist cards (override style.css) */
