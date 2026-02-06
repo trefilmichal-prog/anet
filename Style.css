@@ -432,7 +432,7 @@ body.intro-done .content {
 }
 
 .brand-mark{ width: 280px; height:auto; overflow:visible; }
-.brand-mark .cls-1{ stroke-width:18px; } /* když chceš tlustší tah */
+/* stroke-width necháváme z SVG (12px) */
 
 
 
