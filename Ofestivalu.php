@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/includes/background_repository.php';
+require_once __DIR__ . '/includes/settings_repository.php';
+require_once __DIR__ . '/includes/festival_content.php';
+
 $heroBackgroundImage = get_background_image('festival', 'back.png');
+$festivalPageText = get_setting('festival_page_text', get_default_festival_page_text());
 ?>
 <!doctype html>
 <html lang="cs">
@@ -211,15 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <h2>O FESTIVALU</h2>
 <div class="container2-divider2"><span class="star star-animated">✦</span></div>
 <div class="festival-text-box">
-<p>Harmonia Caelestis je festival klasické hudby, který se koná v malebných kulisách Plzeňského kraje, jižních Čech a Karlovarského kraje. Jeho cílem je zpřístupnit široké veřejnosti krásu a bohatství klasické hudby a propojit lidi z různých koutů světa prostřednictvím sdíleného zážitku z živého hudebního umění.</p>
-
-<p>Generálním partnerem tohoto ročníku festivalu je Plzeňská diecéze CČSH, která tak vyjadřuje svůj zájem o podporu kulturního života v regionu a šíření duchovních hodnot. Festival se koná pod záštitou plzeňského husitského biskupa Lukáše Bujny. Pořadatelem festivalu je Institut plzeňské diecéze.</p>
-
-<p>Koncerty jsou pořádány za finanční podpory Ministerstva kultury ČR, Magistrátu města Plzně a města Milevska.</p>
-
-<p>Program festivalu je pestrý a zahrnuje koncerty renomovaných českých i zahraničních souborů a sólistů. Nabízí širokou škálu hudebních stylů od baroka po současnost, s důrazem na duchovní hudbu.</p>
-
-<p>Festival Harmonia Caelestis je jedinečnou příležitostí vychutnat si krásu klasické hudby v krásných historických památkách i moderních prostorách a zároveň se setkat s lidmi, kteří sdílí lásku k hudbě.</p>
+<?php echo nl2br(htmlspecialchars($festivalPageText, ENT_QUOTES, "UTF-8")); ?>
 </div>
 </div>
         
