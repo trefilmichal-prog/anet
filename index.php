@@ -1,19 +1,11 @@
 <?php
 require_once __DIR__ . '/includes/program_repository.php';
 require_once __DIR__ . '/includes/background_repository.php';
-require_once __DIR__ . '/includes/settings_repository.php';
+require_once __DIR__ . '/includes/site_header.php';
 $programItems = get_program_items(3);
 $heroBackgroundImage = get_background_image('home', 'kostel.jpg');
 $homeContentBackgroundImage = get_background_image('home_content', 'back.png');
-$siteMenuRgba = get_admin_menu_rgba($siteMenuEnabled);
-$siteMenuStyle = $siteMenuRgba !== '' ? ' style="--site-menu-bg: ' . htmlspecialchars($siteMenuRgba, ENT_QUOTES, 'UTF-8') . ';"' : '';
-$siteHeaderClass = $siteMenuEnabled ? 'site-header site-header--menu-bg' : 'site-header';
-$siteFontFamilyValue = get_setting('site_font_family', get_site_font_family_default());
-$siteFontFamilyNormalized = normalize_site_font_family($siteFontFamilyValue);
-if ($siteFontFamilyNormalized === '') {
-    $siteFontFamilyNormalized = get_site_font_family_default();
-}
-$siteFontStyle = ' style="--site-font-family: ' . htmlspecialchars($siteFontFamilyNormalized, ENT_QUOTES, 'UTF-8') . ';"';
+$siteFontStyle = get_site_font_style();
 ?>
 ﻿<!doctype html>
 <html lang="cs">
@@ -23,85 +15,27 @@ $siteFontStyle = ' style="--site-font-family: ' . htmlspecialchars($siteFontFami
     <title>Background Gradient Layout</title>
     <link rel="stylesheet" href="Style.css">
     <script src="assets/cursor-trail.js" defer></script>
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var header = document.querySelector('.site-header');
-  var btn = document.querySelector('.nav-toggle');
-  var nav = document.querySelector('.main-nav');
-
-  if (!header || !btn || !nav) return;
-
-  btn.addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    var open = header.classList.toggle('nav-open');
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-
-  nav.addEventListener('click', function (e) {
-    if (e.target && e.target.tagName === 'A') {
-      header.classList.remove('nav-open');
-      btn.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  document.addEventListener('click', function () {
-    header.classList.remove('nav-open');
-    btn.setAttribute('aria-expanded', 'false');
-  });
-});
-</script>
 </head>
 <body<?php echo $siteFontStyle; ?>>
     <div id="cursor-trail" aria-hidden="true"></div>
-    <header class="<?php echo $siteHeaderClass; ?>" id="head"<?php echo $siteMenuStyle; ?>>
-        <div class="header-inner">
-
-            <!-- LOGO -->
-            <div class="logo">
-                Harmonia Caelestis
-            </div>
-<button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
-             <span></span> 
-             <span></span>
-             <span></span>
-            </button>
-            <!-- NAVIGACE -->
-            <nav class="main-nav">
-                <a href="index.php">Úvod</a>
-                <a href="Aktuality.php">Aktuality</a>
-                <a href="Program.php">Program</a>
-                <a href="Umelci.php">Umělci</a>
-                <a href="Ofestivalu.php">O festivalu</a>
-                <a class="icon icon--fb" href="https://www.facebook.com/hcimfcz/" aria-label="Facebook"><span></span></a>
-                <a class="icon icon--mail" href="mailto:reditel@ipd-ccsh.cz" aria-label="E-mail"><span></span></a>
-
-
-
-
-            </nav>
-
-        </div>
-
-        <script>
+    <?php render_site_header(); ?>
+    <script>
 (function () {
   function runBrandAnim() {
-    const el = document.getElementById('brand');
-    if (!el) return;
+    var el = document.getElementById('brand');
+    if (!el) {
+      return;
+    }
 
-    // reset (aby se to vždycky znovu rozjelo)
     el.classList.remove('is-animate');
-    void el.offsetWidth; // reflow hack
+    void el.offsetWidth;
     el.classList.add('is-animate');
   }
 
   window.addEventListener('load', runBrandAnim);
-  window.addEventListener('pageshow', runBrandAnim); // když se stránka vrátí z cache (Safari/Firefox)
+  window.addEventListener('pageshow', runBrandAnim);
 })();
-</script>
-
-    </header>
+    </script>
 
 
     <!-- HERO / HEADER -->
