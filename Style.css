@@ -469,8 +469,8 @@ body.intro-done .content {
 
   .brand-text{
     font-size: clamp(1.05rem, 4.5vw, 1.35rem);
-    margin-left: clamp(-32%, -10vw, -18%);
-    margin-top: 14%;
+    margin-left: -60%;
+    margin-top: 40%;
   }
 }
 
