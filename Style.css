@@ -442,23 +442,15 @@ body.intro-done .content {
 
 .brand{
   position: absolute;
-  left:50%;
+  left: var(--brand-left-desktop, 50%);
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(var(--brand-translate-desktop, -50%), -50%);
   display:flex;
   align-items:center;
   justify-content:center;
   gap:0;
   z-index:10;
   filter: drop-shadow(0 3px 14px rgba(0,0,0,.55));
-}
-.brand--pos-desktop-left{
-  left: var(--brand-pos-desktop-left, 10%);
-  transform: translate(0, -50%);
-}
-.brand--pos-desktop-center{
-  left:50%;
-  transform: translate(-50%, -50%);
 }
 
 .brand-mark,
@@ -499,17 +491,8 @@ body.intro-done .content {
 @media (max-width: 600px){
   .brand{
     gap: 6px;
-    left: 50%;
-  }
-
-  .brand--pos-mobile-left{
-    left: var(--brand-pos-mobile-left, 6%);
-    transform: translate(0, -50%);
-  }
-
-  .brand--pos-mobile-center{
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: var(--brand-left-mobile, var(--brand-left-desktop, 50%));
+    transform: translate(var(--brand-translate-mobile, var(--brand-translate-desktop, -50%)), -50%);
   }
 
   .brand-mark{
