@@ -461,6 +461,7 @@ body.intro-done .content {
 @media (max-width: 600px){
   .brand{
     gap: 6px;
+    left: 48%;
   }
 
   .brand-mark{
