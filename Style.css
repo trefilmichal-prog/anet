@@ -398,8 +398,7 @@ body.intro-done .content {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* obsah dolů */
-    padding-bottom: 10px; /* jemné doladění */
+    justify-content: center; /* obsah vycentrovat */
     align-items: center;
     text-align: center;
     padding: 0px;
@@ -429,11 +428,10 @@ body.intro-done .content {
 }
 
 .brand{
-  position:absolute;
+  position: fixed;
   left:50%;
-  bottom:0;
-  --brand-offset: clamp(20px, 4vh, 48px);
-  transform: translate(-50%, calc(-1 * var(--brand-offset)));
+  top: 50%;
+  transform: translate(-50%, -50%);
   display:flex;
   align-items:center;
   gap:0;
@@ -473,12 +471,6 @@ body.intro-done .content {
     font-size: clamp(1.05rem, 4.5vw, 1.35rem);
     margin-left: -10%;
     margin-top: 14%;
-  }
-}
-
-@media (min-width: 601px){
-  .brand{
-    --brand-offset: clamp(60px, 10vh, 140px);
   }
 }
 
