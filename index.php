@@ -6,6 +6,9 @@ $programItems = get_program_items(3);
 $heroBackgroundImage = get_background_image('home', 'kostel.jpg');
 $homeContentBackgroundImage = get_background_image('home_content', 'back.png');
 $siteFontStyle = get_site_font_style();
+$brandConfig = require __DIR__ . '/includes/brand-config.php';
+$brandType = isset($brandConfig['type']) ? $brandConfig['type'] : 'svg';
+$brandValue = isset($brandConfig['value']) ? $brandConfig['value'] : '';
 ?>
 ﻿<!doctype html>
 <html lang="cs">
@@ -51,52 +54,64 @@ $siteFontStyle = get_site_font_style();
 
 
             <div class="brand" id="brand">
- <svg class="brand-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 455.35 252.33" aria-hidden="true">
-  <defs>
-    <style>
-      .cls-1{
-        fill:none;
-        stroke:#f2e9dc;          /* barva */
-        stroke-linecap:round;
-        stroke-miterlimit:10;
-        stroke-width:12px;
-      }
-    </style>
-  </defs>
+                <?php if ($brandType === 'text'): ?>
+                    <span class="brand-text"><?php echo htmlspecialchars($brandValue, ENT_QUOTES, 'UTF-8'); ?></span>
+                <?php elseif ($brandType === 'image'): ?>
+                    <img class="brand-image" src="<?php echo htmlspecialchars($brandValue, ENT_QUOTES, 'UTF-8'); ?>" alt="Logo">
+                <?php else: ?>
+                    <?php
+                    $inlineSvg = null;
+                    if (!empty($brandValue) && $brandValue !== 'inline') {
+                        $svgPath = $brandValue;
+                        if (!preg_match('/^\\//', $svgPath)) {
+                            $svgPath = __DIR__ . '/' . ltrim($svgPath, '/');
+                        }
+                        if (file_exists($svgPath)) {
+                            $inlineSvg = file_get_contents($svgPath);
+                        }
+                    }
+                    ?>
+                    <?php if (!empty($inlineSvg)): ?>
+                        <?php echo $inlineSvg; ?>
+                    <?php else: ?>
+                        <svg class="brand-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 455.35 252.33" aria-hidden="true">
+                            <defs>
+                                <style>
+                                    .cls-1{
+                                        fill:none;
+                                        stroke:#f2e9dc;          /* barva */
+                                        stroke-linecap:round;
+                                        stroke-miterlimit:10;
+                                        stroke-width:12px;
+                                    }
+                                </style>
+                            </defs>
 
-  <!-- 1) levá čára -->
-  <line class="cls-1"
-        x1="57.78" y1="56.11" x2="57.78" y2="246.33"
-        pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
-    <animate id="t1" attributeName="stroke-dashoffset" from="1" to="0" dur="0.35s" begin="0s" fill="freeze"/>
-  </line>
+                            <!-- 1) levá čára -->
+                            <line class="cls-1"
+                                  x1="57.78" y1="56.11" x2="57.78" y2="246.33"
+                                  pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
+                                <animate id="t1" attributeName="stroke-dashoffset" from="1" to="0" dur="0.35s" begin="0s" fill="freeze"/>
+                            </line>
 
-  <!-- 2) pravá čára -->
-  <line class="cls-1"
-        x1="137.55" y1="18.54" x2="137.55" y2="221.22"
-        pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
-    <animate id="t2" attributeName="stroke-dashoffset" from="1" to="0" dur="0.35s" begin="t1.end" fill="freeze"/>
-  </line>
+                            <!-- 2) pravá čára -->
+                            <line class="cls-1"
+                                  x1="137.55" y1="18.54" x2="137.55" y2="221.22"
+                                  pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
+                                <animate id="t2" attributeName="stroke-dashoffset" from="1" to="0" dur="0.35s" begin="t1.end" fill="freeze"/>
+                            </line>
 
-  <!-- 3) křivka -->
-  <path class="cls-1"
-        d="M6.31,202.83s-6.79-21,43.43-51.61C141.32,95.4,449.35,6,449.35,6"
-        pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
-    <animate id="t3" attributeName="stroke-dashoffset" from="1" to="0" dur="1.05s" begin="t2.end" fill="freeze"/>
-  </path>
-  <text class="brand-text-path" x="160" y="210">armonia Caelestis</text>
-</svg>
-
-
-
-
-
-
-
-
-
-
-</div>
+                            <!-- 3) křivka -->
+                            <path class="cls-1"
+                                  d="M6.31,202.83s-6.79-21,43.43-51.61C141.32,95.4,449.35,6,449.35,6"
+                                  pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
+                                <animate id="t3" attributeName="stroke-dashoffset" from="1" to="0" dur="1.05s" begin="t2.end" fill="freeze"/>
+                            </path>
+                            <text class="brand-text-path" x="160" y="210">armonia Caelestis</text>
+                        </svg>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
 
 
 
