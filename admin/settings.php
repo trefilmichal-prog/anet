@@ -16,6 +16,8 @@ $fontMessage = '';
 $fontError = '';
 $logoMessage = '';
 $logoError = '';
+$brandMessage = '';
+$brandError = '';
 $menuDefaults = get_admin_menu_defaults();
 $festivalText = get_setting('festival_page_text', get_default_festival_page_text());
 $adminMenuEnabledValue = get_setting('admin_menu_bg_enabled', $menuDefaults['admin_menu_bg_enabled']);
@@ -24,6 +26,26 @@ $adminMenuColor = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_b
 $adminMenuOpacity = get_setting('admin_menu_bg_opacity', $menuDefaults['admin_menu_bg_opacity']);
 $siteFontFamily = get_setting('site_font_family', get_site_font_family_default());
 $siteLogoPath = get_setting('site_logo_path', '');
+$brandDefaults = array(
+    'type' => 'svg',
+    'value' => 'inline'
+);
+$brandConfigPath = dirname(__DIR__) . '/includes/brand-config.php';
+if (file_exists($brandConfigPath)) {
+    $brandConfigFallback = require $brandConfigPath;
+    if (is_array($brandConfigFallback)) {
+        if (isset($brandConfigFallback['type'])) {
+            $brandDefaults['type'] = $brandConfigFallback['type'];
+        }
+        if (isset($brandConfigFallback['value'])) {
+            $brandDefaults['value'] = $brandConfigFallback['value'];
+        }
+    }
+}
+$brandTypeValue = get_setting('brand_type', '');
+$brandValueValue = get_setting('brand_value', '');
+$brandType = $brandTypeValue !== '' ? $brandTypeValue : $brandDefaults['type'];
+$brandValue = $brandValueValue !== '' ? $brandValueValue : $brandDefaults['value'];
 
 try {
     $db = get_db();
@@ -113,6 +135,24 @@ try {
             set_setting('site_logo_path', '');
             $siteLogoPath = '';
             $logoMessage = 'Logo bylo odstraněno.';
+        } elseif ($action === 'save_brand_settings') {
+            $brandTypeInput = isset($_POST['brand_type']) ? trim($_POST['brand_type']) : '';
+            $brandValueInput = isset($_POST['brand_value']) ? trim($_POST['brand_value']) : '';
+            $allowedBrandTypes = array('text', 'image', 'svg');
+
+            if (!in_array($brandTypeInput, $allowedBrandTypes, true)) {
+                $brandError = 'Vyberte typ brandu (text, image nebo svg).';
+            } else {
+                set_setting('brand_type', $brandTypeInput);
+                set_setting('brand_value', $brandValueInput);
+                $brandType = $brandTypeInput;
+                $brandValue = $brandValueInput;
+                if ($brandValueInput === '') {
+                    $brandMessage = 'Brand byl uložen. Prázdná hodnota použije fallback nastavení.';
+                } else {
+                    $brandMessage = 'Brand byl uložen.';
+                }
+            }
         }
     }
 } catch (RuntimeException $e) {
@@ -122,6 +162,7 @@ try {
     $menuError = $e->getMessage();
     $fontError = $e->getMessage();
     $logoError = $e->getMessage();
+    $brandError = $e->getMessage();
 } catch (Exception $e) {
     error_log('Admin settings init failed: ' . $e->getMessage());
     $pinError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
@@ -129,6 +170,7 @@ try {
     $menuError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $fontError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $logoError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
+    $brandError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
 }
 
 $adminPageTitle = 'Nastavení';
@@ -226,6 +268,30 @@ require_once __DIR__ . '/partials/header.php';
                 <button class="admin-button" type="submit">Uložit logo</button>
                 <button class="admin-button admin-button--secondary" type="submit" name="action" value="remove_site_logo">Odstranit logo</button>
             </div>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h1>Brand webu</h1>
+        <?php if ($brandMessage): ?><p class="admin-alert admin-alert--success"><?php echo h($brandMessage); ?></p><?php endif; ?>
+        <?php if ($brandError): ?><p class="admin-alert admin-alert--error"><?php echo h($brandError); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post">
+            <input type="hidden" name="action" value="save_brand_settings">
+            <label class="admin-field">
+                <span>Typ brandu</span>
+                <select name="brand_type" required>
+                    <option value="text"<?php echo $brandType === 'text' ? ' selected' : ''; ?>>Text</option>
+                    <option value="image"<?php echo $brandType === 'image' ? ' selected' : ''; ?>>Image</option>
+                    <option value="svg"<?php echo $brandType === 'svg' ? ' selected' : ''; ?>>SVG</option>
+                </select>
+            </label>
+            <label class="admin-field">
+                <span>Hodnota brandu</span>
+                <input type="text" name="brand_value" value="<?php echo h($brandValue); ?>">
+                <span class="admin-help">Text: název značky, Image: URL/relativní cesta, SVG: "inline" nebo cesta k SVG souboru.</span>
+            </label>
+            <button class="admin-button" type="submit">Uložit brand</button>
         </form>
     </section>
 </section>
