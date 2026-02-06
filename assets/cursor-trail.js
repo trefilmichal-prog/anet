@@ -3,14 +3,32 @@
   if (!trail) return;
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduceMotion.matches) {
+  var finePointer = window.matchMedia('(pointer: fine)');
+  var anyFinePointer = window.matchMedia('(any-pointer: fine)');
+  var allowPointer = finePointer.matches || anyFinePointer.matches;
+
+  if (!allowPointer) {
     trail.style.display = 'none';
     return;
   }
 
-  var finePointer = window.matchMedia('(pointer: fine)');
-  if (!finePointer.matches) {
-    trail.style.display = 'none';
+  if (reduceMotion.matches) {
+    var staticDot = document.createElement('span');
+    staticDot.className = 'cursor-trail__dot';
+    trail.appendChild(staticDot);
+
+    function updateStatic(event) {
+      staticDot.style.transform =
+        'translate3d(' + event.clientX + 'px, ' + event.clientY + 'px, 0) translate(-50%, -50%)';
+
+      if (!trail.classList.contains('is-active')) {
+        trail.classList.add('is-active');
+      }
+    }
+
+    document.addEventListener('mousemove', updateStatic);
+    document.addEventListener('pointermove', updateStatic);
+    document.addEventListener('pointerenter', updateStatic);
     return;
   }
 
@@ -40,7 +58,7 @@
     return (1 - amt) * start + amt * end;
   }
 
-  document.addEventListener('mousemove', function (event) {
+  function updateTarget(event) {
     target.x = event.clientX;
     target.y = event.clientY;
 
@@ -48,7 +66,11 @@
       isActive = true;
       trail.classList.add('is-active');
     }
-  });
+  }
+
+  document.addEventListener('mousemove', updateTarget);
+  document.addEventListener('pointermove', updateTarget);
+  document.addEventListener('pointerenter', updateTarget);
 
   function animate() {
     if (isActive) {
