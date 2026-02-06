@@ -328,12 +328,12 @@ body.intro-done .content {
 }
 
 .home-ornaments img:first-child {
-    left: -50%;
+    left: 0;
     transform: translate(-50%, -50%);
 }
 
 .home-ornaments img:last-child {
-    right: -50%;
+    right: 0;
     transform: translate(50%, -50%);
 }
 
