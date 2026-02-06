@@ -20,10 +20,17 @@ function render_site_header()
     $siteMenuStyle = $siteMenuRgba !== '' ? ' style="--site-menu-bg: ' . htmlspecialchars($siteMenuRgba, ENT_QUOTES, 'UTF-8') . ';"' : '';
     $siteHeaderClass = $siteMenuEnabled ? 'site-header site-header--menu-bg' : 'site-header';
     $menuItems = get_menu_items();
+    $logoPath = trim((string) get_setting('site_logo_path', ''));
     ?>
     <header class="<?php echo htmlspecialchars($siteHeaderClass, ENT_QUOTES, 'UTF-8'); ?>" id="head"<?php echo $siteMenuStyle; ?>>
         <div class="header-inner">
-            <div class="logo">Harmonia Caelestis</div>
+            <div class="logo">
+                <?php if ($logoPath !== ''): ?>
+                    <img src="<?php echo htmlspecialchars($logoPath, ENT_QUOTES, 'UTF-8'); ?>" alt="Harmonia Caelestis">
+                <?php else: ?>
+                    Harmonia Caelestis
+                <?php endif; ?>
+            </div>
             <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
                 <span></span>
                 <span></span>

@@ -151,11 +151,19 @@ body.intro-done .content {
 
 /* LOGO */
 .logo {
-   
+    display: flex;
+    align-items: center;
     font-size: 1.4rem;
     letter-spacing: 0.04em;
     color: #f2e9dc;
     white-space: nowrap;
+}
+
+.logo img {
+    display: block;
+    max-height: 56px;
+    width: auto;
+    height: auto;
 }
 
 /* NAVIGACE */
