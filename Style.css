@@ -474,6 +474,7 @@ body.intro-done .content {
     position: relative;
     background-image: url("back.png");
     background-repeat: repeat;
+    min-height: calc(100vh - 96px);
     padding: 120px 20px 160px;
     overflow: hidden;
 
