@@ -48,6 +48,15 @@ $brandTypeValue = get_setting('brand_type', '');
 $brandValueValue = get_setting('brand_value', '');
 $brandType = $brandTypeValue !== '' ? $brandTypeValue : $brandDefaults['type'];
 $brandValue = $brandValueValue !== '' ? $brandValueValue : $brandDefaults['value'];
+$allowedBrandPositions = array('left', 'center');
+$brandPositionDesktopValue = get_setting('brand_position_desktop', '');
+$brandPositionMobileValue = get_setting('brand_position_mobile', '');
+$brandPositionDesktop = in_array($brandPositionDesktopValue, $allowedBrandPositions, true)
+    ? $brandPositionDesktopValue
+    : 'center';
+$brandPositionMobile = in_array($brandPositionMobileValue, $allowedBrandPositions, true)
+    ? $brandPositionMobileValue
+    : 'center';
 
 try {
     $db = get_db();
@@ -173,6 +182,26 @@ try {
                 } else {
                     $brandMessage = 'Brand byl uložen.';
                 }
+            }
+        } elseif ($action === 'save_brand_position') {
+            $brandPositionDesktopInput = isset($_POST['brand_position_desktop']) ? trim($_POST['brand_position_desktop']) : '';
+            $brandPositionMobileInput = isset($_POST['brand_position_mobile']) ? trim($_POST['brand_position_mobile']) : '';
+
+            if (!in_array($brandPositionDesktopInput, $allowedBrandPositions, true)
+                || !in_array($brandPositionMobileInput, $allowedBrandPositions, true)) {
+                $brandError = 'Pozice brandu musí být left nebo center.';
+                if (in_array($brandPositionDesktopInput, $allowedBrandPositions, true)) {
+                    $brandPositionDesktop = $brandPositionDesktopInput;
+                }
+                if (in_array($brandPositionMobileInput, $allowedBrandPositions, true)) {
+                    $brandPositionMobile = $brandPositionMobileInput;
+                }
+            } else {
+                set_setting('brand_position_desktop', $brandPositionDesktopInput);
+                set_setting('brand_position_mobile', $brandPositionMobileInput);
+                $brandPositionDesktop = $brandPositionDesktopInput;
+                $brandPositionMobile = $brandPositionMobileInput;
+                $brandMessage = 'Pozice brandu byla uložena.';
             }
         } elseif ($action === 'remove_brand_settings') {
             set_setting('brand_type', '');
@@ -316,7 +345,6 @@ require_once __DIR__ . '/partials/header.php';
         <?php if ($brandError): ?><p class="admin-alert admin-alert--error"><?php echo h($brandError); ?></p><?php endif; ?>
 
         <form class="admin-form" method="post">
-            <input type="hidden" name="action" value="save_brand_settings">
             <label class="admin-field">
                 <span>Typ brandu</span>
                 <select name="brand_type" required>
@@ -330,8 +358,23 @@ require_once __DIR__ . '/partials/header.php';
                 <input type="text" name="brand_value" value="<?php echo h($brandValue); ?>">
                 <span class="admin-help">Text: název značky, Image: URL/relativní cesta, SVG: "inline" nebo cesta k SVG souboru.</span>
             </label>
+            <label class="admin-field">
+                <span>Pozice brandu (Desktop)</span>
+                <select name="brand_position_desktop">
+                    <option value="center"<?php echo $brandPositionDesktop === 'center' ? ' selected' : ''; ?>>Center</option>
+                    <option value="left"<?php echo $brandPositionDesktop === 'left' ? ' selected' : ''; ?>>Left</option>
+                </select>
+            </label>
+            <label class="admin-field">
+                <span>Pozice brandu (Mobil)</span>
+                <select name="brand_position_mobile">
+                    <option value="center"<?php echo $brandPositionMobile === 'center' ? ' selected' : ''; ?>>Center</option>
+                    <option value="left"<?php echo $brandPositionMobile === 'left' ? ' selected' : ''; ?>>Left</option>
+                </select>
+            </label>
             <div class="admin-field">
-                <button class="admin-button" type="submit">Uložit brand</button>
+                <button class="admin-button" type="submit" name="action" value="save_brand_settings">Uložit brand</button>
+                <button class="admin-button" type="submit" name="action" value="save_brand_position">Uložit pozici brandu</button>
                 <button class="admin-button admin-button--secondary" type="submit" name="action" value="remove_brand_settings">Odstranit brand</button>
             </div>
         </form>

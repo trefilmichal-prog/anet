@@ -12,6 +12,15 @@ $brandFallback = array(
     'type' => 'svg',
     'value' => 'inline'
 );
+$allowedBrandPositions = array('left', 'center');
+$brandPositionDesktopValue = trim((string) get_setting('brand_position_desktop', ''));
+$brandPositionMobileValue = trim((string) get_setting('brand_position_mobile', ''));
+$brandPositionDesktop = in_array($brandPositionDesktopValue, $allowedBrandPositions, true)
+    ? $brandPositionDesktopValue
+    : 'center';
+$brandPositionMobile = in_array($brandPositionMobileValue, $allowedBrandPositions, true)
+    ? $brandPositionMobileValue
+    : 'center';
 $brandConfigPath = __DIR__ . '/includes/brand-config.php';
 if (file_exists($brandConfigPath)) {
     $brandConfig = require $brandConfigPath;
@@ -77,7 +86,7 @@ if (!in_array($brandType, array('text', 'image', 'svg'), true)) {
         <div class="hero__content">
 
 
-            <div class="brand" id="brand">
+            <div class="brand brand--pos-desktop-<?php echo htmlspecialchars($brandPositionDesktop, ENT_QUOTES, 'UTF-8'); ?> brand--pos-mobile-<?php echo htmlspecialchars($brandPositionMobile, ENT_QUOTES, 'UTF-8'); ?>" id="brand">
                 <?php if ($brandType === 'text'): ?>
                     <span class="brand-text"><?php echo htmlspecialchars($brandValue, ENT_QUOTES, 'UTF-8'); ?></span>
                 <?php elseif ($brandType === 'image'): ?>
