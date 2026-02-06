@@ -328,11 +328,21 @@ body.intro-done .content {
 }
 
 .home-ornaments img:first-child {
-    left: 0;
+    left: -50%;
+    transform: translate(-50%, -50%);
 }
 
 .home-ornaments img:last-child {
-    right: 0;
+    right: -50%;
+    transform: translate(50%, -50%);
+}
+
+@media (min-width: 1200px) {
+    .home-ornaments img {
+        height: clamp(320px, 40vw, 520px);
+        width: auto;
+        max-width: none;
+    }
 }
 
 @media (max-width: 900px) {
