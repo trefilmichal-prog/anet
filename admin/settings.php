@@ -9,7 +9,14 @@ $pinMessage = '';
 $pinError = '';
 $festivalMessage = '';
 $festivalError = '';
+$menuMessage = '';
+$menuError = '';
+$menuDefaults = get_admin_menu_defaults();
 $festivalText = get_setting('festival_page_text', get_default_festival_page_text());
+$adminMenuEnabledValue = get_setting('admin_menu_bg_enabled', $menuDefaults['admin_menu_bg_enabled']);
+$adminMenuEnabled = $adminMenuEnabledValue === '1';
+$adminMenuColor = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_bg_color']);
+$adminMenuOpacity = get_setting('admin_menu_bg_opacity', $menuDefaults['admin_menu_bg_opacity']);
 
 try {
     $db = get_db();
@@ -51,16 +58,40 @@ try {
                 set_setting('festival_page_text', $festivalText);
                 $festivalMessage = 'Text O festivalu byl uložen.';
             }
+        } elseif ($action === 'save_admin_menu') {
+            $adminMenuEnabled = isset($_POST['admin_menu_bg_enabled']) ? '1' : '0';
+            $adminMenuColorInput = isset($_POST['admin_menu_bg_color']) ? trim($_POST['admin_menu_bg_color']) : '';
+            $adminMenuOpacityInput = isset($_POST['admin_menu_bg_opacity']) ? trim($_POST['admin_menu_bg_opacity']) : '';
+
+            $adminMenuColorNormalized = normalize_admin_menu_color($adminMenuColorInput, $menuRgb);
+            $adminMenuOpacityNormalized = normalize_admin_menu_opacity($adminMenuOpacityInput);
+
+            if ($adminMenuColorNormalized === '') {
+                $menuError = 'Barva pozadí musí být ve formátu HEX (#rrggbb) nebo rgb(r,g,b).';
+            } elseif ($adminMenuOpacityNormalized === '') {
+                $menuError = 'Průhlednost musí být číslo 0–1 nebo 0–100.';
+            } else {
+                set_setting('admin_menu_bg_enabled', $adminMenuEnabled);
+                set_setting('admin_menu_bg_color', $adminMenuColorNormalized);
+                set_setting('admin_menu_bg_opacity', $adminMenuOpacityNormalized);
+                $menuMessage = 'Nastavení pozadí menu bylo uloženo.';
+            }
+
+            $adminMenuEnabled = $adminMenuEnabled === '1';
+            $adminMenuColor = $adminMenuColorNormalized !== '' ? $adminMenuColorNormalized : $adminMenuColorInput;
+            $adminMenuOpacity = $adminMenuOpacityNormalized !== '' ? $adminMenuOpacityNormalized : $adminMenuOpacityInput;
         }
     }
 } catch (RuntimeException $e) {
     error_log('Admin settings DB failed: ' . $e->getMessage());
     $pinError = $e->getMessage();
     $festivalError = $e->getMessage();
+    $menuError = $e->getMessage();
 } catch (Exception $e) {
     error_log('Admin settings init failed: ' . $e->getMessage());
     $pinError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $festivalError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
+    $menuError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
 }
 
 $adminPageTitle = 'Nastavení';
@@ -92,6 +123,31 @@ require_once __DIR__ . '/partials/header.php';
                 <textarea name="festival_text" rows="14" required><?php echo h($festivalText); ?></textarea>
             </label>
             <button class="admin-button" type="submit">Uložit text</button>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h1>Pozadí menu administrace</h1>
+        <?php if ($menuMessage): ?><p class="admin-alert admin-alert--success"><?php echo h($menuMessage); ?></p><?php endif; ?>
+        <?php if ($menuError): ?><p class="admin-alert admin-alert--error"><?php echo h($menuError); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post">
+            <input type="hidden" name="action" value="save_admin_menu">
+            <label class="admin-field">
+                <span>Povolit vlastní pozadí menu</span>
+                <input type="checkbox" name="admin_menu_bg_enabled" value="1" <?php echo $adminMenuEnabled ? 'checked' : ''; ?>>
+            </label>
+            <label class="admin-field">
+                <span>Barva pozadí (HEX nebo rgb)</span>
+                <input type="text" name="admin_menu_bg_color" value="<?php echo h($adminMenuColor); ?>" required>
+                <span class="admin-help">Příklad: #160c23 nebo rgb(22,12,35)</span>
+            </label>
+            <label class="admin-field">
+                <span>Průhlednost (0–1 nebo 0–100)</span>
+                <input type="text" name="admin_menu_bg_opacity" value="<?php echo h($adminMenuOpacity); ?>" required>
+                <span class="admin-help">Příklad: 0.95 nebo 95</span>
+            </label>
+            <button class="admin-button" type="submit">Uložit nastavení menu</button>
         </form>
     </section>
 </section>

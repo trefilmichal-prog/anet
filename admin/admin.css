@@ -65,7 +65,7 @@ a:focus-visible {
 }
 
 .admin-header {
-    background: rgba(22, 12, 35, 0.95);
+    background: var(--admin-menu-bg, rgba(22, 12, 35, 0.95));
     border-bottom: 1px solid var(--admin-color-border);
     box-shadow: var(--admin-shadow-sm);
 }
@@ -114,7 +114,15 @@ a:focus-visible {
     padding: var(--admin-space-2) var(--admin-space-3);
     border-radius: var(--admin-radius-sm);
     border: 1px solid var(--admin-color-border);
-    background: var(--admin-color-bg-elevated);
+    background: var(--admin-menu-bg, var(--admin-color-bg-elevated));
+}
+
+.admin-header--no-menu-bg {
+    background: transparent;
+}
+
+.admin-header--no-menu-bg .admin-nav a {
+    background: transparent;
 }
 
 .admin-nav a.is-active {

@@ -1,7 +1,29 @@
 <?php
+require_once dirname(__DIR__, 2) . '/includes/settings_repository.php';
+
 $adminPageTitle = isset($adminPageTitle) ? (string) $adminPageTitle : 'Administrace';
 $adminShowNavigation = isset($adminShowNavigation) ? (bool) $adminShowNavigation : true;
 $currentScript = basename(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '');
+$menuDefaults = get_admin_menu_defaults();
+$menuEnabledValue = get_setting('admin_menu_bg_enabled', $menuDefaults['admin_menu_bg_enabled']);
+$menuEnabled = $menuEnabledValue === '1';
+$menuColorValue = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_bg_color']);
+$menuOpacityValue = get_setting('admin_menu_bg_opacity', $menuDefaults['admin_menu_bg_opacity']);
+$menuRgb = null;
+$menuColorNormalized = normalize_admin_menu_color($menuColorValue, $menuRgb);
+if ($menuColorNormalized === '') {
+    $menuColorNormalized = normalize_admin_menu_color($menuDefaults['admin_menu_bg_color'], $menuRgb);
+}
+$menuOpacityNormalized = normalize_admin_menu_opacity($menuOpacityValue);
+if ($menuOpacityNormalized === '') {
+    $menuOpacityNormalized = normalize_admin_menu_opacity($menuDefaults['admin_menu_bg_opacity']);
+}
+$adminHeaderStyle = '';
+if ($menuEnabled && $menuRgb !== null && $menuOpacityNormalized !== '') {
+    $menuRgba = 'rgba(' . $menuRgb['r'] . ', ' . $menuRgb['g'] . ', ' . $menuRgb['b'] . ', ' . $menuOpacityNormalized . ')';
+    $adminHeaderStyle = ' style="--admin-menu-bg: ' . h($menuRgba) . ';"';
+}
+$adminHeaderClass = 'admin-header' . ($menuEnabled ? '' : ' admin-header--no-menu-bg');
 $adminNavItems = array(
     'dashboard.php' => 'Dashboard',
     'backgrounds.php' => 'Pozadí',
@@ -19,7 +41,7 @@ $adminNavItems = array(
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-<header class="admin-header">
+<header class="<?php echo h($adminHeaderClass); ?>"<?php echo $adminHeaderStyle; ?>>
     <div class="admin-content admin-header__inner">
         <p class="admin-title">Administrace</p>
         <?php if ($adminShowNavigation): ?>
