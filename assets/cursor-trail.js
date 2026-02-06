@@ -13,26 +13,11 @@
   }
 
   if (reduceMotion.matches) {
-    var staticDot = document.createElement('span');
-    staticDot.className = 'cursor-trail__dot';
-    trail.appendChild(staticDot);
-
-    function updateStatic(event) {
-      staticDot.style.transform =
-        'translate3d(' + event.clientX + 'px, ' + event.clientY + 'px, 0) translate(-50%, -50%)';
-
-      if (!trail.classList.contains('is-active')) {
-        trail.classList.add('is-active');
-      }
-    }
-
-    document.addEventListener('mousemove', updateStatic);
-    document.addEventListener('pointermove', updateStatic);
-    document.addEventListener('pointerenter', updateStatic);
+    trail.style.display = 'none';
     return;
   }
 
-  var trailCount = 6;
+  var trailCount = 5;
   var dots = [];
   var i;
 
@@ -53,6 +38,10 @@
   };
 
   var isActive = false;
+  var lead = {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
+  };
 
   function lerp(start, end, amt) {
     return (1 - amt) * start + amt * end;
@@ -74,13 +63,13 @@
 
   function animate() {
     if (isActive) {
-      dots[0].x = lerp(dots[0].x, target.x, 0.2);
-      dots[0].y = lerp(dots[0].y, target.y, 0.2);
-      dots[0].el.style.transform = 'translate3d(' + dots[0].x + 'px, ' + dots[0].y + 'px, 0) translate(-50%, -50%)';
+      lead.x = lerp(lead.x, target.x, 0.2);
+      lead.y = lerp(lead.y, target.y, 0.2);
 
-      for (i = 1; i < dots.length; i += 1) {
-        dots[i].x = lerp(dots[i].x, dots[i - 1].x, 0.25);
-        dots[i].y = lerp(dots[i].y, dots[i - 1].y, 0.25);
+      for (i = 0; i < dots.length; i += 1) {
+        var source = i === 0 ? lead : dots[i - 1];
+        dots[i].x = lerp(dots[i].x, source.x, 0.25);
+        dots[i].y = lerp(dots[i].y, source.y, 0.25);
         dots[i].el.style.transform = 'translate3d(' + dots[i].x + 'px, ' + dots[i].y + 'px, 0) translate(-50%, -50%)';
       }
     }
