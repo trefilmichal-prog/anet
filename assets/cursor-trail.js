@@ -38,6 +38,7 @@
   };
 
   var isActive = false;
+  var inactivityTimeoutId = null;
   var lead = {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2
@@ -50,6 +51,15 @@
   function updateTarget(event) {
     target.x = event.clientX;
     target.y = event.clientY;
+
+    if (inactivityTimeoutId) {
+      window.clearTimeout(inactivityTimeoutId);
+    }
+
+    inactivityTimeoutId = window.setTimeout(function () {
+      trail.classList.remove('is-active');
+      isActive = false;
+    }, 450);
 
     if (!isActive) {
       isActive = true;
