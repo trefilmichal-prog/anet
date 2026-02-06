@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__DIR__, 2) . '/includes/settings_repository.php';
+require_once dirname(dirname(__DIR__)) . '/includes/settings_repository.php';
 
 $adminPageTitle = isset($adminPageTitle) ? (string) $adminPageTitle : 'Administrace';
 $adminShowNavigation = isset($adminShowNavigation) ? (bool) $adminShowNavigation : true;
