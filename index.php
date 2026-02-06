@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="hero__content">
 
 
-            <div class="brand">
+            <div class="brand" id="brand">
  <svg class="brand-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 455.35 252.33" aria-hidden="true">
   <defs>
     <style>
@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
     <animate id="t3" attributeName="stroke-dashoffset" from="1" to="0" dur="1.05s" begin="t2.end" fill="freeze"/>
   </path>
+  <text class="brand-text-path" x="160" y="210">armonia Caelestis</text>
 </svg>
 
 
@@ -155,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-  <span class="brand-text">armonia Caelestis</span>
 </div>
 
 

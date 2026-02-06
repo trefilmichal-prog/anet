@@ -445,17 +445,17 @@ body.intro-done .content {
 
 
 
-.brand-text{
-  color: rgba(242,233,220,.95);
-  font-size: 2rem;
+.brand-text-path{
+  fill: none;
+  stroke: #f2e9dc;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  font-family: "Times New Roman", serif;
+  font-size: 32px;
   letter-spacing: .08em;
-  white-space: nowrap;
-  margin-left:-30%;
-  margin-top:20%;
-
-  opacity: 0;
-  animation: textFade .45s ease forwards;
-  animation-delay: 1.55s; /* po dokreslení */
 }
 
 @media (max-width: 600px){
@@ -468,15 +468,9 @@ body.intro-done .content {
     width: clamp(180px, 52vw, 210px);
   }
 
-  .brand-text{
-    font-size: clamp(1.05rem, 4.5vw, 1.35rem);
-    margin-left: -60%;
-    margin-top: 40%;
+  .brand-text-path{
+    font-size: 24px;
   }
-}
-
-@keyframes textFade{
-  to{ opacity:1; }
 }
 
 
@@ -492,31 +486,25 @@ body.intro-done .content {
   stroke-dashoffset:1200;
 }
 
-/* default: text schovaný */
-.brand-text{
-  opacity:0;
-  transform: translateX(-12px);
-}
-
 /* animace se spustí až po přidání třídy */
 #brand.is-animate .brand-path{
   animation: drawLogo 1.6s ease forwards;
 }
 
-#brand.is-animate .brand-text{
-  animation: revealText .6s ease forwards;
-  animation-delay: 1.25s;
+#brand.is-animate .brand-text-path{
+  animation: drawText .6s ease forwards;
+  animation-delay: 1.75s;
 }
 
 @keyframes drawLogo{ to{ stroke-dashoffset:0; } }
-@keyframes revealText{ to{ opacity:1; transform: translateX(0); } }
+@keyframes drawText{ to{ stroke-dashoffset:0; } }
 
 /* reduced motion */
 @media (prefers-reduced-motion: reduce){
   #brand .brand-path{ stroke-dashoffset:0; }
-  #brand .brand-text{ opacity:1; transform:none; }
+  #brand .brand-text-path{ stroke-dashoffset:0; }
   #brand.is-animate .brand-path,
-  #brand.is-animate .brand-text{ animation:none; }
+  #brand.is-animate .brand-text-path{ animation:none; }
 }
 
 
