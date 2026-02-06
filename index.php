@@ -3,6 +3,7 @@ require_once __DIR__ . '/includes/program_repository.php';
 require_once __DIR__ . '/includes/background_repository.php';
 $programItems = get_program_items(3);
 $heroBackgroundImage = get_background_image('home', 'kostel.jpg');
+$homeContentBackgroundImage = get_background_image('home_content', 'back.png');
 ?>
 ﻿<!doctype html>
 <html lang="cs">
@@ -158,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     <!-- NAVAZUJÍCÍ OBSAH -->
-    <section class="content">
+    <section class="content" style="background-image: url('<?php echo htmlspecialchars($homeContentBackgroundImage, ENT_QUOTES, 'UTF-8'); ?>');">
         <div class="container" id="button">
             <a href="Program.php" class="btn-program">
                 Program 2026
