@@ -63,6 +63,30 @@ function get_admin_menu_defaults()
     );
 }
 
+function get_site_font_family_default()
+{
+    return 'serif';
+}
+
+function normalize_site_font_family($value)
+{
+    $value = trim((string) $value);
+
+    if ($value === '') {
+        return '';
+    }
+
+    if (strlen($value) > 120) {
+        return '';
+    }
+
+    if (!preg_match('/^[-a-zA-Z0-9 ,"\\\']+$/', $value)) {
+        return '';
+    }
+
+    return $value;
+}
+
 function normalize_admin_menu_color($value, &$rgb = null)
 {
     $value = trim((string) $value);
