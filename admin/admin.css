@@ -160,6 +160,15 @@ a:focus-visible {
     font-size: var(--admin-font-size-xs);
 }
 
+.admin-logo-preview {
+    max-height: 80px;
+    width: auto;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-color-border);
+    background: var(--admin-color-bg-elevated);
+    padding: var(--admin-space-1);
+}
+
 .admin-form input,
 .admin-form textarea,
 .admin-form select {

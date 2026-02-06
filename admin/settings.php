@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once dirname(__DIR__) . '/includes/settings_repository.php';
 require_once dirname(__DIR__) . '/includes/festival_content.php';
+require_once dirname(__DIR__) . '/includes/upload.php';
 
 require_admin_login();
 
@@ -13,6 +14,8 @@ $menuMessage = '';
 $menuError = '';
 $fontMessage = '';
 $fontError = '';
+$logoMessage = '';
+$logoError = '';
 $menuDefaults = get_admin_menu_defaults();
 $festivalText = get_setting('festival_page_text', get_default_festival_page_text());
 $adminMenuEnabledValue = get_setting('admin_menu_bg_enabled', $menuDefaults['admin_menu_bg_enabled']);
@@ -20,6 +23,7 @@ $adminMenuEnabled = $adminMenuEnabledValue === '1';
 $adminMenuColor = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_bg_color']);
 $adminMenuOpacity = get_setting('admin_menu_bg_opacity', $menuDefaults['admin_menu_bg_opacity']);
 $siteFontFamily = get_setting('site_font_family', get_site_font_family_default());
+$siteLogoPath = get_setting('site_logo_path', '');
 
 try {
     $db = get_db();
@@ -95,6 +99,16 @@ try {
                 $siteFontFamily = $siteFontFamilyNormalized;
                 $fontMessage = $siteFontFamilyInput === '' ? 'Font byl obnoven na výchozí hodnotu.' : 'Font byl úspěšně uložen.';
             }
+        } elseif ($action === 'save_site_logo') {
+            $uploadedLogo = handle_image_upload('site_logo_file', 'logo');
+
+            if ($uploadedLogo === null || $uploadedLogo === '') {
+                throw new RuntimeException('Vyberte obrázek loga ve formátu PNG, JPG nebo WebP.');
+            }
+
+            set_setting('site_logo_path', $uploadedLogo);
+            $siteLogoPath = $uploadedLogo;
+            $logoMessage = 'Logo bylo uloženo.';
         }
     }
 } catch (RuntimeException $e) {
@@ -103,12 +117,14 @@ try {
     $festivalError = $e->getMessage();
     $menuError = $e->getMessage();
     $fontError = $e->getMessage();
+    $logoError = $e->getMessage();
 } catch (Exception $e) {
     error_log('Admin settings init failed: ' . $e->getMessage());
     $pinError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $festivalError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $menuError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $fontError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
+    $logoError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
 }
 
 $adminPageTitle = 'Nastavení';
@@ -181,6 +197,28 @@ require_once __DIR__ . '/partials/header.php';
                 <span class="admin-help">Příklad: "Times New Roman", serif</span>
             </label>
             <button class="admin-button" type="submit">Uložit font</button>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h1>Logo webu</h1>
+        <?php if ($logoMessage): ?><p class="admin-alert admin-alert--success"><?php echo h($logoMessage); ?></p><?php endif; ?>
+        <?php if ($logoError): ?><p class="admin-alert admin-alert--error"><?php echo h($logoError); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="save_site_logo">
+            <?php if ($siteLogoPath !== ''): ?>
+                <div class="admin-field">
+                    <span>Aktuální logo</span>
+                    <img class="admin-logo-preview" src="<?php echo h($siteLogoPath); ?>" alt="Aktuální logo webu">
+                </div>
+            <?php endif; ?>
+            <label class="admin-field">
+                <span>Nahrát nové logo (PNG, JPG, WebP)</span>
+                <input type="file" name="site_logo_file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" required>
+                <span class="admin-help">Doporučená výška loga do 60 px.</span>
+            </label>
+            <button class="admin-button" type="submit">Uložit logo</button>
         </form>
     </section>
 </section>
