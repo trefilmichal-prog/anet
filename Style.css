@@ -439,7 +439,7 @@ body.intro-done .content {
   filter: drop-shadow(0 3px 14px rgba(0,0,0,.55));
 }
 
-.brand-mark{ width: 280px; height:auto; overflow:visible; }
+.brand-mark{ width: clamp(200px, 24vw, 260px); max-width: 100%; height:auto; overflow:visible; }
 /* stroke-width necháváme z SVG (12px) */
 
 
