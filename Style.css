@@ -453,7 +453,7 @@ body.intro-done .content {
   stroke-linejoin: round;
   stroke-dasharray: 1200;
   stroke-dashoffset: 1200;
-  font-family: "Times New Roman", serif;
+  font-family: var(--site-font-family, serif);
   font-size: 32px;
   letter-spacing: .08em;
 }
