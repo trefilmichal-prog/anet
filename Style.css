@@ -453,7 +453,7 @@ body.intro-done .content {
   filter: drop-shadow(0 3px 14px rgba(0,0,0,.55));
 }
 .brand--pos-desktop-left{
-  left:10%;
+  left: var(--brand-pos-desktop-left, 10%);
   transform: translate(0, -50%);
 }
 .brand--pos-desktop-center{
@@ -503,7 +503,7 @@ body.intro-done .content {
   }
 
   .brand--pos-mobile-left{
-    left: 6%;
+    left: var(--brand-pos-mobile-left, 6%);
     transform: translate(0, -50%);
   }
 

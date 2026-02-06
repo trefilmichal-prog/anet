@@ -21,6 +21,31 @@ $brandPositionDesktop = in_array($brandPositionDesktopValue, $allowedBrandPositi
 $brandPositionMobile = in_array($brandPositionMobileValue, $allowedBrandPositions, true)
     ? $brandPositionMobileValue
     : 'center';
+$brandPositionDesktopLeftDefault = 10;
+$brandPositionMobileLeftDefault = 6;
+
+function resolve_brand_left_pct($value, $fallback)
+{
+    $value = trim((string) $value);
+    if ($value === '' || !is_numeric($value)) {
+        return (string) $fallback;
+    }
+    $numeric = (float) $value;
+    if ($numeric < 0 || $numeric > 100) {
+        return (string) $fallback;
+    }
+    $normalized = rtrim(rtrim(sprintf('%.4F', $numeric), '0'), '.');
+    return $normalized === '' ? '0' : $normalized;
+}
+
+$brandPositionDesktopLeftPct = resolve_brand_left_pct(
+    get_setting('brand_position_desktop_left_pct', ''),
+    $brandPositionDesktopLeftDefault
+);
+$brandPositionMobileLeftPct = resolve_brand_left_pct(
+    get_setting('brand_position_mobile_left_pct', ''),
+    $brandPositionMobileLeftDefault
+);
 $brandConfigPath = __DIR__ . '/includes/brand-config.php';
 if (file_exists($brandConfigPath)) {
     $brandConfig = require $brandConfigPath;
@@ -86,7 +111,7 @@ if (!in_array($brandType, array('text', 'image', 'svg'), true)) {
         <div class="hero__content">
 
 
-            <div class="brand brand--pos-desktop-<?php echo htmlspecialchars($brandPositionDesktop, ENT_QUOTES, 'UTF-8'); ?> brand--pos-mobile-<?php echo htmlspecialchars($brandPositionMobile, ENT_QUOTES, 'UTF-8'); ?>" id="brand">
+            <div class="brand brand--pos-desktop-<?php echo htmlspecialchars($brandPositionDesktop, ENT_QUOTES, 'UTF-8'); ?> brand--pos-mobile-<?php echo htmlspecialchars($brandPositionMobile, ENT_QUOTES, 'UTF-8'); ?>" id="brand" style="--brand-pos-desktop-left:<?php echo htmlspecialchars($brandPositionDesktopLeftPct, ENT_QUOTES, 'UTF-8'); ?>%; --brand-pos-mobile-left:<?php echo htmlspecialchars($brandPositionMobileLeftPct, ENT_QUOTES, 'UTF-8'); ?>%;">
                 <?php if ($brandType === 'text'): ?>
                     <span class="brand-text"><?php echo htmlspecialchars($brandValue, ENT_QUOTES, 'UTF-8'); ?></span>
                 <?php elseif ($brandType === 'image'): ?>

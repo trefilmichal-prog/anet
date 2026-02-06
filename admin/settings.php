@@ -57,6 +57,33 @@ $brandPositionDesktop = in_array($brandPositionDesktopValue, $allowedBrandPositi
 $brandPositionMobile = in_array($brandPositionMobileValue, $allowedBrandPositions, true)
     ? $brandPositionMobileValue
     : 'center';
+$brandPositionDesktopLeftDefault = 10;
+$brandPositionMobileLeftDefault = 6;
+$brandPositionDesktopLeftPctValue = get_setting('brand_position_desktop_left_pct', '');
+$brandPositionMobileLeftPctValue = get_setting('brand_position_mobile_left_pct', '');
+
+function normalize_brand_left_pct($value)
+{
+    $value = trim((string) $value);
+    if ($value === '' || !is_numeric($value)) {
+        return null;
+    }
+    $numeric = (float) $value;
+    if ($numeric < 0 || $numeric > 100) {
+        return null;
+    }
+    $normalized = rtrim(rtrim(sprintf('%.4F', $numeric), '0'), '.');
+    return $normalized === '' ? '0' : $normalized;
+}
+
+$brandPositionDesktopLeftPct = normalize_brand_left_pct($brandPositionDesktopLeftPctValue);
+$brandPositionMobileLeftPct = normalize_brand_left_pct($brandPositionMobileLeftPctValue);
+if ($brandPositionDesktopLeftPct === null) {
+    $brandPositionDesktopLeftPct = (string) $brandPositionDesktopLeftDefault;
+}
+if ($brandPositionMobileLeftPct === null) {
+    $brandPositionMobileLeftPct = (string) $brandPositionMobileLeftDefault;
+}
 
 try {
     $db = get_db();
@@ -186,23 +213,32 @@ try {
         } elseif ($action === 'save_brand_position') {
             $brandPositionDesktopInput = isset($_POST['brand_position_desktop']) ? trim($_POST['brand_position_desktop']) : '';
             $brandPositionMobileInput = isset($_POST['brand_position_mobile']) ? trim($_POST['brand_position_mobile']) : '';
+            $brandPositionDesktopLeftPctInput = isset($_POST['brand_position_desktop_left_pct'])
+                ? trim($_POST['brand_position_desktop_left_pct'])
+                : '';
+            $brandPositionMobileLeftPctInput = isset($_POST['brand_position_mobile_left_pct'])
+                ? trim($_POST['brand_position_mobile_left_pct'])
+                : '';
+            $brandPositionDesktopLeftPctNormalized = normalize_brand_left_pct($brandPositionDesktopLeftPctInput);
+            $brandPositionMobileLeftPctNormalized = normalize_brand_left_pct($brandPositionMobileLeftPctInput);
 
-            if (!in_array($brandPositionDesktopInput, $allowedBrandPositions, true)
+            if ($brandPositionDesktopLeftPctNormalized === null || $brandPositionMobileLeftPctNormalized === null) {
+                $brandError = 'Procenta pozice brandu musí být číslo v rozsahu 0–100.';
+            } elseif (!in_array($brandPositionDesktopInput, $allowedBrandPositions, true)
                 || !in_array($brandPositionMobileInput, $allowedBrandPositions, true)) {
                 $brandError = 'Pozice brandu musí být left nebo center.';
-                if (in_array($brandPositionDesktopInput, $allowedBrandPositions, true)) {
-                    $brandPositionDesktop = $brandPositionDesktopInput;
-                }
-                if (in_array($brandPositionMobileInput, $allowedBrandPositions, true)) {
-                    $brandPositionMobile = $brandPositionMobileInput;
-                }
             } else {
                 set_setting('brand_position_desktop', $brandPositionDesktopInput);
                 set_setting('brand_position_mobile', $brandPositionMobileInput);
+                set_setting('brand_position_desktop_left_pct', $brandPositionDesktopLeftPctNormalized);
+                set_setting('brand_position_mobile_left_pct', $brandPositionMobileLeftPctNormalized);
                 $brandPositionDesktop = $brandPositionDesktopInput;
                 $brandPositionMobile = $brandPositionMobileInput;
+                $brandPositionDesktopLeftPct = $brandPositionDesktopLeftPctNormalized;
+                $brandPositionMobileLeftPct = $brandPositionMobileLeftPctNormalized;
                 $brandMessage = 'Pozice brandu byla uložena.';
             }
+
         } elseif ($action === 'remove_brand_settings') {
             set_setting('brand_type', '');
             set_setting('brand_value', '');
@@ -366,11 +402,21 @@ require_once __DIR__ . '/partials/header.php';
                 </select>
             </label>
             <label class="admin-field">
+                <span>Posun vlevo (%) pro desktop</span>
+                <input type="number" name="brand_position_desktop_left_pct" min="0" max="100" step="0.1" value="<?php echo h($brandPositionDesktopLeftPct); ?>">
+                <span class="admin-help">Použije se jen pro pozici left. Výchozí hodnota je <?php echo h((string) $brandPositionDesktopLeftDefault); ?>.</span>
+            </label>
+            <label class="admin-field">
                 <span>Pozice brandu (Mobil)</span>
                 <select name="brand_position_mobile">
                     <option value="center"<?php echo $brandPositionMobile === 'center' ? ' selected' : ''; ?>>Center</option>
                     <option value="left"<?php echo $brandPositionMobile === 'left' ? ' selected' : ''; ?>>Left</option>
                 </select>
+            </label>
+            <label class="admin-field">
+                <span>Posun vlevo (%) pro mobil</span>
+                <input type="number" name="brand_position_mobile_left_pct" min="0" max="100" step="0.1" value="<?php echo h($brandPositionMobileLeftPct); ?>">
+                <span class="admin-help">Použije se jen pro pozici left. Výchozí hodnota je <?php echo h((string) $brandPositionMobileLeftDefault); ?>.</span>
             </label>
             <div class="admin-field">
                 <button class="admin-button" type="submit" name="action" value="save_brand_settings">Uložit brand</button>
