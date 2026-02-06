@@ -109,6 +109,10 @@ try {
             set_setting('site_logo_path', $uploadedLogo);
             $siteLogoPath = $uploadedLogo;
             $logoMessage = 'Logo bylo uloženo.';
+        } elseif ($action === 'remove_site_logo') {
+            set_setting('site_logo_path', '');
+            $siteLogoPath = '';
+            $logoMessage = 'Logo bylo odstraněno.';
         }
     }
 } catch (RuntimeException $e) {
@@ -215,10 +219,13 @@ require_once __DIR__ . '/partials/header.php';
             <?php endif; ?>
             <label class="admin-field">
                 <span>Nahrát nové logo (PNG, JPG, WebP)</span>
-                <input type="file" name="site_logo_file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" required>
+                <input type="file" name="site_logo_file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp">
                 <span class="admin-help">Doporučená výška loga do 60 px.</span>
             </label>
-            <button class="admin-button" type="submit">Uložit logo</button>
+            <div class="admin-field">
+                <button class="admin-button" type="submit">Uložit logo</button>
+                <button class="admin-button admin-button--secondary" type="submit" name="action" value="remove_site_logo">Odstranit logo</button>
+            </div>
         </form>
     </section>
 </section>
