@@ -97,6 +97,10 @@ document.addEventListener('DOMContentLoaded', function () {
     <!-- HERO / HEADER -->
     <section class="hero" id="img" style="background-image: url('<?php echo htmlspecialchars($heroBackgroundImage, ENT_QUOTES, 'UTF-8'); ?>');">
         <div class="hero__overlay"></div>
+        <div class="home-ornaments" aria-hidden="true">
+            <img src="assets/lorg.png" alt="">
+            <img src="assets/porg.png" alt="">
+        </div>
 
 
         <div class="hero__content">
