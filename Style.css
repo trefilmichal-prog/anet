@@ -322,8 +322,9 @@ body.intro-done .content {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    height: auto;
-    max-width: min(24vw, 320px);
+    height: 100vh;
+    width: auto;
+    max-width: none;
     opacity: 0.9;
 }
 
@@ -339,15 +340,13 @@ body.intro-done .content {
 
 @media (min-width: 1200px) {
     .home-ornaments img {
-        height: clamp(320px, 40vw, 520px);
-        width: auto;
         max-width: none;
     }
 }
 
 @media (max-width: 900px) {
     .home-ornaments img {
-        max-width: min(30vw, 220px);
+        max-width: none;
         opacity: 0.7;
     }
 }
