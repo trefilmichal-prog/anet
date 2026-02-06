@@ -6,9 +6,33 @@ $programItems = get_program_items(3);
 $heroBackgroundImage = get_background_image('home', 'kostel.jpg');
 $homeContentBackgroundImage = get_background_image('home_content', 'back.png');
 $siteFontStyle = get_site_font_style();
-$brandConfig = require __DIR__ . '/includes/brand-config.php';
-$brandType = isset($brandConfig['type']) ? $brandConfig['type'] : 'svg';
-$brandValue = isset($brandConfig['value']) ? $brandConfig['value'] : '';
+$brandType = trim((string) get_setting('brand_type', ''));
+$brandValue = trim((string) get_setting('brand_value', ''));
+$brandFallback = array(
+    'type' => 'svg',
+    'value' => 'inline'
+);
+$brandConfigPath = __DIR__ . '/includes/brand-config.php';
+if (file_exists($brandConfigPath)) {
+    $brandConfig = require $brandConfigPath;
+    if (is_array($brandConfig)) {
+        if (isset($brandConfig['type'])) {
+            $brandFallback['type'] = $brandConfig['type'];
+        }
+        if (isset($brandConfig['value'])) {
+            $brandFallback['value'] = $brandConfig['value'];
+        }
+    }
+}
+if ($brandType === '') {
+    $brandType = $brandFallback['type'];
+}
+if ($brandValue === '') {
+    $brandValue = $brandFallback['value'];
+}
+if (!in_array($brandType, array('text', 'image', 'svg'), true)) {
+    $brandType = 'svg';
+}
 ?>
 ﻿<!doctype html>
 <html lang="cs">
