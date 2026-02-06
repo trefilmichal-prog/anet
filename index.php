@@ -12,40 +12,45 @@ $brandFallback = array(
     'type' => 'svg',
     'value' => 'inline'
 );
-$allowedBrandPositions = array('left', 'center');
-$brandPositionDesktopValue = trim((string) get_setting('brand_position_desktop', ''));
-$brandPositionMobileValue = trim((string) get_setting('brand_position_mobile', ''));
-$brandPositionDesktop = in_array($brandPositionDesktopValue, $allowedBrandPositions, true)
-    ? $brandPositionDesktopValue
-    : 'center';
-$brandPositionMobile = in_array($brandPositionMobileValue, $allowedBrandPositions, true)
-    ? $brandPositionMobileValue
-    : 'center';
-$brandPositionDesktopLeftDefault = 10;
-$brandPositionMobileLeftDefault = 6;
+$legacyBrandPositionDesktop = trim((string) get_setting('brand_position_desktop', ''));
+$legacyBrandPositionMobile = trim((string) get_setting('brand_position_mobile', ''));
 
-function resolve_brand_left_pct($value, $fallback)
+function normalize_brand_left_setting($value)
 {
     $value = trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+    if (!preg_match('/^\\d+(?:\\.\\d+)?%?$/', $value)) {
+        return '';
+    }
+    $value = rtrim($value, '%');
     if ($value === '' || !is_numeric($value)) {
-        return (string) $fallback;
+        return '';
     }
     $numeric = (float) $value;
     if ($numeric < 0 || $numeric > 100) {
-        return (string) $fallback;
+        return '';
     }
     $normalized = rtrim(rtrim(sprintf('%.4F', $numeric), '0'), '.');
-    return $normalized === '' ? '0' : $normalized;
+    if ($normalized === '') {
+        $normalized = '0';
+    }
+    return $normalized . '%';
 }
 
-$brandPositionDesktopLeftPct = resolve_brand_left_pct(
-    get_setting('brand_position_desktop_left_pct', ''),
-    $brandPositionDesktopLeftDefault
-);
-$brandPositionMobileLeftPct = resolve_brand_left_pct(
-    get_setting('brand_position_mobile_left_pct', ''),
-    $brandPositionMobileLeftDefault
-);
+$brandLeftDesktop = normalize_brand_left_setting(get_setting('brand_left_desktop', ''));
+$brandLeftMobile = normalize_brand_left_setting(get_setting('brand_left_mobile', ''));
+if ($brandLeftDesktop === '' && $legacyBrandPositionDesktop === 'left') {
+    $brandLeftDesktop = normalize_brand_left_setting(get_setting('brand_position_desktop_left_pct', ''));
+}
+if ($brandLeftMobile === '' && $legacyBrandPositionMobile === 'left') {
+    $brandLeftMobile = normalize_brand_left_setting(get_setting('brand_position_mobile_left_pct', ''));
+}
+$brandLeftDesktopStyle = $brandLeftDesktop !== '' ? $brandLeftDesktop : '50%';
+$brandLeftMobileStyle = $brandLeftMobile !== '' ? $brandLeftMobile : '50%';
+$brandTranslateDesktop = $brandLeftDesktop !== '' ? '0' : '-50%';
+$brandTranslateMobile = $brandLeftMobile !== '' ? '0' : '-50%';
 $brandConfigPath = __DIR__ . '/includes/brand-config.php';
 if (file_exists($brandConfigPath)) {
     $brandConfig = require $brandConfigPath;
@@ -111,7 +116,7 @@ if (!in_array($brandType, array('text', 'image', 'svg'), true)) {
         <div class="hero__content">
 
 
-            <div class="brand brand--pos-desktop-<?php echo htmlspecialchars($brandPositionDesktop, ENT_QUOTES, 'UTF-8'); ?> brand--pos-mobile-<?php echo htmlspecialchars($brandPositionMobile, ENT_QUOTES, 'UTF-8'); ?>" id="brand" style="--brand-pos-desktop-left:<?php echo htmlspecialchars($brandPositionDesktopLeftPct, ENT_QUOTES, 'UTF-8'); ?>%; --brand-pos-mobile-left:<?php echo htmlspecialchars($brandPositionMobileLeftPct, ENT_QUOTES, 'UTF-8'); ?>%;">
+            <div class="brand" id="brand" style="--brand-left-desktop:<?php echo htmlspecialchars($brandLeftDesktopStyle, ENT_QUOTES, 'UTF-8'); ?>; --brand-left-mobile:<?php echo htmlspecialchars($brandLeftMobileStyle, ENT_QUOTES, 'UTF-8'); ?>; --brand-translate-desktop:<?php echo htmlspecialchars($brandTranslateDesktop, ENT_QUOTES, 'UTF-8'); ?>; --brand-translate-mobile:<?php echo htmlspecialchars($brandTranslateMobile, ENT_QUOTES, 'UTF-8'); ?>;">
                 <?php if ($brandType === 'text'): ?>
                     <span class="brand-text"><?php echo htmlspecialchars($brandValue, ENT_QUOTES, 'UTF-8'); ?></span>
                 <?php elseif ($brandType === 'image'): ?>
