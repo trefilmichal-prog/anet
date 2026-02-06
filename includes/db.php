@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/festival_content.php';
+
 function get_db()
 {
     static $pdo = null;
@@ -111,6 +113,18 @@ function initialize_schema($pdo)
         $insert->execute(array(
             ':key' => 'admin_pin_hash',
             ':value' => $defaultHash
+        ));
+    }
+
+    $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
+    $stmt->execute(array(':key' => 'festival_page_text'));
+    $festivalPageText = $stmt->fetchColumn();
+
+    if ($festivalPageText === false) {
+        $insert = $pdo->prepare('INSERT INTO settings(key, value) VALUES(:key, :value)');
+        $insert->execute(array(
+            ':key' => 'festival_page_text',
+            ':value' => get_default_festival_page_text()
         ));
     }
 }
