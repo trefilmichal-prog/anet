@@ -42,6 +42,7 @@ function normalize_artist_image_path($imagePath)
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Background Gradient Layout</title>
     <link rel="stylesheet" href="Style.css">
+    <script src="assets/cursor-trail.js" defer></script>
 
     <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -255,6 +256,7 @@ body.intro-done .content{
 
 </head>
 <body>
+    <div id="cursor-trail" aria-hidden="true"></div>
     <div id="intro-overlay" aria-hidden="true">
         <canvas id="intro-particles"></canvas>
         <div id="intro-mask"></div>

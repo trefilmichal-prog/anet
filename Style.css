@@ -1197,3 +1197,60 @@ body.intro-done .content {
   .artists__title{text-align:center;}
   .artist-card__body{text-align:center;}
 }
+
+#cursor-trail{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 2000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#cursor-trail.is-active{
+  opacity: 1;
+}
+
+.cursor-trail__dot{
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(242, 233, 220, 0.9);
+  box-shadow: 0 0 12px rgba(242, 233, 220, 0.7), 0 0 24px rgba(198, 165, 255, 0.35);
+  transform: translate3d(0, 0, 0) translate(-50%, -50%);
+  will-change: transform;
+}
+
+.cursor-trail__dot:nth-child(2){
+  width: 10px;
+  height: 10px;
+  opacity: 0.7;
+}
+
+.cursor-trail__dot:nth-child(3){
+  width: 8px;
+  height: 8px;
+  opacity: 0.5;
+}
+
+.cursor-trail__dot:nth-child(4){
+  width: 6px;
+  height: 6px;
+  opacity: 0.35;
+}
+
+.cursor-trail__dot:nth-child(5){
+  width: 5px;
+  height: 5px;
+  opacity: 0.25;
+}
+
+.cursor-trail__dot:nth-child(6){
+  width: 4px;
+  height: 4px;
+  opacity: 0.2;
+}
