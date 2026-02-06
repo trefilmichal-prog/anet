@@ -484,7 +484,7 @@ body.intro-done .content {
   stroke-dasharray: 1200;
   stroke-dashoffset: 1200;
   font-family: var(--site-font-family, serif);
-  font-size: 60px;
+  font-size: var(--brand-text-path-size, 54px);
   letter-spacing: .08em;
 }
 
@@ -509,7 +509,7 @@ body.intro-done .content {
   }
 
   .brand-text-path{
-    font-size: 24px;
+    font-size: var(--brand-text-path-size-mobile, 20px);
   }
 }
 
@@ -1096,6 +1096,8 @@ body.intro-done .content {
   --gold:rgba(215,199,163,0.95);
   --bg1:#12081b;
   --bg2:#2a0f2b;
+  --brand-text-path-size: 54px;
+  --brand-text-path-size-mobile: 20px;
 }
 
 .page{
