@@ -94,6 +94,14 @@ function initialize_schema($pdo)
         updated_at TEXT
     )');
 
+    $pdo->exec('CREATE TABLE IF NOT EXISTS menu_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        label TEXT NOT NULL,
+        url TEXT NOT NULL,
+        item_type TEXT NOT NULL,
+        sort_order INTEGER NOT NULL DEFAULT 0
+    )');
+
     // Backward-compatible migrations for older SQLite files.
     ensure_table_column($pdo, 'news', 'sort_order', 'INTEGER NOT NULL DEFAULT 0');
     ensure_table_column($pdo, 'program_items', 'subtitle', 'TEXT');
@@ -102,6 +110,10 @@ function initialize_schema($pdo)
     ensure_table_column($pdo, 'artists', 'bio', 'TEXT');
     ensure_table_column($pdo, 'artists', 'sort_order', 'INTEGER NOT NULL DEFAULT 0');
     ensure_table_column($pdo, 'backgrounds', 'updated_at', 'TEXT');
+    ensure_table_column($pdo, 'menu_items', 'label', 'TEXT NOT NULL');
+    ensure_table_column($pdo, 'menu_items', 'url', 'TEXT NOT NULL');
+    ensure_table_column($pdo, 'menu_items', 'item_type', 'TEXT NOT NULL');
+    ensure_table_column($pdo, 'menu_items', 'sort_order', 'INTEGER NOT NULL DEFAULT 0');
 
     $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
     $stmt->execute(array(':key' => 'admin_pin_hash'));

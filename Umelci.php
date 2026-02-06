@@ -1,19 +1,11 @@
 <?php
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/background_repository.php';
-require_once __DIR__ . '/includes/settings_repository.php';
+require_once __DIR__ . '/includes/site_header.php';
 
 $artists = array();
 $heroBackgroundImage = get_background_image('artists', 'back.png');
-$siteMenuRgba = get_admin_menu_rgba($siteMenuEnabled);
-$siteMenuStyle = $siteMenuRgba !== '' ? ' style="--site-menu-bg: ' . htmlspecialchars($siteMenuRgba, ENT_QUOTES, 'UTF-8') . ';"' : '';
-$siteHeaderClass = $siteMenuEnabled ? 'site-header site-header--menu-bg' : 'site-header';
-$siteFontFamilyValue = get_setting('site_font_family', get_site_font_family_default());
-$siteFontFamilyNormalized = normalize_site_font_family($siteFontFamilyValue);
-if ($siteFontFamilyNormalized === '') {
-    $siteFontFamilyNormalized = get_site_font_family_default();
-}
-$siteFontStyle = ' style="--site-font-family: ' . htmlspecialchars($siteFontFamilyNormalized, ENT_QUOTES, 'UTF-8') . ';"';
+$siteFontStyle = get_site_font_style();
 
 try {
     $db = get_db();
@@ -56,32 +48,6 @@ function normalize_artist_image_path($imagePath)
 
     <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var header = document.querySelector('.site-header');
-  var btn = document.querySelector('.nav-toggle');
-  var nav = document.querySelector('.main-nav');
-
-  if (header && btn && nav) {
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      var open = header.classList.toggle('nav-open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-
-    nav.addEventListener('click', function (e) {
-      if (e.target && e.target.tagName === 'A') {
-        header.classList.remove('nav-open');
-        btn.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    document.addEventListener('click', function () {
-      header.classList.remove('nav-open');
-      btn.setAttribute('aria-expanded', 'false');
-    });
-  }
-
   var body = document.body;
   var overlay = document.getElementById('intro-overlay');
   var canvas = document.getElementById('intro-particles');
@@ -272,33 +238,7 @@ body.intro-done .content{
         <div id="intro-mask"></div>
         <div id="intro-star">✦</div>
     </div>
-    <header class="<?php echo $siteHeaderClass; ?>" id="head"<?php echo $siteMenuStyle; ?>>
-        <div class="header-inner">
-
-            <!-- LOGO -->
-            <div class="logo">
-                Harmonia Caelestis
-            </div>
-
-            <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
-             <span></span> 
-             <span></span>
-             <span></span>
-            </button>
-
-            <!-- NAVIGACE -->
-            <nav class="main-nav">
-                <a href="index.php">Úvod</a>
-                <a href="Aktuality.php">Aktuality</a>
-                <a href="Program.php">Program</a>
-                <a href="Umelci.php">Umělci</a>
-                <a href="Ofestivalu.php">O festivalu</a>
-                <a class="icon icon--fb" href="https://www.facebook.com/hcimfcz/" aria-label="Facebook"><span></span></a>
-                <a class="icon icon--mail" href="mailto:reditel@ipd-ccsh.cz" aria-label="E-mail"><span></span></a>   
-            </nav>
-
-        </div>
-    </header>
+    <?php render_site_header(); ?>
 
 
 

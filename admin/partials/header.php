@@ -33,6 +33,7 @@ $adminBodyStyle = ' style="--site-font-family: ' . h($siteFontFamilyNormalized) 
 $adminNavItems = array(
     'dashboard.php' => 'Dashboard',
     'backgrounds.php' => 'Pozadí',
+    'menu.php' => 'Menu',
     'news.php' => 'Aktuality',
     'program.php' => 'Program',
     'artists.php' => 'Umělci',
