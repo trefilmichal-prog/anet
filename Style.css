@@ -484,7 +484,7 @@ body.intro-done .content {
   stroke-dasharray: 1200;
   stroke-dashoffset: 1200;
   font-family: var(--site-font-family, serif);
-  font-size: 32px;
+  font-size: 60px;
   letter-spacing: .08em;
 }
 
