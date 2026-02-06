@@ -48,6 +48,8 @@ $brandTypeValue = get_setting('brand_type', '');
 $brandValueValue = get_setting('brand_value', '');
 $brandType = $brandTypeValue !== '' ? $brandTypeValue : $brandDefaults['type'];
 $brandValue = $brandValueValue !== '' ? $brandValueValue : $brandDefaults['value'];
+$brandTextPathSizeDisplay = get_setting('brand_text_path_size', '');
+$brandTextPathSizeMobileDisplay = get_setting('brand_text_path_size_mobile', '');
 $brandLeftDesktopValue = get_setting('brand_left_desktop', '');
 $brandLeftMobileValue = get_setting('brand_left_mobile', '');
 $legacyBrandPositionDesktop = get_setting('brand_position_desktop', '');
@@ -248,6 +250,24 @@ try {
                 $brandMessage = 'Pozice brandu byla uložena.';
             }
 
+        } elseif ($action === 'save_brand_text_sizes') {
+            $brandTextPathSizeInput = isset($_POST['brand_text_path_size']) ? trim($_POST['brand_text_path_size']) : '';
+            $brandTextPathSizeMobileInput = isset($_POST['brand_text_path_size_mobile']) ? trim($_POST['brand_text_path_size_mobile']) : '';
+            $brandTextPathSizeNormalized = normalize_brand_text_size($brandTextPathSizeInput);
+            $brandTextPathSizeMobileNormalized = normalize_brand_text_size($brandTextPathSizeMobileInput);
+
+            if ($brandTextPathSizeNormalized === null || $brandTextPathSizeMobileNormalized === null) {
+                $brandError = 'Velikost textu musí být číslo s volitelnou jednotkou px.';
+                $brandTextPathSizeDisplay = $brandTextPathSizeInput;
+                $brandTextPathSizeMobileDisplay = $brandTextPathSizeMobileInput;
+            } else {
+                set_setting('brand_text_path_size', $brandTextPathSizeNormalized);
+                set_setting('brand_text_path_size_mobile', $brandTextPathSizeMobileNormalized);
+                $brandTextPathSizeDisplay = $brandTextPathSizeNormalized;
+                $brandTextPathSizeMobileDisplay = $brandTextPathSizeMobileNormalized;
+                $brandMessage = 'Velikost textu brandu byla uložena.';
+            }
+
         } elseif ($action === 'remove_brand_settings') {
             set_setting('brand_type', '');
             set_setting('brand_value', '');
@@ -413,9 +433,20 @@ require_once __DIR__ . '/partials/header.php';
                 <input type="text" name="brand_left_mobile" value="<?php echo h($brandLeftMobileDisplay); ?>">
                 <span class="admin-help">Zadejte číslo 0–100 (uloží se jako procento, např. 6 → 6%). Nechte prázdné pro střed.</span>
             </label>
+            <label class="admin-field">
+                <span>Velikost textu SVG (Desktop)</span>
+                <input type="text" name="brand_text_path_size" value="<?php echo h($brandTextPathSizeDisplay); ?>">
+                <span class="admin-help">Zadejte velikost v px (např. 54 nebo 54px). Nechte prázdné pro výchozí hodnotu.</span>
+            </label>
+            <label class="admin-field">
+                <span>Velikost textu SVG (Mobil)</span>
+                <input type="text" name="brand_text_path_size_mobile" value="<?php echo h($brandTextPathSizeMobileDisplay); ?>">
+                <span class="admin-help">Zadejte velikost v px (např. 20 nebo 20px). Nechte prázdné pro výchozí hodnotu.</span>
+            </label>
             <div class="admin-field">
                 <button class="admin-button" type="submit" name="action" value="save_brand_settings">Uložit brand</button>
                 <button class="admin-button" type="submit" name="action" value="save_brand_position">Uložit pozici brandu</button>
+                <button class="admin-button" type="submit" name="action" value="save_brand_text_sizes">Uložit velikost textu</button>
                 <button class="admin-button admin-button--secondary" type="submit" name="action" value="remove_brand_settings">Odstranit brand</button>
             </div>
         </form>
