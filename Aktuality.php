@@ -318,6 +318,7 @@ body.intro-done .content{transition-duration:.35s !important;}
 
 </head>
 <body>
+    <div id="cursor-trail" aria-hidden="true"></div>
     <div id="intro-overlay" aria-hidden="true">
         <canvas id="intro-particles"></canvas>
         <div id="intro-mask"></div>
