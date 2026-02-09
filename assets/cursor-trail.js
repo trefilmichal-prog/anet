@@ -13,20 +13,24 @@
   if (debug) {
     console.log('cursor-trail init', allowPointer);
   }
+  if (debug) {
+    console.log('cursor-trail reduced motion', reduceMotion.matches);
+  }
+  var reducedMotionEnabled = false;
   if (reduceMotion.matches) {
-    trail.style.display = 'none';
-    return;
+    reducedMotionEnabled = true;
   }
 
   if (!allowPointer) {
     trail.style.display = 'none';
   }
 
-  var trailCount = 5;
+  var trailCount = reducedMotionEnabled ? 2 : 5;
   var dots = [];
   var i;
   var rippleInterval = 70;
   var lastRippleTime = 0;
+  var allowRipple = !reducedMotionEnabled;
 
   for (i = 0; i < trailCount; i += 1) {
     var dot = document.createElement('span');
@@ -97,7 +101,7 @@
     }
 
     var now = (window.performance && window.performance.now) ? window.performance.now() : Date.now();
-    if (now - lastRippleTime >= rippleInterval) {
+    if (allowRipple && now - lastRippleTime >= rippleInterval) {
       lastRippleTime = now;
       createRipple(target.x, target.y);
     }
