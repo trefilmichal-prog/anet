@@ -257,7 +257,7 @@ body.intro-done .content{
 <div class="artists__container">
     <?php if (empty($artists)): ?>
         <?php if (trim($artistsPlaceholderText) !== ''): ?>
-            <div class="artists__placeholder">
+            <div class="festival-text-box">
                 <p><?php echo htmlspecialchars($artistsPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
             </div>
         <?php endif; ?>

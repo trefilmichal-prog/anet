@@ -165,7 +165,11 @@ document.addEventListener('DOMContentLoaded', function () {
             <h2>PROGRAM III. ROČNÍK 2026</h2>
             <br>
             <?php if (empty($programItems)): ?>
-                <p><?php echo htmlspecialchars($programPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
+                <?php if (trim($programPlaceholderText) !== ''): ?>
+                    <div class="festival-text-box">
+                        <p><?php echo htmlspecialchars($programPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
+                    </div>
+                <?php endif; ?>
             <?php else: ?>
                 <div class="container2-divider2"><span class="star star-animated">✦</span></div>
                 <div class="program-grid">
