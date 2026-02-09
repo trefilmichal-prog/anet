@@ -153,6 +153,30 @@ function initialize_schema($pdo)
     }
 
     $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
+    $stmt->execute(array(':key' => 'program_placeholder_text'));
+    $programPlaceholderText = $stmt->fetchColumn();
+
+    if ($programPlaceholderText === false) {
+        $insert = $pdo->prepare('INSERT INTO settings(key, value) VALUES(:key, :value)');
+        $insert->execute(array(
+            ':key' => 'program_placeholder_text',
+            ':value' => 'Program bude brzy doplněn.'
+        ));
+    }
+
+    $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
+    $stmt->execute(array(':key' => 'artists_placeholder_text'));
+    $artistsPlaceholderText = $stmt->fetchColumn();
+
+    if ($artistsPlaceholderText === false) {
+        $insert = $pdo->prepare('INSERT INTO settings(key, value) VALUES(:key, :value)');
+        $insert->execute(array(
+            ':key' => 'artists_placeholder_text',
+            ':value' => 'Umělci budou brzy doplněni.'
+        ));
+    }
+
+    $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
     $stmt->execute(array(':key' => 'site_font_family'));
     $siteFontFamily = $stmt->fetchColumn();
 
