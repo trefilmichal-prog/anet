@@ -707,6 +707,7 @@ body.intro-done .content {
     width: 100%;
     margin: 0 auto;
     padding: 28px 32px;
+    border: 1px solid rgba(255, 230, 173, 0.55);
     border-radius: 14px;
     background: rgba(22, 12, 35, 0.55);
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
@@ -716,7 +717,7 @@ body.intro-done .content {
 
 .festival-text-box p {
     margin: 0 0 1rem;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: normal;
     text-align: center;
     line-height: 1.5;
