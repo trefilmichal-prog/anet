@@ -1146,6 +1146,23 @@ body.intro-done .content {
   gap: 26px;
 }
 
+.artists__placeholder{
+  margin: 32px auto 0;
+  max-width: 720px;
+  padding: 22px 26px;
+  border-radius: 16px;
+  border: 1px solid rgba(215,199,163,0.32);
+  background: linear-gradient(to bottom, rgba(55,35,75,0.38), rgba(25,14,36,0.52));
+  box-shadow: 0 22px 60px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.04);
+  text-align: center;
+}
+.artists__placeholder p{
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(242,233,220,0.88);
+}
+
 /* card */
 .artist-card{
   max-width: 600px;

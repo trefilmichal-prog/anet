@@ -255,7 +255,11 @@ body.intro-done .content{
 
 <div class="artists__container">
     <?php if (empty($artists)): ?>
-        <p><?php echo htmlspecialchars($artistsPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
+        <?php if (trim($artistsPlaceholderText) !== ''): ?>
+            <div class="artists__placeholder">
+                <p><?php echo htmlspecialchars($artistsPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
+            </div>
+        <?php endif; ?>
     <?php else: ?>
         <div class="artists__grid">
             <?php foreach ($artists as $artist): ?>
