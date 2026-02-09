@@ -1389,12 +1389,12 @@ body.intro-done .content {
 
 .cursor-trail__ripple{
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: var(--ripple-size, 12px);
+  height: var(--ripple-size, 12px);
   border-radius: 999px;
   border: 1px solid rgba(140, 229, 245, 0.4);
   background: radial-gradient(circle, rgba(210, 250, 255, 0.4) 0%, rgba(110, 216, 236, 0.18) 45%, rgba(14, 70, 95, 0.05) 70%, transparent 100%);
-  animation: cursor-ripple 0.9s ease-out forwards;
+  animation: cursor-ripple var(--ripple-duration, 0.9s) cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
   filter: blur(0.3px);
   pointer-events: none;
 }

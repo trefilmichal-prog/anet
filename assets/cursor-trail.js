@@ -1,5 +1,5 @@
 (function () {
-  var debug = true;
+  var debug = false;
   var trail = document.getElementById('cursor-trail');
   if (!trail) return;
 
@@ -31,6 +31,10 @@
   var rippleInterval = 70;
   var lastRippleTime = 0;
   var allowRipple = !reducedMotionEnabled;
+  var rippleMinSize = 12;
+  var rippleMaxSize = 24;
+  var rippleMinDuration = 700;
+  var rippleMaxDuration = 1100;
 
   for (i = 0; i < trailCount; i += 1) {
     var dot = document.createElement('span');
@@ -114,6 +118,10 @@
   function createRipple(x, y) {
     var ripple = document.createElement('span');
     ripple.className = 'cursor-trail__ripple';
+    var rippleSize = rippleMinSize + Math.random() * (rippleMaxSize - rippleMinSize);
+    var rippleDuration = rippleMinDuration + Math.random() * (rippleMaxDuration - rippleMinDuration);
+    ripple.style.setProperty('--ripple-size', rippleSize + 'px');
+    ripple.style.setProperty('--ripple-duration', rippleDuration + 'ms');
     ripple.style.left = x + 'px';
     ripple.style.top = y + 'px';
     trail.appendChild(ripple);
@@ -125,7 +133,7 @@
     }
 
     ripple.addEventListener('animationend', removeRipple);
-    window.setTimeout(removeRipple, 1100);
+    window.setTimeout(removeRipple, rippleDuration + 150);
   }
 
   function animate() {
