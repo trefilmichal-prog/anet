@@ -152,14 +152,8 @@ try {
             }
         } elseif ($action === 'save_home_artists_text') {
             $homeArtistsText = isset($_POST['home_artists_text']) ? trim($_POST['home_artists_text']) : '';
-
-            if ($homeArtistsText === '') {
-                $homeArtistsError = 'Text sekce Umělci nesmí být prázdný.';
-                $homeArtistsText = get_setting('home_artists_text', get_default_home_artists_text());
-            } else {
-                set_setting('home_artists_text', $homeArtistsText);
-                $homeArtistsMessage = 'Text sekce Umělci byl uložen.';
-            }
+            set_setting('home_artists_text', $homeArtistsText);
+            $homeArtistsMessage = 'Text sekce Umělci byl uložen.';
         } elseif ($action === 'save_admin_menu') {
             $adminMenuEnabled = isset($_POST['admin_menu_bg_enabled']) ? '1' : '0';
             $adminMenuColorInput = isset($_POST['admin_menu_bg_color']) ? trim($_POST['admin_menu_bg_color']) : '';
