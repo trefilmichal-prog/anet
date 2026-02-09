@@ -141,6 +141,18 @@ function initialize_schema($pdo)
     }
 
     $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
+    $stmt->execute(array(':key' => 'home_artists_text'));
+    $homeArtistsText = $stmt->fetchColumn();
+
+    if ($homeArtistsText === false) {
+        $insert = $pdo->prepare('INSERT INTO settings(key, value) VALUES(:key, :value)');
+        $insert->execute(array(
+            ':key' => 'home_artists_text',
+            ':value' => get_default_home_artists_text()
+        ));
+    }
+
+    $stmt = $pdo->prepare('SELECT value FROM settings WHERE key = :key');
     $stmt->execute(array(':key' => 'site_font_family'));
     $siteFontFamily = $stmt->fetchColumn();
 
