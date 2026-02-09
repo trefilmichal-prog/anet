@@ -309,8 +309,10 @@ body.intro-done .content{transition-duration:.35s !important;}
         <div class="container2">
             <h2>AKTUALITY</h2>
             <br>
-            <h3>Novinky a tiskové zprávy</h3>
-            <div class="container2-divider"></div>
+            <div class="festival-text-box">
+                <p>Novinky a tiskové zprávy</p>
+            </div>
+            <div class="container2-divider2"><span class="star star-animated">✦</span></div>
 
             <div class="news__container">
                 <div class="news__grid">
