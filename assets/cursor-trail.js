@@ -1,4 +1,5 @@
 (function () {
+  var debug = true;
   var trail = document.getElementById('cursor-trail');
   if (!trail) return;
 
@@ -6,14 +7,16 @@
   var finePointer = window.matchMedia('(pointer: fine)');
   var anyFinePointer = window.matchMedia('(any-pointer: fine)');
   var anyHover = window.matchMedia('(any-hover: hover)');
+  var allowPointer = finePointer.matches
+    || anyFinePointer.matches
+    || anyHover.matches;
+  if (debug) {
+    console.log('cursor-trail init', allowPointer);
+  }
   if (reduceMotion.matches) {
     trail.style.display = 'none';
     return;
   }
-
-  var allowPointer = finePointer.matches
-    || anyFinePointer.matches
-    || anyHover.matches;
 
   if (!allowPointer) {
     trail.style.display = 'none';
@@ -43,6 +46,7 @@
 
   var isActive = false;
   var inactivityTimeoutId = null;
+  var hasLoggedEvent = false;
   var lead = {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2
@@ -68,6 +72,11 @@
       } else {
         return;
       }
+    }
+
+    if (debug && !hasLoggedEvent && event) {
+      console.log('cursor-trail event', event.type, event.clientX, event.clientY);
+      hasLoggedEvent = true;
     }
 
     target.x = event.clientX;
