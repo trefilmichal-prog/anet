@@ -39,6 +39,19 @@
   for (i = 0; i < trailCount; i += 1) {
     var dot = document.createElement('span');
     dot.className = 'cursor-trail__dot';
+    if (reducedMotionEnabled) {
+      dot.style.animation = 'none';
+    } else {
+      var floatDelay = i * 0.08;
+      var floatDuration = 2.6 + (i * 0.18);
+      var floatScale = 1.08 - (i * 0.01);
+      if (floatScale < 1.03) {
+        floatScale = 1.03;
+      }
+      dot.style.setProperty('--cursor-trail-float-delay', floatDelay + 's');
+      dot.style.setProperty('--cursor-trail-float-duration', floatDuration + 's');
+      dot.style.setProperty('--cursor-trail-float-scale', floatScale);
+    }
     trail.appendChild(dot);
     dots.push({
       el: dot,
@@ -145,7 +158,8 @@
         var source = i === 0 ? lead : dots[i - 1];
         dots[i].x = lerp(dots[i].x, source.x, 0.25);
         dots[i].y = lerp(dots[i].y, source.y, 0.25);
-        dots[i].el.style.transform = 'translate3d(' + dots[i].x + 'px, ' + dots[i].y + 'px, 0) translate(-50%, -50%)';
+        dots[i].el.style.left = dots[i].x + 'px';
+        dots[i].el.style.top = dots[i].y + 'px';
       }
     }
 
