@@ -24,7 +24,7 @@ function resolve_admin_form_error(Exception $exception)
 
 function ensure_upload_directory($type)
 {
-    $allowed = array('backgrounds', 'news', 'program', 'artists', 'logo');
+    $allowed = array('backgrounds', 'news', 'program', 'artists', 'logo', 'partners');
     if (!in_array($type, $allowed, true)) {
         throw new RuntimeException('Neplatný typ upload adresáře.');
     }

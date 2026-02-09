@@ -3,6 +3,7 @@ require_once __DIR__ . '/includes/program_repository.php';
 require_once __DIR__ . '/includes/background_repository.php';
 require_once __DIR__ . '/includes/festival_content.php';
 require_once __DIR__ . '/includes/site_header.php';
+require_once __DIR__ . '/includes/partners_repository.php';
 $programItems = get_program_items(3);
 $heroBackgroundImage = get_background_image('home', 'kostel.jpg');
 $homeContentBackgroundImage = get_background_image('home_content', 'back.png');
@@ -325,33 +326,7 @@ function normalize_home_artist_image_path($imagePath)
             </article>
 
         </section>
-        <footer class="site-footer" id="sponsors">
-
-            <div class="footer-inner">
-
-                <div class="footer-title">Partneři</div>
-
-                <div class="sponsors-row">
-                    <a href="https://www.ccshplzen.cz" class="sponsor">
-                        <img src="ccsh.png" alt="ccsh">
-                    </a>
-
-                    <a href="https://duxnet.cz" class="sponsor">
-                        <img src="d.png" alt="Duxnet.cz">
-                    </a>
-                    <a href="https://mk.gov.cz" class="sponsor">
-                        <img src="mk.jpg" alt="MK">
-                    </a>
-                    <a href="https://www.plzen2025.eu" class="sponsor">
-                        <img src="2025.png" alt="2025">
-                    </a>
-
-
-                </div>
-
-            </div>
-
-        </footer>
+        <?php render_partners_footer(); ?>
 
     </section>
 

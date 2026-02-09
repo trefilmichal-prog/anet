@@ -94,6 +94,14 @@ function initialize_schema($pdo)
         updated_at TEXT
     )');
 
+    $pdo->exec('CREATE TABLE IF NOT EXISTS partners (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        url TEXT,
+        image TEXT,
+        sort_order INTEGER NOT NULL DEFAULT 0
+    )');
+
     $pdo->exec('CREATE TABLE IF NOT EXISTS menu_items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         label TEXT NOT NULL,
@@ -110,6 +118,10 @@ function initialize_schema($pdo)
     ensure_table_column($pdo, 'artists', 'bio', 'TEXT');
     ensure_table_column($pdo, 'artists', 'sort_order', 'INTEGER NOT NULL DEFAULT 0');
     ensure_table_column($pdo, 'backgrounds', 'updated_at', 'TEXT');
+    ensure_table_column($pdo, 'partners', 'name', 'TEXT NOT NULL');
+    ensure_table_column($pdo, 'partners', 'url', 'TEXT');
+    ensure_table_column($pdo, 'partners', 'image', 'TEXT');
+    ensure_table_column($pdo, 'partners', 'sort_order', 'INTEGER NOT NULL DEFAULT 0');
     ensure_table_column($pdo, 'menu_items', 'label', 'TEXT NOT NULL');
     ensure_table_column($pdo, 'menu_items', 'url', 'TEXT NOT NULL');
     ensure_table_column($pdo, 'menu_items', 'item_type', 'TEXT NOT NULL');
