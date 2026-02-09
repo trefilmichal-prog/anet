@@ -2,6 +2,7 @@
 require_once __DIR__ . '/includes/background_repository.php';
 require_once __DIR__ . '/includes/site_header.php';
 require_once __DIR__ . '/includes/festival_content.php';
+require_once __DIR__ . '/includes/partners_repository.php';
 
 $heroBackgroundImage = get_background_image('festival', 'back.png');
 $festivalPageText = get_setting('festival_page_text', get_default_festival_page_text());
@@ -167,33 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </div>
 </div>
         
-        <footer class="site-footer" id="sponsors">
-
-            <div class="footer-inner">
-
-                <div class="footer-title">Partneři</div>
-
-                <div class="sponsors-row">
-                    <a href="https://www.ccshplzen.cz" class="sponsor">
-                        <img src="ccsh.png" alt="ccsh">
-                    </a>
-
-                    <a href="https://duxnet.cz" class="sponsor">
-                        <img src="d.png" alt="Duxnet.cz">
-                    </a>
-                    <a href="https://mk.gov.cz" class="sponsor">
-                        <img src="mk.jpg" alt="MK">
-                    </a>
-                    <a href="https://www.plzen2025.eu" class="sponsor">
-                        <img src="2025.png" alt="2025">
-                    </a>
-
-
-                </div>
-
-            </div>
-
-        </footer>
+        <?php render_partners_footer(); ?>
 
     </section>
 

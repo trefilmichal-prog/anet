@@ -37,6 +37,7 @@ $adminNavItems = array(
     'news.php' => 'Aktuality',
     'program.php' => 'Program',
     'artists.php' => 'Umělci',
+    'partners.php' => 'Partneři',
     'settings.php' => 'Nastavení'
 );
 ?>
