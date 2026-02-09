@@ -2,9 +2,11 @@
 require_once __DIR__ . '/includes/program_repository.php';
 require_once __DIR__ . '/includes/background_repository.php';
 require_once __DIR__ . '/includes/site_header.php';
+require_once __DIR__ . '/includes/settings_repository.php';
 $programItems = get_program_items();
 $heroBackgroundImage = get_background_image('program', 'back.png');
 $siteFontStyle = get_site_font_style();
+$programPlaceholderText = get_setting('program_placeholder_text', 'Program bude brzy doplněn.');
 ?>
 <!doctype html>
 <html lang="cs">
@@ -162,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <h2>PROGRAM III. ROČNÍK 2026</h2>
             <br>
             <?php if (empty($programItems)): ?>
-                <p>Program bude brzy doplněn.</p>
+                <p><?php echo htmlspecialchars($programPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
             <?php else: ?>
                 <div class="container2-divider2"><span class="star star-animated">✦</span></div>
                 <div class="program-grid">

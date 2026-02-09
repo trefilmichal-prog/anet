@@ -12,6 +12,10 @@ $festivalMessage = '';
 $festivalError = '';
 $homeArtistsMessage = '';
 $homeArtistsError = '';
+$programPlaceholderMessage = '';
+$programPlaceholderError = '';
+$artistsPlaceholderMessage = '';
+$artistsPlaceholderError = '';
 $menuMessage = '';
 $menuError = '';
 $fontMessage = '';
@@ -23,6 +27,8 @@ $brandError = '';
 $menuDefaults = get_admin_menu_defaults();
 $festivalText = get_setting('festival_page_text', get_default_festival_page_text());
 $homeArtistsText = get_setting('home_artists_text', get_default_home_artists_text());
+$programPlaceholderText = get_setting('program_placeholder_text', 'Program bude brzy doplněn.');
+$artistsPlaceholderText = get_setting('artists_placeholder_text', 'Umělci budou brzy doplněni.');
 $adminMenuEnabledValue = get_setting('admin_menu_bg_enabled', $menuDefaults['admin_menu_bg_enabled']);
 $adminMenuEnabled = $adminMenuEnabledValue === '1';
 $adminMenuColor = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_bg_color']);
@@ -154,6 +160,14 @@ try {
             $homeArtistsText = isset($_POST['home_artists_text']) ? trim($_POST['home_artists_text']) : '';
             set_setting('home_artists_text', $homeArtistsText);
             $homeArtistsMessage = 'Text sekce Umělci byl uložen.';
+        } elseif ($action === 'save_program_placeholder_text') {
+            $programPlaceholderText = isset($_POST['program_placeholder_text']) ? trim($_POST['program_placeholder_text']) : '';
+            set_setting('program_placeholder_text', $programPlaceholderText);
+            $programPlaceholderMessage = 'Text placeholderu programu byl uložen.';
+        } elseif ($action === 'save_artists_placeholder_text') {
+            $artistsPlaceholderText = isset($_POST['artists_placeholder_text']) ? trim($_POST['artists_placeholder_text']) : '';
+            set_setting('artists_placeholder_text', $artistsPlaceholderText);
+            $artistsPlaceholderMessage = 'Text placeholderu umělců byl uložen.';
         } elseif ($action === 'save_admin_menu') {
             $adminMenuEnabled = isset($_POST['admin_menu_bg_enabled']) ? '1' : '0';
             $adminMenuColorInput = isset($_POST['admin_menu_bg_color']) ? trim($_POST['admin_menu_bg_color']) : '';
@@ -288,6 +302,8 @@ try {
     $pinError = $e->getMessage();
     $festivalError = $e->getMessage();
     $homeArtistsError = $e->getMessage();
+    $programPlaceholderError = $e->getMessage();
+    $artistsPlaceholderError = $e->getMessage();
     $menuError = $e->getMessage();
     $fontError = $e->getMessage();
     $logoError = $e->getMessage();
@@ -297,6 +313,8 @@ try {
     $pinError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $festivalError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $homeArtistsError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
+    $programPlaceholderError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
+    $artistsPlaceholderError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $menuError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $fontError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $logoError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
@@ -344,6 +362,34 @@ require_once __DIR__ . '/partials/header.php';
             <input type="hidden" name="action" value="save_home_artists_text">
             <label>Text v boxu Umělci
                 <textarea name="home_artists_text" rows="4" required><?php echo h($homeArtistsText); ?></textarea>
+            </label>
+            <button class="admin-button" type="submit">Uložit text</button>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h1>Placeholder programu</h1>
+        <?php if ($programPlaceholderMessage): ?><p class="admin-alert admin-alert--success"><?php echo h($programPlaceholderMessage); ?></p><?php endif; ?>
+        <?php if ($programPlaceholderError): ?><p class="admin-alert admin-alert--error"><?php echo h($programPlaceholderError); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post">
+            <input type="hidden" name="action" value="save_program_placeholder_text">
+            <label>Text při prázdném programu
+                <textarea name="program_placeholder_text" rows="3" required><?php echo h($programPlaceholderText); ?></textarea>
+            </label>
+            <button class="admin-button" type="submit">Uložit text</button>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h1>Placeholder umělců</h1>
+        <?php if ($artistsPlaceholderMessage): ?><p class="admin-alert admin-alert--success"><?php echo h($artistsPlaceholderMessage); ?></p><?php endif; ?>
+        <?php if ($artistsPlaceholderError): ?><p class="admin-alert admin-alert--error"><?php echo h($artistsPlaceholderError); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post">
+            <input type="hidden" name="action" value="save_artists_placeholder_text">
+            <label>Text při prázdných umělcích
+                <textarea name="artists_placeholder_text" rows="3" required><?php echo h($artistsPlaceholderText); ?></textarea>
             </label>
             <button class="admin-button" type="submit">Uložit text</button>
         </form>

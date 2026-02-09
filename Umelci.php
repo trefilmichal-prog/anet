@@ -2,10 +2,12 @@
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/background_repository.php';
 require_once __DIR__ . '/includes/site_header.php';
+require_once __DIR__ . '/includes/settings_repository.php';
 
 $artists = array();
 $heroBackgroundImage = get_background_image('artists', 'back.png');
 $siteFontStyle = get_site_font_style();
+$artistsPlaceholderText = get_setting('artists_placeholder_text', 'Umělci budou brzy doplněni.');
 
 try {
     $db = get_db();
@@ -253,7 +255,7 @@ body.intro-done .content{
 
 <div class="artists__container">
     <?php if (empty($artists)): ?>
-        <p>Umělci budou brzy doplněni.</p>
+        <p><?php echo htmlspecialchars($artistsPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
     <?php else: ?>
         <div class="artists__grid">
             <?php foreach ($artists as $artist): ?>
