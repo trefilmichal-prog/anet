@@ -1,11 +1,14 @@
 <?php
 require_once __DIR__ . '/includes/program_repository.php';
 require_once __DIR__ . '/includes/background_repository.php';
+require_once __DIR__ . '/includes/festival_content.php';
 require_once __DIR__ . '/includes/site_header.php';
 $programItems = get_program_items(3);
 $heroBackgroundImage = get_background_image('home', 'kostel.jpg');
 $homeContentBackgroundImage = get_background_image('home_content', 'back.png');
 $siteFontStyle = get_site_font_style();
+$homeArtistsText = get_setting('home_artists_text', get_default_home_artists_text());
+$artists = array();
 $brandType = trim((string) get_setting('brand_type', ''));
 $brandValue = trim((string) get_setting('brand_value', ''));
 $brandFallback = array(
@@ -79,6 +82,36 @@ if ($brandValue === '') {
 }
 if (!in_array($brandType, array('text', 'image', 'svg'), true)) {
     $brandType = 'svg';
+}
+
+try {
+    $db = get_db();
+    $stmt = $db->query('SELECT name, image FROM artists ORDER BY sort_order ASC, id DESC LIMIT 3');
+    $artists = $stmt->fetchAll();
+} catch (Exception $e) {
+    error_log('Homepage artists load failed: ' . $e->getMessage());
+    $artists = array();
+}
+
+function normalize_home_artist_image_path($imagePath)
+{
+    $imagePath = trim((string) $imagePath);
+
+    if ($imagePath === '') {
+        return '';
+    }
+
+    $imagePath = str_replace('\\', '/', $imagePath);
+
+    if (strpos($imagePath, '..') !== false || preg_match('/[^a-zA-Z0-9_\-\/.]/', $imagePath)) {
+        return '';
+    }
+
+    if (strpos($imagePath, 'uploads/artists/') !== 0) {
+        return '';
+    }
+
+    return $imagePath;
 }
 ?>
 ﻿<!doctype html>
@@ -259,22 +292,27 @@ if (!in_array($brandType, array('text', 'image', 'svg'), true)) {
                 <h3 class="glass-title">Umělci</h3>
 
                 <div class="artist-row">
-                    <div class="artist">
-                        <img src="a1.png" alt="">
-                        <div class="artist-name">Michaela Káčerková</div>
-                    </div>
-                    <div class="artist">
-                        <img src="a2.png" alt="">
-                        <div class="artist-name">Josef Kovačič</div>
-                    </div>
-                    <div class="artist">
-                        <img src="a3.png" alt="">
-                        <div class="artist-name">Kateřina Málková</div>
-                    </div>
+                    <?php if (empty($artists)): ?>
+                        <div class="glass-note">Umělci budou brzy doplněni.</div>
+                    <?php else: ?>
+                        <?php foreach ($artists as $artist): ?>
+                            <?php
+                            $artistName = htmlspecialchars((string) $artist['name'], ENT_QUOTES, 'UTF-8');
+                            $artistImage = normalize_home_artist_image_path($artist['image']);
+                            $artistImageEscaped = htmlspecialchars($artistImage, ENT_QUOTES, 'UTF-8');
+                            ?>
+                            <div class="artist">
+                                <?php if ($artistImage !== ''): ?>
+                                    <img src="<?php echo $artistImageEscaped; ?>" alt="<?php echo $artistName; ?>">
+                                <?php endif; ?>
+                                <div class="artist-name"><?php echo $artistName; ?></div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
                 <p class="glass-text">
-                    Špičkoví interpreti, jedinečné programy a slavnostní koncerty v mimořádných prostorách.
+                    <?php echo htmlspecialchars($homeArtistsText, ENT_QUOTES, 'UTF-8'); ?>
                 </p>
 
                 <div class="glass-actions">

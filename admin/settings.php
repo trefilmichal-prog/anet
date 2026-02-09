@@ -10,6 +10,8 @@ $pinMessage = '';
 $pinError = '';
 $festivalMessage = '';
 $festivalError = '';
+$homeArtistsMessage = '';
+$homeArtistsError = '';
 $menuMessage = '';
 $menuError = '';
 $fontMessage = '';
@@ -20,6 +22,7 @@ $brandMessage = '';
 $brandError = '';
 $menuDefaults = get_admin_menu_defaults();
 $festivalText = get_setting('festival_page_text', get_default_festival_page_text());
+$homeArtistsText = get_setting('home_artists_text', get_default_home_artists_text());
 $adminMenuEnabledValue = get_setting('admin_menu_bg_enabled', $menuDefaults['admin_menu_bg_enabled']);
 $adminMenuEnabled = $adminMenuEnabledValue === '1';
 $adminMenuColor = get_setting('admin_menu_bg_color', $menuDefaults['admin_menu_bg_color']);
@@ -146,6 +149,16 @@ try {
             } else {
                 set_setting('festival_page_text', $festivalText);
                 $festivalMessage = 'Text O festivalu byl uložen.';
+            }
+        } elseif ($action === 'save_home_artists_text') {
+            $homeArtistsText = isset($_POST['home_artists_text']) ? trim($_POST['home_artists_text']) : '';
+
+            if ($homeArtistsText === '') {
+                $homeArtistsError = 'Text sekce Umělci nesmí být prázdný.';
+                $homeArtistsText = get_setting('home_artists_text', get_default_home_artists_text());
+            } else {
+                set_setting('home_artists_text', $homeArtistsText);
+                $homeArtistsMessage = 'Text sekce Umělci byl uložen.';
             }
         } elseif ($action === 'save_admin_menu') {
             $adminMenuEnabled = isset($_POST['admin_menu_bg_enabled']) ? '1' : '0';
@@ -280,6 +293,7 @@ try {
     error_log('Admin settings DB failed: ' . $e->getMessage());
     $pinError = $e->getMessage();
     $festivalError = $e->getMessage();
+    $homeArtistsError = $e->getMessage();
     $menuError = $e->getMessage();
     $fontError = $e->getMessage();
     $logoError = $e->getMessage();
@@ -288,6 +302,7 @@ try {
     error_log('Admin settings init failed: ' . $e->getMessage());
     $pinError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $festivalError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
+    $homeArtistsError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $menuError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $fontError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
     $logoError = 'Nepodařilo se načíst nastavení. Zkuste to prosím znovu.';
@@ -321,6 +336,20 @@ require_once __DIR__ . '/partials/header.php';
             <input type="hidden" name="action" value="save_festival_text">
             <label>Obsah stránky O festivalu
                 <textarea name="festival_text" rows="14" required><?php echo h($festivalText); ?></textarea>
+            </label>
+            <button class="admin-button" type="submit">Uložit text</button>
+        </form>
+    </section>
+
+    <section class="admin-card">
+        <h1>Text sekce Umělci (homepage)</h1>
+        <?php if ($homeArtistsMessage): ?><p class="admin-alert admin-alert--success"><?php echo h($homeArtistsMessage); ?></p><?php endif; ?>
+        <?php if ($homeArtistsError): ?><p class="admin-alert admin-alert--error"><?php echo h($homeArtistsError); ?></p><?php endif; ?>
+
+        <form class="admin-form" method="post">
+            <input type="hidden" name="action" value="save_home_artists_text">
+            <label>Text v boxu Umělci
+                <textarea name="home_artists_text" rows="4" required><?php echo h($homeArtistsText); ?></textarea>
             </label>
             <button class="admin-button" type="submit">Uložit text</button>
         </form>

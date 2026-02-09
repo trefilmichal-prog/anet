@@ -8,3 +8,8 @@ function get_default_festival_page_text()
         . "Program festivalu je pestrý a zahrnuje koncerty renomovaných českých i zahraničních souborů a sólistů. Nabízí širokou škálu hudebních stylů od baroka po současnost, s důrazem na duchovní hudbu.\n\n"
         . "Festival Harmonia Caelestis je jedinečnou příležitostí vychutnat si krásu klasické hudby v krásných historických památkách i moderních prostorách a zároveň se setkat s lidmi, kteří sdílí lásku k hudbě.";
 }
+
+function get_default_home_artists_text()
+{
+    return 'Špičkoví interpreti, jedinečné programy a slavnostní koncerty v mimořádných prostorách.';
+}
