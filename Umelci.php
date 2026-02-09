@@ -257,10 +257,12 @@ body.intro-done .content{
 <div class="artists__container">
     <?php if (empty($artists)): ?>
         <?php if (trim($artistsPlaceholderText) !== ''): ?>
-            <div class="artists__placeholder">
-                <div class="container2-divider2"><span class="star star-animated">✦</span></div>
-                <div class="festival-text-box">
-                    <p><?php echo htmlspecialchars($artistsPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
+            <div class="container2">
+                <div class="artists__placeholder">
+                    <div class="container2-divider2"><span class="star star-animated">✦</span></div>
+                    <div class="festival-text-box">
+                        <p><?php echo htmlspecialchars($artistsPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></p>
+                    </div>
                 </div>
             </div>
         <?php endif; ?>
