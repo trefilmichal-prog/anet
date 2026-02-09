@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <section class="content" style="background-image: url('<?php echo htmlspecialchars($heroBackgroundImage, ENT_QUOTES, 'UTF-8'); ?>');">
         <div class="container2">
             <h2>PROGRAM III. ROČNÍK 2026</h2>
-            <div class="container2-divider2"><span class="star star-animated">✦</span></div>
+            <br>
             <?php if (empty($programItems)): ?>
                 <?php if (trim($programPlaceholderText) !== ''): ?>
                     <div class="festival-text-box">
@@ -171,6 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                 <?php endif; ?>
             <?php else: ?>
+                <div class="container2-divider2"><span class="star star-animated">✦</span></div>
                 <div class="program-grid">
                     <?php foreach ($programItems as $item): ?>
                         <article class="program-card">
