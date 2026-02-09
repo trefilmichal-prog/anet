@@ -1330,10 +1330,11 @@ body.intro-done .content {
   width: 16px;
   height: 16px;
   border-radius: 999px;
-  background: transparent;
-  border: 1px solid rgba(242, 233, 220, 0.55);
-  box-shadow: 0 0 8px rgba(242, 233, 220, 0.25), 0 0 18px rgba(198, 165, 255, 0.18);
+  background: radial-gradient(circle at 30% 30%, rgba(198, 247, 255, 0.8) 0%, rgba(96, 212, 231, 0.45) 42%, rgba(35, 128, 158, 0.18) 68%, rgba(10, 38, 56, 0.04) 100%);
+  border: 1px solid rgba(128, 220, 236, 0.45);
+  box-shadow: 0 0 10px rgba(110, 219, 236, 0.35), 0 0 22px rgba(70, 178, 209, 0.22);
   transform: translate3d(0, 0, 0) translate(-50%, -50%);
+  filter: blur(0.2px);
   will-change: transform;
 }
 
@@ -1341,18 +1342,19 @@ body.intro-done .content {
 .cursor-trail__dot::after{
   content: "";
   position: absolute;
-  inset: -6px;
+  inset: -7px;
   border-radius: 999px;
-  border: 1px solid rgba(198, 165, 255, 0.25);
-  box-shadow: 0 0 10px rgba(198, 165, 255, 0.18);
-  opacity: 0.75;
+  background: radial-gradient(circle at 35% 35%, rgba(214, 252, 255, 0.55) 0%, rgba(120, 220, 238, 0.25) 50%, rgba(20, 84, 110, 0.08) 75%, transparent 100%);
+  box-shadow: 0 0 14px rgba(120, 220, 238, 0.28);
+  opacity: 0.7;
+  filter: blur(0.6px);
 }
 
 .cursor-trail__dot::after{
-  inset: -12px;
-  border-color: rgba(242, 233, 220, 0.18);
-  box-shadow: 0 0 16px rgba(242, 233, 220, 0.12);
-  opacity: 0.5;
+  inset: -14px;
+  background: radial-gradient(circle at 40% 40%, rgba(180, 242, 255, 0.25) 0%, rgba(90, 196, 219, 0.12) 55%, rgba(14, 61, 85, 0.04) 80%, transparent 100%);
+  box-shadow: 0 0 18px rgba(90, 196, 219, 0.18);
+  opacity: 0.45;
 }
 
 .cursor-trail__dot:nth-child(2){
@@ -1377,4 +1379,30 @@ body.intro-done .content {
   width: 34px;
   height: 34px;
   opacity: 0.24;
+}
+
+.cursor-trail__ripple{
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 229, 245, 0.4);
+  background: radial-gradient(circle, rgba(210, 250, 255, 0.4) 0%, rgba(110, 216, 236, 0.18) 45%, rgba(14, 70, 95, 0.05) 70%, transparent 100%);
+  animation: cursor-ripple 0.9s ease-out forwards;
+  filter: blur(0.3px);
+  pointer-events: none;
+}
+
+@keyframes cursor-ripple{
+  0%{
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0.7;
+  }
+  70%{
+    opacity: 0.35;
+  }
+  100%{
+    transform: translate(-50%, -50%) scale(3.4);
+    opacity: 0;
+  }
 }
