@@ -940,8 +940,7 @@ body.intro-done .content {
 
 .artist-row .glass-note {
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible;
 }
 
 .artist img {
