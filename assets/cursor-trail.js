@@ -6,18 +6,17 @@
   var finePointer = window.matchMedia('(pointer: fine)');
   var anyFinePointer = window.matchMedia('(any-pointer: fine)');
   var anyHover = window.matchMedia('(any-hover: hover)');
+  if (reduceMotion.matches) {
+    trail.style.display = 'none';
+    return;
+  }
+
   var allowPointer = finePointer.matches
     || anyFinePointer.matches
     || anyHover.matches;
 
   if (!allowPointer) {
     trail.style.display = 'none';
-    return;
-  }
-
-  if (reduceMotion.matches) {
-    trail.style.display = 'none';
-    return;
   }
 
   var trailCount = 5;
@@ -54,6 +53,23 @@
   }
 
   function updateTarget(event) {
+    if (!allowPointer) {
+      var hasPointerType = event && typeof event.pointerType === 'string';
+      var maxTouchPoints = (navigator && typeof navigator.maxTouchPoints === 'number')
+        ? navigator.maxTouchPoints
+        : 0;
+      var isMouse = hasPointerType
+        ? event.pointerType === 'mouse'
+        : maxTouchPoints === 0;
+
+      if (isMouse) {
+        allowPointer = true;
+        trail.style.display = '';
+      } else {
+        return;
+      }
+    }
+
     target.x = event.clientX;
     target.y = event.clientY;
 
