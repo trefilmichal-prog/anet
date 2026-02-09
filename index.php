@@ -311,9 +311,11 @@ function normalize_home_artist_image_path($imagePath)
                     <?php endif; ?>
                 </div>
 
-                <p class="glass-text">
-                    <?php echo htmlspecialchars($homeArtistsText, ENT_QUOTES, 'UTF-8'); ?>
-                </p>
+                <?php if ($homeArtistsText !== ''): ?>
+                    <p class="glass-text">
+                        <?php echo htmlspecialchars($homeArtistsText, ENT_QUOTES, 'UTF-8'); ?>
+                    </p>
+                <?php endif; ?>
 
                 <div class="glass-actions">
                     <a class="btn-glass" href="Umelci.php">Všichni umělci <span>›</span></a>
