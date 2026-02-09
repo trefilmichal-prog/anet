@@ -24,6 +24,8 @@
   var trailCount = 5;
   var dots = [];
   var i;
+  var rippleInterval = 70;
+  var lastRippleTime = 0;
 
   for (i = 0; i < trailCount; i += 1) {
     var dot = document.createElement('span');
@@ -69,11 +71,34 @@
       isActive = true;
       trail.classList.add('is-active');
     }
+
+    var now = (window.performance && window.performance.now) ? window.performance.now() : Date.now();
+    if (now - lastRippleTime >= rippleInterval) {
+      lastRippleTime = now;
+      createRipple(target.x, target.y);
+    }
   }
 
   document.addEventListener('mousemove', updateTarget);
   document.addEventListener('pointermove', updateTarget);
   document.addEventListener('pointerenter', updateTarget);
+
+  function createRipple(x, y) {
+    var ripple = document.createElement('span');
+    ripple.className = 'cursor-trail__ripple';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    trail.appendChild(ripple);
+
+    function removeRipple() {
+      if (ripple && ripple.parentNode) {
+        ripple.parentNode.removeChild(ripple);
+      }
+    }
+
+    ripple.addEventListener('animationend', removeRipple);
+    window.setTimeout(removeRipple, 1100);
+  }
 
   function animate() {
     if (isActive) {
