@@ -8,6 +8,8 @@ $heroBackgroundImage = get_background_image('home', 'kostel.jpg');
 $homeContentBackgroundImage = get_background_image('home_content', 'back.png');
 $siteFontStyle = get_site_font_style();
 $homeArtistsText = get_setting('home_artists_text', get_default_home_artists_text());
+$programPlaceholderText = get_setting('program_placeholder_text', 'Program bude brzy doplněn.');
+$artistsPlaceholderText = get_setting('artists_placeholder_text', 'Umělci budou brzy doplněni.');
 $artists = array();
 $brandType = trim((string) get_setting('brand_type', ''));
 $brandValue = trim((string) get_setting('brand_value', ''));
@@ -245,7 +247,7 @@ function normalize_home_artist_image_path($imagePath)
                 <div class="glass-list">
                     <?php if (empty($programItems)): ?>
                         <div class="glass-item">
-                            <div class="glass-note">Program bude brzy doplněn.</div>
+                            <div class="glass-note"><?php echo htmlspecialchars($programPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></div>
                         </div>
                     <?php else: ?>
                         <?php foreach ($programItems as $index => $item): ?>
@@ -293,7 +295,7 @@ function normalize_home_artist_image_path($imagePath)
 
                 <div class="artist-row">
                     <?php if (empty($artists)): ?>
-                        <div class="glass-note">Umělci budou brzy doplněni.</div>
+                        <div class="glass-note"><?php echo htmlspecialchars($artistsPlaceholderText, ENT_QUOTES, 'UTF-8'); ?></div>
                     <?php else: ?>
                         <?php foreach ($artists as $artist): ?>
                             <?php
