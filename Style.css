@@ -574,6 +574,10 @@ body.intro-done .content {
 
     
 }
+#button {
+    justify-content: center;
+    align-items: center;
+}
 .container2 {
     max-width: 900px;
     margin: 0 auto;
@@ -796,6 +800,7 @@ body.intro-done .content {
 /*-----TLAČÍTKO-----*/
 
 .btn-program {
+    display: inline-flex;
     align-items: center;
     gap: 12px;
     padding: 14px 28px;
